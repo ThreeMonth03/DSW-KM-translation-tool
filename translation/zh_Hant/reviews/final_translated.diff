@@ -1,0 +1,11 @@
+--- knowledge-models-common-dsw-knowledge-model-zh_Hant.po
++++ final_translated.po
+@@ -4639,7 +4639,7 @@
+ 
+ #: question:83c0d09d-e74c-4c81-a52c-aaa2e18415ac:title
+ msgid "To execute the DMP, is additional specialist expertise required?"
+-msgstr ""
++msgstr "測試翻譯"
+ 
+ #: question:4ee4d67d-62c5-47f0-a741-f2629b65cf8a:text
+ msgid "To perform capacity planning, it is important to know what the need for storage capacity at the beginning and the end of the project will be."
