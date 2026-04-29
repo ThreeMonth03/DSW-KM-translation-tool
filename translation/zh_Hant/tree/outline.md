@@ -223,7 +223,7 @@
                         - [x] [layer 7] 0002 Case number
 
                           [Q] [translation](<0001 Common DSW Knowledge Model [6f6241d9]/0001 Administrative information [1e85da40]/0002 Research Project(s) [c3dabaaf]/0010 Does the project require ethical approval [dbb99f35]/0002 Yes [f301ae6e]/0001 Inspectorate Authority [40005844]/0002 Case number [bd0dd2d0]/translation.md>)
-        - [ ] [layer 3] 0003 To execute the DMP, is additional specialist expertise required
+        - [x] [layer 3] 0003 To execute the DMP, is additional specialist expertise required
 
           [Q] [translation](<0001 Common DSW Knowledge Model [6f6241d9]/0001 Administrative information [1e85da40]/0003 To execute the DMP, is additional specialist expertise required [83c0d09d]/translation.md>)
 
