@@ -9,7 +9,6 @@ from pathlib import Path
 from dsw_translation_tool.translation_repository_config import (
     TranslationRepositoryConfigError,
     load_translation_repository_config,
-    localize_download_url,
     version_branch,
     version_paths,
 )
@@ -53,7 +52,7 @@ def main() -> None:
         f"Supported versions: {', '.join(versions)}",
         f"Latest branch: {version_branch(config, latest_version)}",
         f"Latest source KM path: {latest_paths.source_km_path.as_posix()}",
-        f"Latest Localize PO URL: {localize_download_url(config, latest_version)}",
+        f"Localize PO URL: {config.localize.download_url}",
         f"Registry API: {config.registry.api_url}",
         f"Translation tree path: {latest_paths.translation_tree_dir.as_posix()}",
         f"Protected chapters: {', '.join(config.migration.protected_chapters) or '(none)'}",

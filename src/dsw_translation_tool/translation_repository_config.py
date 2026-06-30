@@ -57,8 +57,6 @@ class LocalizeConfig:
     """Localize/Weblate source metadata for PO synchronization."""
 
     download_url: str
-    download_url_template: str | None
-    download_urls: dict[str, str]
     repository: str | None
 
 
@@ -199,8 +197,6 @@ def _load_translation_config(payload: dict[str, Any]) -> TranslationLanguageConf
 def _load_localize_config(payload: dict[str, Any]) -> LocalizeConfig:
     return LocalizeConfig(
         download_url=_require_str(payload, "download_url"),
-        download_url_template=_optional_str(payload, "download_url_template"),
-        download_urls=_optional_version_url_map(payload, "download_urls"),
         repository=_optional_str(payload, "repository"),
     )
 
@@ -264,18 +260,6 @@ def version_paths(config: TranslationRepositoryConfig, version: str) -> KmVersio
         localize_merge_report_path=Path("reviews") / "localize_merge_report.json",
         conflicts_report_path=Path("reviews") / "conflicts.json",
     )
-
-
-def localize_download_url(config: TranslationRepositoryConfig, version: str) -> str:
-    """Return the Localize/Weblate PO download URL for one KM version."""
-
-    normalized = normalize_version(version)
-    validate_supported_version(config, normalized)
-    if normalized in config.localize.download_urls:
-        return config.localize.download_urls[normalized]
-    if config.localize.download_url_template:
-        return config.localize.download_url_template.format(version=normalized)
-    return config.localize.download_url
 
 
 def validate_supported_version(config: TranslationRepositoryConfig, version: str) -> None:
@@ -363,18 +347,6 @@ def _optional_str_list(parent: dict[str, Any], key: str) -> list[str]:
     if not isinstance(value, list) or not all(isinstance(item, str) for item in value):
         raise TranslationRepositoryConfigError(f"Expected string list at `{key}`")
     return [item.strip() for item in value if item.strip()]
-
-
-def _optional_version_url_map(parent: dict[str, Any], key: str) -> dict[str, str]:
-    value = parent.get(key, {})
-    if not isinstance(value, dict):
-        raise TranslationRepositoryConfigError(f"Expected mapping at `{key}`")
-    result: dict[str, str] = {}
-    for raw_version, raw_url in value.items():
-        if not isinstance(raw_version, str) or not isinstance(raw_url, str) or not raw_url.strip():
-            raise TranslationRepositoryConfigError(f"Expected version-to-URL mapping at `{key}`")
-        result[normalize_version(raw_version)] = raw_url.strip()
-    return result
 
 
 def _duplicates(values: tuple[str, ...]) -> list[str]:

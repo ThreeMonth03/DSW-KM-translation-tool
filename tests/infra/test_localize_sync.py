@@ -26,21 +26,11 @@ def test_pull_localize_po_initializes_base_and_latest(workspace: Path) -> None:
     assert result.base_po_path.read_bytes() == b"new po"
 
 
-def test_pull_localize_po_uses_per_version_download_url(workspace: Path) -> None:
-    """Verify Localize pulls use the URL configured for the requested KM version."""
+def test_pull_localize_po_uses_single_download_url_for_all_km_versions(workspace: Path) -> None:
+    """Verify Localize pulls use the rolling project URL for any KM version."""
 
     config_path = workspace / "translation-config.yml"
     write_config(config_path, supported_versions=["2.7.0", "2.8.0"])
-    config_path.write_text(
-        config_path.read_text(encoding="utf-8").replace(
-            "  repository: https://github.com/ds-wizard/dsw-root-locales.git\n",
-            """  repository: https://github.com/ds-wizard/dsw-root-locales.git
-  download_urls:
-    "2.8.0": https://localize.ds-wizard.org/download/example/km-2-8/zh_Hant/
-""",
-        ),
-        encoding="utf-8",
-    )
     requested_urls: list[str] = []
 
     result = pull_localize_po(
@@ -50,8 +40,12 @@ def test_pull_localize_po_uses_per_version_download_url(workspace: Path) -> None
         downloader=lambda url: requested_urls.append(url) or b"new po",
     )
 
-    assert requested_urls == ["https://localize.ds-wizard.org/download/example/km-2-8/zh_Hant/"]
-    assert result.url == "https://localize.ds-wizard.org/download/example/km-2-8/zh_Hant/"
+    expected_url = (
+        "https://localize.ds-wizard.org/download/knowledge-models/"
+        "common-dsw-knowledge-model/zh_Hant/"
+    )
+    assert requested_urls == [expected_url]
+    assert result.url == expected_url
 
 
 def test_pull_localize_po_updates_base_from_previous_latest(workspace: Path) -> None:
