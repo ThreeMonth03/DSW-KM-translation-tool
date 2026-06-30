@@ -83,7 +83,8 @@ def test_config_loader_normalizes_versions_and_paths(workspace: Path) -> None:
     assert paths.localize_latest_po_path == Path("sources/localize/zh_Hant/latest.po")
     assert paths.translation_tree_dir == Path("tree")
     assert paths.final_po_path == Path("builds/final_translated.po")
-    assert paths.conflicts_report_path == Path("reports/conflicts.json")
+    assert paths.localize_merge_report_path == Path("reviews/localize_merge_report.json")
+    assert paths.conflicts_report_path == Path("reviews/conflicts.json")
 
 
 def test_version_sorting_handles_multi_digit_segments() -> None:
@@ -165,6 +166,9 @@ def test_versioned_ci_sync_config_derives_branch_and_source_paths(workspace: Pat
     assert config.source_km_path == Path(
         "sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km"
     )
+    assert config.localize_base_po_path == Path("sources/localize/zh_Hant/base.po")
+    assert config.localize_merge_report_path == Path("reviews/localize_merge_report.json")
+    assert config.protected_chapters == ("0003", "0004", "0005")
     assert config.original_po_path == host_repo / "sources/localize/zh_Hant/latest.po"
     assert config.original_model_path == (
         host_repo / "sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km"

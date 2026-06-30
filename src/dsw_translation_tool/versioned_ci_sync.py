@@ -84,6 +84,9 @@ def build_versioned_ci_sync_config(
         output_km_id=output_km_id or repository_config.translation.translated_km_id,
         output_name=output_name or repository_config.translation.translated_name,
         restore_source_ref=restore_source_ref or f"origin/{branch}",
+        localize_base_po_path=paths.localize_base_po_path,
+        localize_merge_report_path=paths.localize_merge_report_path,
+        protected_chapters=repository_config.migration.protected_chapters,
     )
 
 

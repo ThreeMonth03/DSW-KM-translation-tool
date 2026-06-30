@@ -240,8 +240,8 @@ def version_paths(config: TranslationRepositoryConfig, version: str) -> KmVersio
         final_km_path=Path("builds") / "final_translated.km",
         review_diff_path=Path("reviews") / "final_translated.diff",
         validation_report_path=Path("reports") / "final_report.json",
-        localize_merge_report_path=Path("reports") / "localize_merge_report.json",
-        conflicts_report_path=Path("reports") / "conflicts.json",
+        localize_merge_report_path=Path("reviews") / "localize_merge_report.json",
+        conflicts_report_path=Path("reviews") / "conflicts.json",
     )
 
 
