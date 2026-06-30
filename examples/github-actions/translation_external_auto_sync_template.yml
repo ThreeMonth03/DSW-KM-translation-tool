@@ -63,6 +63,13 @@ jobs:
         working-directory: tooling-repo
         run: make install-dev BOOTSTRAP_PYTHON=python
 
+      - name: Pull latest Localize PO snapshot
+        run: >-
+          tooling-repo/.venv/bin/python tooling-repo/src/pull_localize_po.py
+          --repo-root "$GITHUB_WORKSPACE/translation-repo"
+          --config "${{ env.TRANSLATION_CONFIG }}"
+          --km-version "${{ env.KM_VERSION }}"
+
       # This helper may restore malformed translation.md or one split
       # shared_blocks/<group-id>/context.md file from the version branch once,
       # then rerun sync. That keeps CI unblocked, but can overwrite malformed
