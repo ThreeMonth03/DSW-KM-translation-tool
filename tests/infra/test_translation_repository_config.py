@@ -9,6 +9,7 @@ import pytest
 from dsw_translation_tool.translation_repository_config import (
     TranslationRepositoryConfigError,
     load_translation_repository_config,
+    localize_download_url,
     sorted_versions,
     version_branch,
     version_paths,
@@ -120,6 +121,57 @@ def test_config_loader_uses_default_registry_when_omitted(workspace: Path) -> No
     assert config.registry.api_url == "https://api.registry.ds-wizard.org"
 
 
+def test_localize_download_url_supports_per_version_mapping(workspace: Path) -> None:
+    """Verify exact per-version Localize URLs override the fallback URL."""
+
+    config_path = workspace / "translation-config.yml"
+    write_config(config_path, supported_versions=["2.7.0", "2.8.0"])
+    config_path.write_text(
+        config_path.read_text(encoding="utf-8").replace(
+            "  repository: https://github.com/ds-wizard/dsw-root-locales.git\n",
+            """  repository: https://github.com/ds-wizard/dsw-root-locales.git
+  download_urls:
+    "2.8.0": https://localize.ds-wizard.org/download/example/km-2-8/zh_Hant/
+""",
+        ),
+        encoding="utf-8",
+    )
+
+    config = load_translation_repository_config(config_path)
+
+    assert localize_download_url(config, "2.7.0") == (
+        "https://localize.ds-wizard.org/download/knowledge-models/"
+        "common-dsw-knowledge-model/zh_Hant/"
+    )
+    assert (
+        localize_download_url(config, "2.8.0")
+        == "https://localize.ds-wizard.org/download/example/km-2-8/zh_Hant/"
+    )
+
+
+def test_localize_download_url_supports_version_template(workspace: Path) -> None:
+    """Verify Localize URL templates are used when no exact mapping exists."""
+
+    config_path = workspace / "translation-config.yml"
+    write_config(config_path, supported_versions=["2.7.0", "2.8.0"])
+    config_path.write_text(
+        config_path.read_text(encoding="utf-8").replace(
+            "  repository: https://github.com/ds-wizard/dsw-root-locales.git\n",
+            """  repository: https://github.com/ds-wizard/dsw-root-locales.git
+  download_url_template: https://localize.ds-wizard.org/download/km/{version}/zh_Hant/
+""",
+        ),
+        encoding="utf-8",
+    )
+
+    config = load_translation_repository_config(config_path)
+
+    assert (
+        localize_download_url(config, "2.8.0")
+        == "https://localize.ds-wizard.org/download/km/2.8.0/zh_Hant/"
+    )
+
+
 def test_config_loader_rejects_unsupported_migration_mode(workspace: Path) -> None:
     """Verify that only conservative exact migration is accepted."""
 
@@ -156,6 +208,7 @@ def test_validate_translation_config_cli_reports_summary(
     assert result.returncode == 0, result.stderr or result.stdout
     assert "KM translation config is valid." in result.stdout
     assert "Latest branch: translation/v2.7.0" in result.stdout
+    assert "Latest Localize PO URL: https://localize.ds-wizard.org/download/" in result.stdout
     assert "Registry API: https://api.registry.ds-wizard.org" in result.stdout
     assert "Protected chapters: 0003, 0004, 0005" in result.stdout
     assert "## KM Translation Config" in summary_path.read_text(encoding="utf-8")

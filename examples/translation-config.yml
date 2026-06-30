@@ -26,6 +26,8 @@ tooling:
 localize:
   download_url: https://localize.ds-wizard.org/download/knowledge-models/common-dsw-knowledge-model/zh_Hant/
   repository: https://github.com/ds-wizard/dsw-root-locales.git
+  download_urls:
+    "2.7.0": https://localize.ds-wizard.org/download/knowledge-models/common-dsw-knowledge-model/zh_Hant/
 
 registry:
   api_url: https://api.registry.ds-wizard.org
