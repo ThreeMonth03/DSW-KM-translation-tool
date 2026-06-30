@@ -71,6 +71,17 @@ class CiSyncCommitConfig:
         source_lang: Source language code used by the sync CLI.
         target_lang: Target language code used by the sync CLI.
         commit_message: Commit message used when sync changes are detected.
+        source_po_path: Optional source PO template path. Relative paths are
+            resolved inside the host repository; absolute paths are used as-is.
+            Defaults to the canonical PO bundled in the tooling repository.
+        source_km_path: Optional source KM bundle path. Relative paths are
+            resolved inside the host repository; absolute paths are used as-is.
+            Defaults to the canonical KM bundled in the tooling repository.
+        output_organization_id: Optional organization ID for the generated KM.
+        output_km_id: Optional KM ID for the generated KM.
+        output_name: Optional display name for the generated KM.
+        restore_source_ref: Git ref used when restoring a malformed
+            translation source file during CI recovery.
     """
 
     host_repo_path: Path
@@ -81,6 +92,12 @@ class CiSyncCommitConfig:
     source_lang: str = DEFAULT_SOURCE_LANG
     target_lang: str = DEFAULT_TARGET_LANG
     commit_message: str = DEFAULT_SYNC_COMMIT_MESSAGE
+    source_po_path: Path | None = None
+    source_km_path: Path | None = None
+    output_organization_id: str | None = None
+    output_km_id: str | None = None
+    output_name: str | None = None
+    restore_source_ref: str = "origin/master"
 
     @property
     def host_repo_dir(self) -> Path:
@@ -178,15 +195,38 @@ class CiSyncCommitConfig:
 
     @property
     def original_po_path(self) -> Path:
-        """Return the canonical original PO path inside the tooling repository."""
+        """Return the source PO template path for sync and validation."""
 
-        return self.tooling_repo_dir / DEFAULT_PO_PATH
+        return self._resolve_source_path(
+            configured_path=self.source_po_path,
+            default_path=self.tooling_repo_dir / DEFAULT_PO_PATH,
+        )
 
     @property
     def original_model_path(self) -> Path:
-        """Return the canonical original KM path inside the tooling repository."""
+        """Return the source KM bundle path for building translated KM output."""
 
-        return self.tooling_repo_dir / DEFAULT_MODEL_PATH
+        return self._resolve_source_path(
+            configured_path=self.source_km_path,
+            default_path=self.tooling_repo_dir / DEFAULT_MODEL_PATH,
+        )
+
+    def _resolve_source_path(self, configured_path: Path | None, default_path: Path) -> Path:
+        """Resolve one optional source path for CI automation.
+
+        Args:
+            configured_path: User-provided source path, or ``None``.
+            default_path: Fallback path used by legacy single-version repos.
+
+        Returns:
+            Absolute path to the source file.
+        """
+
+        if configured_path is None:
+            return default_path.resolve()
+        if configured_path.is_absolute():
+            return configured_path.resolve()
+        return (self.host_repo_dir / configured_path).resolve()
 
     def validate(self) -> None:
         """Validate that the requested sync operation can run locally.
@@ -219,6 +259,8 @@ class CiSyncCommitConfig:
                 "Missing tooling virtualenv Python. Run `make install-dev` first: "
                 f"{self.tooling_python_path}"
             )
+        if not self.restore_source_ref.strip():
+            raise CiSyncError("Restore source ref must not be empty.")
         if not self.original_po_path.exists():
             raise CiSyncError(f"Missing original PO file: {self.original_po_path}")
         if not self.original_model_path.exists():
@@ -327,7 +369,7 @@ def _run_sync_with_origin_restore(
     config: CiSyncCommitConfig,
     runner: CommandRunner,
 ) -> None:
-    """Run sync once, optionally restoring one broken source file from master.
+    """Run sync once, optionally restoring one broken source file from a git ref.
 
     Args:
         config: Sync-and-commit configuration.
@@ -354,14 +396,14 @@ def _run_sync_with_origin_restore(
 
     print(
         "[ci-sync] WARNING: restoring malformed translation source from "
-        f"origin/master: {restore_path}"
+        f"{config.restore_source_ref}: {restore_path}"
     )
-    _restore_file_from_origin_master(config, runner, restore_path)
+    _restore_file_from_configured_source(config, runner, restore_path)
     _run_checked(
         runner,
         _build_sync_command(config),
         cwd=config.tooling_repo_dir,
-        description="re-run sync translation artifacts after origin/master restore",
+        description="re-run sync translation artifacts after git restore",
         echo_output=True,
     )
 
@@ -425,7 +467,27 @@ def _build_po_to_km_command(config: CiSyncCommitConfig) -> list[str]:
         config.source_lang,
         "--target-lang",
         config.target_lang,
-    ]
+    ] + _build_optional_po_to_km_identity_args(config)
+
+
+def _build_optional_po_to_km_identity_args(config: CiSyncCommitConfig) -> list[str]:
+    """Build optional translated-KM identity flags.
+
+    Args:
+        config: Sync-and-commit configuration.
+
+    Returns:
+        Command-line flags for identity overrides.
+    """
+
+    args: list[str] = []
+    if config.output_organization_id:
+        args.extend(["--output-organization-id", config.output_organization_id])
+    if config.output_km_id:
+        args.extend(["--output-km-id", config.output_km_id])
+    if config.output_name:
+        args.extend(["--output-name", config.output_name])
+    return args
 
 
 def _build_translation_test_command(config: CiSyncCommitConfig) -> list[str]:
@@ -551,12 +613,12 @@ def _extract_origin_restore_candidate(
     return None
 
 
-def _restore_file_from_origin_master(
+def _restore_file_from_configured_source(
     config: CiSyncCommitConfig,
     runner: CommandRunner,
     file_path: Path,
 ) -> None:
-    """Restore one tracked translation source file from `origin/master`.
+    """Restore one tracked translation source file from the configured git ref.
 
     Args:
         config: Sync-and-commit configuration.
@@ -570,9 +632,17 @@ def _restore_file_from_origin_master(
     relative_path = file_path.relative_to(config.host_repo_dir).as_posix()
     _run_checked(
         runner,
-        ["git", "restore", "--source", "origin/master", "--worktree", "--", relative_path],
+        [
+            "git",
+            "restore",
+            "--source",
+            config.restore_source_ref,
+            "--worktree",
+            "--",
+            relative_path,
+        ],
         cwd=config.host_repo_dir,
-        description=f"restore {relative_path} from origin/master",
+        description=f"restore {relative_path} from {config.restore_source_ref}",
     )
 
 

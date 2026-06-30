@@ -13,6 +13,7 @@ from dsw_translation_tool.translation_repository_config import (
     version_branch,
     version_paths,
 )
+from dsw_translation_tool.versioned_ci_sync import build_versioned_ci_sync_config
 from tests.helpers import run_cli_script
 
 
@@ -134,3 +135,39 @@ def test_validate_translation_config_cli_reports_summary(
     assert "Latest branch: translation/v2.7.0" in result.stdout
     assert "Protected chapters: 0003, 0004, 0005" in result.stdout
     assert "## KM Translation Config" in summary_path.read_text(encoding="utf-8")
+
+
+def test_versioned_ci_sync_config_derives_branch_and_source_paths(workspace: Path) -> None:
+    """Verify CI sync config can be derived from translation-config.yml."""
+
+    host_repo = workspace / "translation-repo"
+    tooling_repo = workspace / "tooling-repo"
+    host_repo.mkdir()
+    tooling_repo.mkdir()
+    config_path = host_repo / "translation-config.yml"
+    write_config(config_path, supported_versions=["2.6.0", "2.7.0"])
+
+    config = build_versioned_ci_sync_config(
+        host_repo_path=host_repo,
+        tooling_repo_path=tooling_repo,
+        config_path=Path("translation-config.yml"),
+        mode="schedule",
+        km_version="2.7.0",
+    )
+
+    assert config.translation_root == "."
+    assert config.translation_root_arg == "."
+    assert config.target_ref == "translation/v2.7.0"
+    assert config.restore_source_ref == "origin/translation/v2.7.0"
+    assert config.source_lang == "en"
+    assert config.target_lang == "zh_Hant"
+    assert config.source_po_path == Path("sources/localize/zh_Hant/latest.po")
+    assert config.source_km_path == Path(
+        "sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km"
+    )
+    assert config.original_po_path == host_repo / "sources/localize/zh_Hant/latest.po"
+    assert config.original_model_path == (
+        host_repo / "sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km"
+    )
+    assert config.output_organization_id == "dsw"
+    assert config.output_km_id == "root-zh-hant"

@@ -4,7 +4,7 @@ on:
   schedule:
     - cron: "0 1,13 * * *"
   pull_request:
-    branches: [master]
+    branches: [translation/v2.7.0]
 
 permissions:
   contents: write
@@ -12,12 +12,15 @@ permissions:
 concurrency:
   group: >-
     external-translation-auto-sync-${{ github.event_name == 'pull_request' &&
-    github.event.pull_request.head.ref || 'master' }}
+    github.event.pull_request.head.ref || 'translation/v2.7.0' }}
   cancel-in-progress: false
 
 env:
   TOOLING_REPOSITORY: ThreeMonth03/DSW_Translation_tool
   TOOLING_REF: master
+  KM_VERSION: 2.7.0
+  VERSION_BRANCH: translation/v2.7.0
+  TRANSLATION_CONFIG: translation-config.yml
   TRANSLATION_ROOT: .
 
 jobs:
@@ -34,9 +37,15 @@ jobs:
         with:
           ref: >-
             ${{ github.event_name == 'pull_request' &&
-            github.event.pull_request.head.ref || 'master' }}
+            github.event.pull_request.head.ref || env.VERSION_BRANCH }}
           path: translation-repo
           fetch-depth: 0
+
+      - name: Fetch version branch for recovery restores
+        working-directory: translation-repo
+        run: >-
+          git fetch origin
+          "${{ env.VERSION_BRANCH }}:refs/remotes/origin/${{ env.VERSION_BRANCH }}"
 
       - name: Checkout tooling repository
         uses: actions/checkout@v4
@@ -55,7 +64,7 @@ jobs:
         run: make install-dev BOOTSTRAP_PYTHON=python
 
       # This helper may restore malformed translation.md or one split
-      # shared_blocks/<group-id>/translation.txt file from origin/master once,
+      # shared_blocks/<group-id>/context.md file from the version branch once,
       # then rerun sync. That keeps CI unblocked, but can overwrite malformed
       # PR-branch edits.
       - name: Sync, validate, and auto-commit translation artifacts
@@ -63,9 +72,12 @@ jobs:
           tooling-repo/.venv/bin/python tooling-repo/src/ci_sync_commit.py
           --host-repo "$GITHUB_WORKSPACE/translation-repo"
           --tooling-repo "$GITHUB_WORKSPACE/tooling-repo"
+          --config "${{ env.TRANSLATION_CONFIG }}"
+          --km-version "${{ env.KM_VERSION }}"
           --translation-root "${{ env.TRANSLATION_ROOT }}"
           --target-ref "${{ github.event_name == 'pull_request' &&
-          github.event.pull_request.head.ref || 'master' }}"
+          github.event.pull_request.head.ref || env.VERSION_BRANCH }}"
+          --restore-source-ref "origin/${{ env.VERSION_BRANCH }}"
           --mode "${{ github.event_name }}"
 
   skip-fork-pr:
