@@ -42,6 +42,7 @@ class BranchConfig:
     """Version branch naming policy."""
 
     version_branch_prefix: str
+    tracking_branch: str | None
 
 
 @dataclass(frozen=True)
@@ -139,7 +140,8 @@ def load_translation_repository_config(path: str | Path) -> TranslationRepositor
     branches = BranchConfig(
         version_branch_prefix=_require_str(
             _require_dict(payload, "branches"), "version_branch_prefix"
-        )
+        ),
+        tracking_branch=_optional_str(_require_dict(payload, "branches"), "tracking_branch"),
     )
     tooling = ToolingConfig(
         repository=_require_str(_require_dict(payload, "tooling"), "repository"),
@@ -229,6 +231,14 @@ def version_branch(config: TranslationRepositoryConfig, version: str) -> str:
     normalized = normalize_version(version)
     validate_supported_version(config, normalized)
     return f"{config.branches.version_branch_prefix}{normalized}"
+
+
+def tracking_branch(config: TranslationRepositoryConfig) -> str:
+    """Return the branch that should track the latest configured KM version."""
+
+    if config.branches.tracking_branch:
+        return config.branches.tracking_branch
+    return version_branch(config, config.knowledge_model.supported_versions[-1])
 
 
 def version_paths(config: TranslationRepositoryConfig, version: str) -> KmVersionWorkspacePaths:

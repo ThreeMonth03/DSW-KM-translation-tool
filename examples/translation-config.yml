@@ -18,6 +18,7 @@ translation:
 
 branches:
   version_branch_prefix: translation/v
+  tracking_branch: translation/latest
 
 tooling:
   repository: ThreeMonth03/DSW_Translation_tool

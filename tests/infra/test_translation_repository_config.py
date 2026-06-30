@@ -10,6 +10,7 @@ from dsw_translation_tool.translation_repository_config import (
     TranslationRepositoryConfigError,
     load_translation_repository_config,
     sorted_versions,
+    tracking_branch,
     version_branch,
     version_paths,
 )
@@ -43,6 +44,7 @@ translation:
 
 branches:
   version_branch_prefix: translation/v
+  tracking_branch: translation/latest
 
 tooling:
   repository: ThreeMonth03/DSW_Translation_tool
@@ -79,6 +81,7 @@ def test_config_loader_normalizes_versions_and_paths(workspace: Path) -> None:
     assert config.registry.api_url == "https://api.registry.ds-wizard.org"
     assert config.migration.protected_chapters == ("0003", "0004", "0005")
     assert version_branch(config, "v2.7.0") == "translation/v2.7.0"
+    assert tracking_branch(config) == "translation/latest"
 
     paths = version_paths(config, "2.7.0")
     assert paths.package_id == "dsw:root:2.7.0"
@@ -156,6 +159,7 @@ def test_validate_translation_config_cli_reports_summary(
     assert result.returncode == 0, result.stderr or result.stdout
     assert "KM translation config is valid." in result.stdout
     assert "Latest branch: translation/v2.7.0" in result.stdout
+    assert "Tracking branch: translation/latest" in result.stdout
     assert "Localize PO URL: https://localize.ds-wizard.org/download/" in result.stdout
     assert "Registry API: https://api.registry.ds-wizard.org" in result.stdout
     assert "Protected chapters: 0003, 0004, 0005" in result.stdout
