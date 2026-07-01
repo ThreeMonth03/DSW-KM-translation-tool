@@ -49,7 +49,8 @@ Git or Weblate. It:
 2. Pulls the latest Weblate PO into the ephemeral workflow checkout.
 3. Runs `src/report_localize_status.py`.
 4. Writes a GitHub step summary and uploads
-   `reviews/localize_status_report.json` as an artifact.
+   `reviews/localize_status_report.json` and
+   `reviews/localize_status_report.md` as artifacts.
 
 It requires only `contents: read` and does not use `LOCALIZE_API_TOKEN`.
 

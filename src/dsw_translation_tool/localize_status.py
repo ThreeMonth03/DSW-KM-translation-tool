@@ -6,7 +6,35 @@ import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
+from .data_models import PoBlock
 from .po import PoCatalogParser
+
+
+@dataclass(frozen=True)
+class LocalizePoReferenceStatus:
+    """One KM reference attached to a Localize/Weblate PO block."""
+
+    prefix: str
+    uuid: str
+    field: str
+    comment: str
+
+
+@dataclass(frozen=True)
+class LocalizePoIssue:
+    """One PO block that needs maintainer attention.
+
+    Args:
+        block_number: One-based PO block number in parser order.
+        msgid: Source string.
+        msgstr: Target string.
+        references: KM references attached to the block.
+    """
+
+    block_number: int
+    msgid: str
+    msgstr: str
+    references: tuple[LocalizePoReferenceStatus, ...]
 
 
 @dataclass(frozen=True)
@@ -25,6 +53,8 @@ class LocalizePoStatusReport:
         empty_references: Number of KM references covered by empty blocks.
         fuzzy_references: Number of KM references covered by fuzzy blocks.
         accepted_references: Number of KM references covered by accepted blocks.
+        empty_issues: Empty PO blocks that need translation.
+        fuzzy_issues: Fuzzy PO blocks that need review.
     """
 
     po_path: str
@@ -38,6 +68,8 @@ class LocalizePoStatusReport:
     empty_references: int
     fuzzy_references: int
     accepted_references: int
+    empty_issues: tuple[LocalizePoIssue, ...]
+    fuzzy_issues: tuple[LocalizePoIssue, ...]
 
     @property
     def filled_percent(self) -> float:
@@ -99,8 +131,10 @@ def build_localize_po_status_report(po_path: Path | str) -> LocalizePoStatusRepo
     empty_references = 0
     fuzzy_references = 0
     accepted_references = 0
+    empty_issues: list[LocalizePoIssue] = []
+    fuzzy_issues: list[LocalizePoIssue] = []
 
-    for block in blocks:
+    for block_number, block in enumerate(blocks, start=1):
         reference_count = len(block.references)
         has_translation = bool(block.msgstr.strip())
         if has_translation:
@@ -109,10 +143,12 @@ def build_localize_po_status_report(po_path: Path | str) -> LocalizePoStatusRepo
         else:
             empty_blocks += 1
             empty_references += reference_count
+            empty_issues.append(_build_issue(block_number=block_number, block=block))
 
         if block.is_fuzzy:
             fuzzy_blocks += 1
             fuzzy_references += reference_count
+            fuzzy_issues.append(_build_issue(block_number=block_number, block=block))
         elif has_translation:
             accepted_blocks += 1
             accepted_references += reference_count
@@ -129,11 +165,22 @@ def build_localize_po_status_report(po_path: Path | str) -> LocalizePoStatusRepo
         empty_references=empty_references,
         fuzzy_references=fuzzy_references,
         accepted_references=accepted_references,
+        empty_issues=tuple(empty_issues),
+        fuzzy_issues=tuple(fuzzy_issues),
     )
 
 
-def render_localize_po_status_markdown(report: LocalizePoStatusReport) -> str:
-    """Render a Localize/Weblate PO status report as Markdown."""
+def render_localize_po_status_markdown(
+    report: LocalizePoStatusReport,
+    issue_limit: int | None = 20,
+) -> str:
+    """Render a Localize/Weblate PO status report as Markdown.
+
+    Args:
+        report: Report to render.
+        issue_limit: Maximum issue rows to show per issue type. Use `None` for
+            all issue rows.
+    """
 
     rows = [
         ("Total parsed PO messages", report.message_blocks, report.references),
@@ -171,6 +218,12 @@ def render_localize_po_status_markdown(report: LocalizePoStatusReport) -> str:
             ),
         ]
     )
+    lines.extend(
+        _render_issue_section("Fuzzy / Needs Editing Entries", report.fuzzy_issues, issue_limit)
+    )
+    lines.extend(
+        _render_issue_section("Empty Translation Entries", report.empty_issues, issue_limit)
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -190,13 +243,66 @@ def write_localize_po_status_json(
 def write_localize_po_status_markdown(
     report: LocalizePoStatusReport,
     output_path: Path | str,
+    issue_limit: int | None = 20,
 ) -> None:
     """Append a status report to a Markdown file."""
 
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
-        handle.write(render_localize_po_status_markdown(report))
+        handle.write(render_localize_po_status_markdown(report, issue_limit=issue_limit))
+
+
+def _build_issue(block_number: int, block: PoBlock) -> LocalizePoIssue:
+    """Build an actionable status issue from one PO block."""
+
+    return LocalizePoIssue(
+        block_number=block_number,
+        msgid=block.msgid,
+        msgstr=block.msgstr,
+        references=tuple(
+            LocalizePoReferenceStatus(
+                prefix=reference.prefix,
+                uuid=reference.uuid,
+                field=reference.field,
+                comment=reference.comment,
+            )
+            for reference in block.references
+        ),
+    )
+
+
+def _render_issue_section(
+    title: str,
+    issues: tuple[LocalizePoIssue, ...],
+    issue_limit: int | None,
+) -> list[str]:
+    """Render one actionable issue table."""
+
+    lines = ["", f"### {title}", ""]
+    if not issues:
+        lines.append("No entries.")
+        return lines
+
+    visible_issues = issues if issue_limit is None else issues[:issue_limit]
+    lines.extend(
+        [
+            "| PO block | References | Source | Translation |",
+            "| ---: | --- | --- | --- |",
+        ]
+    )
+    for issue in visible_issues:
+        lines.append(
+            "| "
+            f"{issue.block_number} | "
+            f"{_format_references(issue.references)} | "
+            f"{_format_markdown_cell(issue.msgid)} | "
+            f"{_format_markdown_cell(issue.msgstr)} |"
+        )
+    hidden_count = len(issues) - len(visible_issues)
+    if hidden_count > 0:
+        lines.extend(["", f"... and {hidden_count} more entries."])
+    return lines
 
 
 def _percentage(part: int, total: int) -> float:
@@ -217,3 +323,20 @@ def _format_percent(value: float) -> str:
     """Format a percentage for Markdown tables."""
 
     return f"{value:.2f}%"
+
+
+def _format_references(references: tuple[LocalizePoReferenceStatus, ...]) -> str:
+    """Format issue references for a compact Markdown table cell."""
+
+    return "<br>".join(
+        _format_markdown_cell(reference.comment, limit=80) for reference in references
+    )
+
+
+def _format_markdown_cell(value: str, limit: int = 120) -> str:
+    """Format text for one Markdown table cell."""
+
+    collapsed = " ".join(value.split())
+    if len(collapsed) > limit:
+        collapsed = f"{collapsed[: limit - 1]}..."
+    return collapsed.replace("|", "\\|")

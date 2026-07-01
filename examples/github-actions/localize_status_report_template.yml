@@ -53,10 +53,13 @@ jobs:
           tooling-repo/.venv/bin/python tooling-repo/src/report_localize_status.py
           --po "$GITHUB_WORKSPACE/translation-repo/sources/localize/${{ env.TARGET_LANG }}/latest.po"
           --json-out "$GITHUB_WORKSPACE/translation-repo/reviews/localize_status_report.json"
+          --details-out "$GITHUB_WORKSPACE/translation-repo/reviews/localize_status_report.md"
           --summary "$GITHUB_STEP_SUMMARY"
 
       - name: Upload status report artifact
         uses: actions/upload-artifact@v7
         with:
           name: localize-status-report
-          path: translation-repo/reviews/localize_status_report.json
+          path: |
+            translation-repo/reviews/localize_status_report.json
+            translation-repo/reviews/localize_status_report.md

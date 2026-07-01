@@ -11,6 +11,7 @@ from dsw_translation_tool.localize_status import (
     build_localize_po_status_report,
     render_localize_po_status_markdown,
     write_localize_po_status_json,
+    write_localize_po_status_markdown,
 )
 
 
@@ -60,6 +61,13 @@ def test_localize_po_status_counts_blocks_and_references(workspace: Path) -> Non
     assert report.accepted_references == 1
     assert report.filled_percent == 66.67
     assert report.accepted_percent == 33.33
+    assert [issue.block_number for issue in report.empty_issues] == [2]
+    assert [issue.block_number for issue in report.fuzzy_issues] == [3]
+    assert report.empty_issues[0].references[0].comment == (
+        "questions:22222222-2222-2222-2222-222222222222:title"
+    )
+    assert report.fuzzy_issues[0].msgid == "Review me"
+    assert report.fuzzy_issues[0].msgstr == "需要檢查"
 
 
 def test_localize_po_status_renders_markdown(workspace: Path) -> None:
@@ -75,6 +83,10 @@ def test_localize_po_status_renders_markdown(workspace: Path) -> None:
     assert "| Empty msgstr | 1 | 2 |" in markdown
     assert "| Fuzzy / needs editing | 1 | 1 |" in markdown
     assert "| Filled and not fuzzy blocks | 33.33% |" in markdown
+    assert "### Fuzzy / Needs Editing Entries" in markdown
+    assert "choices:44444444-4444-4444-4444-444444444444:label" in markdown
+    assert "### Empty Translation Entries" in markdown
+    assert "questions:22222222-2222-2222-2222-222222222222:title" in markdown
 
 
 def test_localize_po_status_writes_json(workspace: Path) -> None:
@@ -92,6 +104,27 @@ def test_localize_po_status_writes_json(workspace: Path) -> None:
     assert data["references"] == 4
     assert data["filledPercent"] == 66.67
     assert data["acceptedPercent"] == 33.33
+    assert data["empty_issues"][0]["block_number"] == 2
+    assert data["fuzzy_issues"][0]["references"][0]["field"] == "label"
+
+
+def test_localize_po_status_writes_full_markdown_details(workspace: Path) -> None:
+    """Verify full Markdown details can be written without issue limiting."""
+
+    po_path = workspace / "latest.po"
+    details_path = workspace / "details.md"
+    write_status_fixture_po(po_path)
+
+    write_localize_po_status_markdown(
+        build_localize_po_status_report(po_path),
+        details_path,
+        issue_limit=None,
+    )
+
+    details = details_path.read_text(encoding="utf-8")
+    assert "### Fuzzy / Needs Editing Entries" in details
+    assert "Review me" in details
+    assert "... and" not in details
 
 
 def test_report_localize_status_cli_writes_outputs(
@@ -103,6 +136,7 @@ def test_report_localize_status_cli_writes_outputs(
     po_path = workspace / "latest.po"
     json_path = workspace / "status.json"
     summary_path = workspace / "summary.md"
+    details_path = workspace / "details.md"
     write_status_fixture_po(po_path)
 
     result = subprocess.run(
@@ -115,6 +149,10 @@ def test_report_localize_status_cli_writes_outputs(
             str(json_path),
             "--summary",
             str(summary_path),
+            "--details-out",
+            str(details_path),
+            "--issue-limit",
+            "1",
         ],
         check=True,
         capture_output=True,
@@ -124,3 +162,5 @@ def test_report_localize_status_cli_writes_outputs(
     assert "## Localize/Weblate PO Status" in result.stdout
     assert json_path.exists()
     assert "## Localize/Weblate PO Status" in summary_path.read_text(encoding="utf-8")
+    assert details_path.exists()
+    assert "Markdown details written to" in result.stdout
