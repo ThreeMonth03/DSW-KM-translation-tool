@@ -58,6 +58,12 @@ fuzzy entries from newly introduced fuzzy entries. It does not change the PO
 file and does not prevent future Weblate edits from replacing or clearing those
 entries.
 
+The same workflow can also run `src/report_weblate_checks.py` with the Weblate
+query `has:check`. That catches website-side quality-check warnings that are
+not always visible from PO fuzzy flags alone. The check report is diagnostic and
+should use `--allow-api-failure` so Weblate API rate limits do not block Git
+sync monitoring.
+
 It requires only `contents: read` and does not use `LOCALIZE_API_TOKEN`.
 
 Use the alignment report workflow to verify artifact consistency without

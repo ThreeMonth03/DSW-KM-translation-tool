@@ -77,6 +77,18 @@ Generate a read-only Localize/Weblate PO status report:
   --known-fuzzy-references "$TRANSLATION_REPO_DIR/config/localize_known_fuzzy_references.txt"
 ```
 
+Generate a read-only Weblate quality-check report:
+
+```shell
+"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/report_weblate_checks.py" \
+  --repo-root "$TRANSLATION_REPO_DIR" \
+  --config translation-config.yml \
+  --query has:check \
+  --json-out "$TRANSLATION_REPO_DIR/reviews/weblate_checks_report.json" \
+  --details-out "$TRANSLATION_REPO_DIR/reviews/weblate_checks_report.md" \
+  --allow-api-failure
+```
+
 Generate a read-only end-to-end alignment report:
 
 ```shell

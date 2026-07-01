@@ -64,6 +64,16 @@ jobs:
           fi
           tooling-repo/.venv/bin/python tooling-repo/src/report_localize_status.py "${args[@]}"
 
+      - name: Generate Weblate checks report
+        run: >-
+          tooling-repo/.venv/bin/python tooling-repo/src/report_weblate_checks.py
+          --repo-root "$GITHUB_WORKSPACE/translation-repo"
+          --config "${{ env.TRANSLATION_CONFIG }}"
+          --json-out "$GITHUB_WORKSPACE/translation-repo/reviews/weblate_checks_report.json"
+          --details-out "$GITHUB_WORKSPACE/translation-repo/reviews/weblate_checks_report.md"
+          --summary "$GITHUB_STEP_SUMMARY"
+          --allow-api-failure
+
       - name: Upload status report artifact
         uses: actions/upload-artifact@v7
         with:
@@ -71,3 +81,5 @@ jobs:
           path: |
             translation-repo/reviews/localize_status_report.json
             translation-repo/reviews/localize_status_report.md
+            translation-repo/reviews/weblate_checks_report.json
+            translation-repo/reviews/weblate_checks_report.md

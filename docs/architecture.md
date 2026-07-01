@@ -59,6 +59,8 @@ These modules connect the translation repository to the Weblate website:
 - `localize_sync.py`: downloads the current Weblate PO snapshot.
 - `localize_status.py`: reports PO completion, empty strings, and fuzzy /
   needs-editing counts without modifying translations.
+- `weblate_checks.py`: reports Weblate units matching quality-check queries
+  such as `has:check` without changing translations.
 - `alignment_status.py`: verifies that Weblate, the checked-in Localize PO,
   the translation tree, the final PO, and the final KM are mutually aligned.
 - `localize_tree_sync.py`: force-refreshes `tree/` from the latest Weblate PO.
