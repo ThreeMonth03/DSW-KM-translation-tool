@@ -81,7 +81,7 @@ jobs:
           tooling-repo/.venv/bin/python tooling-repo/src/migrate_reviewed_to_localize.py "${args[@]}"
 
       - name: Upload migration report artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: localize-reviewed-migration
           path: |
