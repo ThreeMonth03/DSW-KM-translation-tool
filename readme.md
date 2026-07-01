@@ -360,6 +360,8 @@ This command:
 - downloads the current Localize/Weblate PO into
   `sources/localize/zh_Hant/latest.po`
 - keeps the previous PO snapshot as `sources/localize/zh_Hant/base.po`
+- force-refreshes `tree/` from the latest Localize/Weblate PO, so Git mirrors
+  the website before any generated artifacts are rebuilt
 - syncs `tree/`, `builds/final_translated.po`, review files, and
   `builds/final_translated.km`
 - uses `latest-wins` for non-fuzzy Weblate changes when both Weblate and the
@@ -408,10 +410,11 @@ truth. Its policy is:
 
 The high-level helper for external translation repositories is
 [`src/sync_from_localize.py`](./src/sync_from_localize.py). It pulls the current
-Localize/Weblate PO, then delegates artifact generation and Git commits to
-[`src/ci_sync_commit.py`](./src/ci_sync_commit.py). After shared-string sync
-builds `builds/final_translated.po`, the CI helper also builds
-`builds/final_translated.km` with the translated KM identity.
+Localize/Weblate PO, re-exports the translation tree from that PO with existing
+tree translations discarded, then delegates PO/KM generation, validation, and
+Git commits to [`src/ci_sync_commit.py`](./src/ci_sync_commit.py). After
+shared-string sync builds `builds/final_translated.po`, the CI helper also
+builds `builds/final_translated.km` with the translated KM identity.
 
 The auto-sync writer is intentionally aggressive when a checked-in translation
 source file is malformed in CI:

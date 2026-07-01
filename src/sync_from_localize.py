@@ -12,6 +12,7 @@ from dsw_translation_tool.ci_sync import (
     run_ci_sync_commit,
 )
 from dsw_translation_tool.localize_sync import pull_localize_po
+from dsw_translation_tool.localize_tree_sync import refresh_tree_from_localize
 from dsw_translation_tool.versioned_ci_sync import build_versioned_ci_sync_config
 
 
@@ -98,6 +99,17 @@ def main() -> None:
         commit_message=args.commit_message,
         restore_source_ref=args.restore_source_ref,
     )
+    refresh_result = refresh_tree_from_localize(
+        config=sync_config,
+        km_version=pull_result.version,
+    )
+    print("Localize tree refresh")
+    print(f"  Version         : {refresh_result.version}")
+    print(f"  Tree            : {refresh_result.tree_dir}")
+    print(f"  Folders         : {refresh_result.folder_count}")
+    print(f"  Root folders    : {refresh_result.root_count}")
+    print(f"  Shared blocks   : {refresh_result.shared_block_file_count}")
+
     try:
         committed = run_ci_sync_commit(sync_config)
     except CiSyncError as error:
