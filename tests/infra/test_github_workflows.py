@@ -20,40 +20,16 @@ def load_workflow_yaml(path: Path) -> dict[str, object]:
     return yaml.load(path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
 
 
-def test_translation_auto_sync_workflow_matches_writer_policy(repo_root: Path) -> None:
-    """Verify the in-repo auto-sync workflow matches the intended CI policy.
-
-    Args:
-        repo_root: Repository root fixture.
-    """
-
-    workflow_path = repo_root / ".github" / "workflows" / "translation_auto_sync.yml"
-    workflow = load_workflow_yaml(workflow_path)
-    workflow_text = workflow_path.read_text(encoding="utf-8")
-
-    assert workflow["on"]["schedule"][0]["cron"] == "0 1,13 * * *"
-    assert workflow["on"]["pull_request"]["branches"] == ["master"]
-    assert workflow["permissions"]["contents"] == "write"
-    assert "github.event.pull_request.head.repo.full_name == github.repository" in workflow_text
-    assert "github.actor != 'github-actions[bot]'" in workflow_text
-    assert "src/ci_sync_commit.py" in workflow_text
-    assert "origin/master" in workflow_text
-    assert "Skipping auto-sync commit for fork pull requests." in workflow_text
-    assert "chore(sync): refresh translation artifacts" not in workflow_text
-
-
-def test_external_translation_auto_sync_template_matches_writer_policy(
+def test_localize_auto_sync_template_matches_writer_policy(
     repo_root: Path,
 ) -> None:
-    """Verify the external auto-sync template matches the intended CI policy.
+    """Verify the Localize auto-sync template matches the intended CI policy.
 
     Args:
         repo_root: Repository root fixture.
     """
 
-    workflow_path = (
-        repo_root / "examples" / "github-actions" / "translation_external_auto_sync_template.yml"
-    )
+    workflow_path = repo_root / "examples" / "github-actions" / "localize_auto_sync_template.yml"
     workflow = load_workflow_yaml(workflow_path)
     workflow_text = workflow_path.read_text(encoding="utf-8")
 
@@ -80,30 +56,6 @@ def test_external_translation_auto_sync_template_matches_writer_policy(
     assert "--restore-source-ref" in workflow_text
     assert "origin/${{ env.TRACKING_BRANCH }}" in workflow_text
     assert "Skipping auto-sync commit for fork pull requests." in workflow_text
-
-
-def test_localize_reviewed_migration_template_is_manual_and_guarded(
-    repo_root: Path,
-) -> None:
-    """Verify the reviewed Localize migration template is manual and dry-run first."""
-
-    workflow_path = (
-        repo_root / "examples" / "github-actions" / "localize_reviewed_migration_template.yml"
-    )
-    workflow = load_workflow_yaml(workflow_path)
-    workflow_text = workflow_path.read_text(encoding="utf-8")
-
-    assert "workflow_dispatch" in workflow["on"]
-    assert workflow["permissions"]["contents"] == "read"
-    assert workflow["on"]["workflow_dispatch"]["inputs"]["chapters"]["default"] == (
-        "0004 0005 0006"
-    )
-    assert workflow["on"]["workflow_dispatch"]["inputs"]["apply"]["default"] == "false"
-    assert "secrets.LOCALIZE_API_TOKEN" in workflow_text
-    assert "src/migrate_reviewed_to_localize.py" in workflow_text
-    assert "--fill-localize-blanks-from-repo" in workflow_text
-    assert 'if [ "${{ github.event.inputs.apply }}" = "true" ]' in workflow_text
-    assert "translation-repo/reviews/localize_migration_report.json" in workflow_text
 
 
 def test_localize_status_report_template_is_read_only(repo_root: Path) -> None:
@@ -136,8 +88,6 @@ def test_localize_status_report_template_is_read_only(repo_root: Path) -> None:
     assert "--allow-api-failure" in workflow_text
     assert "actions/upload-artifact@v7" in workflow_text
     assert "sync_from_localize.py" not in workflow_text
-    assert "migrate_reviewed_to_localize.py" not in workflow_text
-    assert "secrets.LOCALIZE_API_TOKEN" not in workflow_text
     assert "contents: write" not in workflow_text
 
 
@@ -164,8 +114,6 @@ def test_localize_alignment_report_template_is_read_only(repo_root: Path) -> Non
     assert "actions/upload-artifact@v7" in workflow_text
     assert "pull_localize_po.py" not in workflow_text
     assert "sync_from_localize.py" not in workflow_text
-    assert "migrate_reviewed_to_localize.py" not in workflow_text
-    assert "secrets.LOCALIZE_API_TOKEN" not in workflow_text
     assert "contents: write" not in workflow_text
 
 
@@ -195,5 +143,3 @@ def test_km_version_auto_update_template_is_guarded_writer(repo_root: Path) -> N
     assert "if-no-files-found: ignore" in workflow_text
     assert "actions/upload-artifact@v7" in workflow_text
     assert "sync_from_localize.py" not in workflow_text
-    assert "LOCALIZE_API_TOKEN" not in workflow_text
-    assert "migrate_reviewed_to_localize.py" not in workflow_text

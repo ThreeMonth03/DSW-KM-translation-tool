@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .ci_sync import CiSyncCommitConfig
-from .constants import SHARED_BLOCKS_FILENAME
 from .workflow import TranslationWorkflowService
 
 
@@ -83,7 +82,6 @@ def refresh_tree_from_localize(
         original_po_path=str(latest_po_path),
         out_shared_blocks_outline_path=str(config.shared_blocks_outline_path),
     )
-    _remove_legacy_shared_block_index(config.tree_dir)
 
     return LocalizeTreeRefreshResult(
         version=km_version,
@@ -97,9 +95,3 @@ def refresh_tree_from_localize(
         root_count=len(manifest["rootPaths"]),
         shared_block_file_count=len(shared_blocks_result.written_paths),
     )
-
-
-def _remove_legacy_shared_block_index(tree_dir: Path) -> None:
-    """Remove the obsolete monolithic shared-block markdown file when present."""
-
-    (tree_dir / SHARED_BLOCKS_FILENAME).unlink(missing_ok=True)

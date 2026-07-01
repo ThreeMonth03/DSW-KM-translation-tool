@@ -80,7 +80,6 @@ def prepare_translation_repo_fixture(
                 "  translated_name: Common DSW Knowledge Model (zh-Hant)",
                 "branches:",
                 "  tracking_branch: master",
-                "  version_branch_prefix: translation/v",
                 "tooling:",
                 "  repository: ThreeMonth03/DSW_Translation_tool",
                 "  ref: master",
@@ -89,10 +88,6 @@ def prepare_translation_repo_fixture(
                 "  repository: https://localize.ds-wizard.org/",
                 "registry:",
                 "  api_url: https://api.registry.ds-wizard.org",
-                "migration:",
-                "  mode: exact-only",
-                "  non_exact_policy: leave_empty_needs_translation",
-                "  protected_chapters: []",
                 "",
             ]
         ),

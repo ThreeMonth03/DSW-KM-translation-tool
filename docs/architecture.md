@@ -5,9 +5,8 @@ when deciding where a change belongs.
 
 ## Top-Level Shape
 
-- `readme.md` is the translator-facing entry point and legacy local workflow
-  guide.
-- `Makefile` wraps local development checks and the legacy in-repository
+- `readme.md` is the translator-facing entry point and local workflow guide.
+- `Makefile` wraps local development checks and the in-repository
   translation-tree workflow.
 - `src/*.py` contains command-line entry points used by Make targets and
   GitHub Actions. Keep these files thin.
@@ -65,8 +64,6 @@ These modules connect the translation repository to the Weblate website:
   the translation tree, the final PO, and the final KM are mutually aligned.
 - `localize_tree_sync.py`: force-refreshes `tree/` from the latest Weblate PO.
 - `localize_merge.py`: contains PO merge decisions.
-- `localize_migration.py`: prepares one-shot repository-to-Weblate migration
-  uploads.
 - `ci_sync.py`, `versioned_ci_sync.py`: rebuild generated artifacts and make
   Git sync commits.
 - `km_bundle_sync.py`, `km_latest_sync.py`, `km_registry.py`: support KM bundle
@@ -79,14 +76,10 @@ is:
 Localize/Weblate PO -> tree/ -> builds/final_translated.po -> builds/final_translated.km -> Git commit
 ```
 
-The reverse direction is intentionally manual.
-
 ## GitHub Actions Layer
 
 - `.github/workflows/unittest.yml` validates this tooling repository.
-- `.github/workflows/translation_auto_sync.yml` is the legacy in-repository
-  writer for `translation/zh_Hant`.
-- `examples/github-actions/translation_external_auto_sync_template.yml` is the
+- `examples/github-actions/localize_auto_sync_template.yml` is the
   copy-ready workflow for dedicated translation repositories.
 - `examples/github-actions/localize_status_report_template.yml` is the
   read-only status workflow for scheduled Localize/Weblate health reports.
@@ -96,15 +89,13 @@ The reverse direction is intentionally manual.
   KM Registry writer. It no-ops when the configured KM is current, and only
   pushes a newer published KM after the bundle pull, Weblate mirror, rebuild,
   config validation, translation tests, and alignment check all pass.
-- `examples/github-actions/localize_reviewed_migration_template.yml` is the
-  manual repository-to-Weblate migration workflow.
 
 Keep GitHub Actions as orchestration. Branch selection, recovery, PO merge, KM
 generation, and commit decisions belong in Python helpers.
 
 ## Ownership Rules
 
-- If a change affects Localize/Weblate download, upload, or conflict policy, it
+- If a change affects Localize/Weblate download or conflict policy, it
   belongs in the Localize sync layer and must be reflected in the runbook.
 - If a change affects tree format, shared strings, generated PO, or KM output,
   it belongs in the PO/KM/tree layer and needs round-trip tests.

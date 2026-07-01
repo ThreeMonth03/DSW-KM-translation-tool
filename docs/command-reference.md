@@ -23,7 +23,7 @@ make test-translation
 git diff --check
 ```
 
-## Legacy Local Translation Tree
+## Local Translation Tree
 
 These commands operate on the tooling repository's local
 `translation/zh_Hant/` workspace.
@@ -123,30 +123,6 @@ For pull request mode:
   --target-ref feature-branch \
   --restore-source-ref origin/master \
   --mode pull_request
-```
-
-## One-Shot Repository-To-Weblate Migration
-
-Prepare a dry-run migration PO:
-
-```shell
-"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/migrate_reviewed_to_localize.py" \
-  --repo-root "$TRANSLATION_REPO_DIR" \
-  --config translation-config.yml \
-  --chapters 0004 0005 0006 \
-  --fill-localize-blanks-from-repo
-```
-
-Apply after reviewing the generated report:
-
-```shell
-LOCALIZE_API_TOKEN=... \
-"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/migrate_reviewed_to_localize.py" \
-  --repo-root "$TRANSLATION_REPO_DIR" \
-  --config translation-config.yml \
-  --chapters 0004 0005 0006 \
-  --fill-localize-blanks-from-repo \
-  --apply
 ```
 
 ## KM Bundle Helpers

@@ -18,21 +18,15 @@ class TreeFolderSnapshotBuilder:
     Args:
         document: Markdown document parser used for `translation.md`.
         backup_store: Backup store used for automatic recovery.
-        source_lang: Source language code used by legacy split files.
-        target_lang: Target language code used by markdown and legacy files.
     """
 
     def __init__(
         self,
         document: TranslationMarkdownDocument,
         backup_store: TranslationBackupStore,
-        source_lang: str,
-        target_lang: str,
     ):
         self.document = document
         self.backup_store = backup_store
-        self.source_lang = source_lang
-        self.target_lang = target_lang
 
     def build_snapshot(
         self,
@@ -146,7 +140,7 @@ class TreeFolderSnapshotBuilder:
         tree_dir: str,
         entity_uuid: str,
     ) -> dict[str, TranslationFieldState]:
-        """Read either `translation.md` or the legacy split text files.
+        """Read fields from `translation.md` when present.
 
         Args:
             folder_path: Folder being scanned.
@@ -165,7 +159,7 @@ class TreeFolderSnapshotBuilder:
                 tree_dir=tree_dir,
                 entity_uuid=entity_uuid,
             )
-        return self.scan_legacy_split_files(folder_path, filenames)
+        return {}
 
     def parse_translation_markdown(
         self,
@@ -211,38 +205,4 @@ class TreeFolderSnapshotBuilder:
             entity_uuid=entity_uuid,
             markdown_text=markdown_text,
         )
-        return fields
-
-    def scan_legacy_split_files(
-        self,
-        folder_path: Path,
-        filenames: list[str],
-    ) -> dict[str, TranslationFieldState]:
-        """Read the previous split-file translation format for compatibility.
-
-        Args:
-            folder_path: Folder containing legacy split text files.
-            filenames: Sorted filenames found in the folder.
-
-        Returns:
-            Parsed field mapping from the legacy format.
-        """
-
-        fields: dict[str, TranslationFieldState] = {}
-        target_suffix = f".{self.target_lang}.txt"
-        source_suffix = f".{self.source_lang}.txt"
-
-        for filename in filenames:
-            if not filename.endswith(target_suffix):
-                continue
-            field = filename[: -len(target_suffix)]
-            source_text = ""
-            source_path = folder_path / f"{field}{source_suffix}"
-            target_path = folder_path / filename
-            if source_path.exists():
-                source_text = source_path.read_text(encoding="utf-8")
-            fields[field] = TranslationFieldState(
-                source_text=source_text,
-                target_text=target_path.read_text(encoding="utf-8"),
-            )
         return fields

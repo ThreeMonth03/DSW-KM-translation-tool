@@ -27,7 +27,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--repo-po", default=None)
     parser.add_argument("--out-po", default=None)
     parser.add_argument("--report", default=None)
-    parser.add_argument("--tree-dir", default=None)
     parser.add_argument(
         "--conflict-policy",
         choices=("conservative", "latest-wins"),
@@ -75,12 +74,6 @@ def main() -> None:
             args.report,
             paths.localize_merge_report_path,
         ),
-        tree_dir=_resolve_optional_repo_path(
-            repo_root,
-            args.tree_dir,
-            paths.translation_tree_dir,
-        ),
-        protected_chapters=repository_config.migration.protected_chapters,
         conflict_policy=args.conflict_policy,
     )
     print("Localize PO merge")
@@ -91,7 +84,6 @@ def main() -> None:
     print(f"  Conflict policy      : {args.conflict_policy}")
     print(f"  Accepted latest      : {result.accepted_latest}")
     print(f"  Conflicts            : {result.conflicts}")
-    print(f"  Protected skips      : {result.protected_skips}")
     print(f"  Empty overwrite skips: {result.empty_overwrite_skips}")
     print(f"  Source mismatches    : {result.source_mismatches}")
     print(f"  Fuzzy skips          : {result.fuzzy_skips}")

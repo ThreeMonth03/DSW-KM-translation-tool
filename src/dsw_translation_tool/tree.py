@@ -80,12 +80,8 @@ class TranslationTreeRepository:
         self.snapshot_builder = snapshot_builder or TreeFolderSnapshotBuilder(
             document=self.document,
             backup_store=self.backup_store,
-            source_lang=self.source_lang,
-            target_lang=self.target_lang,
         )
-        self.validator = validator or TranslationTreeValidator(
-            target_lang=self.target_lang,
-        )
+        self.validator = validator or TranslationTreeValidator()
         self.status_collector = status_collector or TranslationStatusCollector()
 
     def read_existing_manifest(self, out_dir: str) -> dict[str, Any] | None:
@@ -531,29 +527,3 @@ class TranslationTreeRepository:
             latest_by_uuid=latest_by_uuid,
             model_name=model_name,
         )
-
-    def _scan_legacy_split_files(
-        self,
-        folder_path: Path,
-        filenames: list[str],
-    ) -> dict[str, TranslationFieldState]:
-        """Read the previous split-file translation format for compatibility."""
-
-        fields: dict[str, TranslationFieldState] = {}
-        target_suffix = f".{self.target_lang}.txt"
-        source_suffix = f".{self.source_lang}.txt"
-
-        for filename in filenames:
-            if not filename.endswith(target_suffix):
-                continue
-            field = filename[: -len(target_suffix)]
-            source_text = ""
-            source_path = folder_path / f"{field}{source_suffix}"
-            target_path = folder_path / filename
-            if source_path.exists():
-                source_text = source_path.read_text(encoding="utf-8")
-            fields[field] = TranslationFieldState(
-                source_text=source_text,
-                target_text=target_path.read_text(encoding="utf-8"),
-            )
-        return fields

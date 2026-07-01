@@ -42,7 +42,6 @@ class BranchConfig:
     """Translation branch naming policy."""
 
     tracking_branch: str
-    version_branch_prefix: str | None
 
 
 @dataclass(frozen=True)
@@ -66,15 +65,6 @@ class RegistryConfig:
     """DSW Registry endpoint used for KM version discovery."""
 
     api_url: str
-
-
-@dataclass(frozen=True)
-class MigrationConfig:
-    """Cross-version and Localize merge policy."""
-
-    mode: str
-    non_exact_policy: str
-    protected_chapters: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -107,7 +97,6 @@ class TranslationRepositoryConfig:
     tooling: ToolingConfig
     localize: LocalizeConfig
     registry: RegistryConfig
-    migration: MigrationConfig
 
 
 VERSION_RE = re.compile(r"^v?(?P<number>\d+(?:\.\d+){1,3})$")
@@ -137,14 +126,13 @@ def load_translation_repository_config(path: str | Path) -> TranslationRepositor
 
     knowledge_model = _load_knowledge_model_config(_require_dict(payload, "knowledge_model"))
     translation = _load_translation_config(_require_dict(payload, "translation"))
-    branches = _load_branch_config(_require_dict(payload, "branches"), knowledge_model)
+    branches = _load_branch_config(_require_dict(payload, "branches"))
     tooling = ToolingConfig(
         repository=_require_str(_require_dict(payload, "tooling"), "repository"),
         ref=_require_str(_require_dict(payload, "tooling"), "ref"),
     )
     localize = _load_localize_config(_require_dict(payload, "localize"))
     registry = _load_registry_config(_optional_dict(payload, "registry"))
-    migration = _load_migration_config(_require_dict(payload, "migration"))
 
     return TranslationRepositoryConfig(
         schema_version=schema_version,
@@ -154,7 +142,6 @@ def load_translation_repository_config(path: str | Path) -> TranslationRepositor
         tooling=tooling,
         localize=localize,
         registry=registry,
-        migration=migration,
     )
 
 
@@ -191,22 +178,12 @@ def _load_translation_config(payload: dict[str, Any]) -> TranslationLanguageConf
     )
 
 
-def _load_branch_config(
-    payload: dict[str, Any],
-    knowledge_model: KnowledgeModelRepositoryConfig,
-) -> BranchConfig:
+def _load_branch_config(payload: dict[str, Any]) -> BranchConfig:
     tracking = _optional_str(payload, "tracking_branch")
-    version_branch_prefix = _optional_str(payload, "version_branch_prefix")
-    if not tracking and not version_branch_prefix:
-        raise TranslationRepositoryConfigError(
-            "branches.tracking_branch is required unless branches.version_branch_prefix "
-            "is configured for legacy version-specific branches"
-        )
     if not tracking:
-        tracking = f"{version_branch_prefix}{knowledge_model.supported_versions[-1]}"
+        raise TranslationRepositoryConfigError("branches.tracking_branch is required")
     return BranchConfig(
         tracking_branch=tracking,
-        version_branch_prefix=version_branch_prefix,
     )
 
 
@@ -221,34 +198,6 @@ def _load_registry_config(payload: dict[str, Any]) -> RegistryConfig:
     return RegistryConfig(
         api_url=_optional_str(payload, "api_url") or DEFAULT_REGISTRY_API_URL,
     )
-
-
-def _load_migration_config(payload: dict[str, Any]) -> MigrationConfig:
-    mode = _require_str(payload, "mode")
-    if mode != "exact-only":
-        raise TranslationRepositoryConfigError("Only migration.mode=exact-only is supported")
-    non_exact_policy = _require_str(payload, "non_exact_policy")
-    if non_exact_policy != "leave_empty_needs_translation":
-        raise TranslationRepositoryConfigError(
-            "Only migration.non_exact_policy=leave_empty_needs_translation is supported"
-        )
-    return MigrationConfig(
-        mode=mode,
-        non_exact_policy=non_exact_policy,
-        protected_chapters=tuple(_optional_str_list(payload, "protected_chapters")),
-    )
-
-
-def version_branch(config: TranslationRepositoryConfig, version: str) -> str:
-    """Return the configured translation branch name for one KM version."""
-
-    normalized = normalize_version(version)
-    validate_supported_version(config, normalized)
-    if config.branches.version_branch_prefix is None:
-        raise TranslationRepositoryConfigError(
-            "branches.version_branch_prefix is required for version-specific branch names"
-        )
-    return f"{config.branches.version_branch_prefix}{normalized}"
 
 
 def tracking_branch(config: TranslationRepositoryConfig) -> str:

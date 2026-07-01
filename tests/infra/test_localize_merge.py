@@ -41,7 +41,6 @@ def merge_workspace(
     base_entries: list[tuple[str, str, str, str]],
     latest_entries: list[tuple[str, str, str, str]],
     repo_entries: list[tuple[str, str, str, str]],
-    protected_chapters: tuple[str, ...] = (),
     latest_fuzzy: bool = False,
     conflict_policy: str = "conservative",
 ) -> tuple[Path, dict[str, object]]:
@@ -52,7 +51,6 @@ def merge_workspace(
     repo_po = workspace / "repo.po"
     out_po = workspace / "merged.po"
     report_path = workspace / "merge-report.json"
-    tree_dir = workspace / "tree"
     write_po(base_po, base_entries)
     write_po(latest_po, latest_entries, fuzzy=latest_fuzzy)
     write_po(repo_po, repo_entries)
@@ -63,8 +61,6 @@ def merge_workspace(
         repo_po_path=repo_po,
         out_po_path=out_po,
         report_path=report_path,
-        tree_dir=tree_dir,
-        protected_chapters=protected_chapters,
         conflict_policy=conflict_policy,
     )
 
@@ -155,27 +151,6 @@ def test_merge_latest_wins_accepts_initial_localize_snapshot(workspace: Path) ->
     assert report["conflicts"] == 0
 
 
-def test_merge_keeps_protected_repo_text_even_in_latest_wins_mode(workspace: Path) -> None:
-    """Verify one-shot migration protection still overrides latest-wins mode."""
-
-    uuid_dir = workspace / "tree" / "0001 Root" / "0003 Protected" / "0001 Node"
-    uuid_dir.mkdir(parents=True)
-    (uuid_dir / "_uuid.txt").write_text(UUID_A, encoding="utf-8")
-
-    out_po, report = merge_workspace(
-        workspace,
-        base_entries=[(UUID_A, "text", "Hello", "舊")],
-        latest_entries=[(UUID_A, "text", "Hello", "Weblate")],
-        repo_entries=[(UUID_A, "text", "Hello", "本地")],
-        protected_chapters=("0003",),
-        conflict_policy="latest-wins",
-    )
-
-    assert output_msgstr(out_po, UUID_A) == "本地"
-    assert report["protected_skips"] == 1
-    assert report["decisions"][0]["decision"] == "protected"
-
-
 def test_merge_does_not_overwrite_non_empty_repo_with_empty_latest(workspace: Path) -> None:
     """Verify empty Localize updates cannot erase non-empty repo translations."""
 
@@ -189,26 +164,6 @@ def test_merge_does_not_overwrite_non_empty_repo_with_empty_latest(workspace: Pa
     assert output_msgstr(out_po, UUID_A) == "舊"
     assert report["empty_overwrite_skips"] == 1
     assert report["decisions"][0]["decision"] == "empty-overwrite-skip"
-
-
-def test_merge_protects_configured_chapter_paths(workspace: Path) -> None:
-    """Verify protected chapter UUIDs keep repo translations."""
-
-    uuid_dir = workspace / "tree" / "0001 Root" / "0003 Protected" / "0001 Node"
-    uuid_dir.mkdir(parents=True)
-    (uuid_dir / "_uuid.txt").write_text(UUID_A, encoding="utf-8")
-
-    out_po, report = merge_workspace(
-        workspace,
-        base_entries=[(UUID_A, "text", "Hello", "舊")],
-        latest_entries=[(UUID_A, "text", "Hello", "Weblate")],
-        repo_entries=[(UUID_A, "text", "Hello", "舊")],
-        protected_chapters=("0003",),
-    )
-
-    assert output_msgstr(out_po, UUID_A) == "舊"
-    assert report["protected_skips"] == 1
-    assert report["decisions"][0]["protected"] is True
 
 
 def test_merge_reports_source_mismatch_without_accepting_latest(workspace: Path) -> None:

@@ -18,7 +18,6 @@ from .translation_repository_config import (
     TranslationRepositoryConfig,
     TranslationRepositoryConfigError,
     load_translation_repository_config,
-    version_branch,
     version_paths,
 )
 from .tree import TranslationTreeRepository
@@ -46,6 +45,5 @@ __all__ = [
     "UUID_FILENAME",
     "ZERO_UUID",
     "load_translation_repository_config",
-    "version_branch",
     "version_paths",
 ]

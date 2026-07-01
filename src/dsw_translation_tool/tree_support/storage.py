@@ -9,7 +9,6 @@ from typing import Any
 from ..constants import (
     FIELD_STATE_FILENAME,
     MANIFEST_NAME,
-    TRANSLATION_BACKUP_FILENAME,
     TRANSLATION_FILENAME,
     TREE_BACKUP_DIRNAME,
     UUID_FILENAME,
@@ -114,19 +113,6 @@ class TranslationTreePathService:
 
         return self.backup_root(tree_dir) / f"{entity_uuid}.{TRANSLATION_FILENAME}.bak"
 
-    @staticmethod
-    def legacy_backup_path(translation_path: Path) -> Path:
-        """Return the legacy in-folder backup path for one translation file.
-
-        Args:
-            translation_path: Translation markdown path.
-
-        Returns:
-            Legacy backup file path.
-        """
-
-        return translation_path.parent / TRANSLATION_BACKUP_FILENAME
-
     def candidate_backup_paths(
         self,
         tree_dir: str | Path,
@@ -144,10 +130,7 @@ class TranslationTreePathService:
             Ordered candidate backup paths.
         """
 
-        return (
-            self.central_backup_path(tree_dir, entity_uuid),
-            self.legacy_backup_path(translation_path),
-        )
+        return (self.central_backup_path(tree_dir, entity_uuid),)
 
 
 class TranslationBackupStore:

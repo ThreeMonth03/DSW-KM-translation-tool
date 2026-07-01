@@ -29,8 +29,3 @@ localize:
 
 registry:
   api_url: https://api.registry.ds-wizard.org
-
-migration:
-  mode: exact-only
-  non_exact_policy: leave_empty_needs_translation
-  protected_chapters: []

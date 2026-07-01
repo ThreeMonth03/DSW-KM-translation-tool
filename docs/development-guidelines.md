@@ -14,8 +14,7 @@ Commit source and durable examples:
 - `docs/`
 - small fixture inputs under `files/`
 
-Do not commit local generated state unless the repository intentionally tracks
-it:
+Local generated state stays out of normal tooling commits:
 
 - `.venv/`
 - Python caches
@@ -42,19 +41,15 @@ workspace for translators and maintainers.
 ## Localize/Weblate Safety
 
 - Treat the latest Weblate state as authoritative for zh-Hant production sync.
-- Do not add scheduled Git-to-Weblate uploads.
-- Use `migrate_reviewed_to_localize.py` only for explicit migration or repair.
-- Keep upload commands dry-run by default.
-- Never commit Weblate or DSW API tokens. Workflows should read tokens from
-  repository secrets.
-- Preserve `fuzzy` and `needs editing` semantics. Do not silently approve or
-  overwrite strings that are outside the requested migration scope.
+- Keep production automation one-way from Weblate to Git.
+- Store Weblate and DSW API tokens in repository secrets.
+- Preserve `fuzzy` and `needs editing` semantics during sync.
 
 ## KM Version Policy
 
-The current zh-Hant production policy is latest-only. Do not build automation
-around unpublished KM versions. Add a newer KM only after it is published by the
-DSW Registry and the translation repository config has been reviewed.
+The current zh-Hant production policy is latest-only. Add a newer KM after it
+is published by the DSW Registry and the translation repository config has been
+reviewed.
 
 ## Standard Checks
 

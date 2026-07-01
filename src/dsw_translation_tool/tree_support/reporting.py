@@ -17,14 +17,7 @@ from ..data_models import (
 
 
 class TranslationTreeValidator:
-    """Build validation results for scanned translation trees.
-
-    Args:
-        target_lang: Target language code used by legacy split-file paths.
-    """
-
-    def __init__(self, target_lang: str):
-        self.target_lang = target_lang
+    """Build validation results for scanned translation trees."""
 
     def build_result(
         self,
@@ -159,7 +152,7 @@ class TranslationTreeValidator:
                         f"Missing translation block: {translation_markdown_path} -> {field}"
                     )
                     continue
-                expected_path = Path(folder_path) / f"{field}.{self.target_lang}.txt"
+                expected_path = Path(folder_path) / TRANSLATION_FILENAME
                 errors.append(f"Missing translation file: {expected_path}")
         return errors
 
@@ -230,7 +223,7 @@ class TranslationStatusCollector:
             entity_uuid: UUID of the folder being reported.
             node: Manifest node record for the folder.
             translations: Parsed translation mapping from the scan result.
-            summary: Mutable summary counters in legacy camelCase form.
+            summary: Mutable summary counters in JSON output form.
 
         Returns:
             Folder status entry, or `None` for non-translatable nodes.

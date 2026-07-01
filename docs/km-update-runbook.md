@@ -6,9 +6,8 @@ the current published KM rather than maintaining parallel version branches.
 
 ## When to Start
 
-Start only after the KM version is published and available from the DSW
-Registry or another official upstream source. Do not add draft or unpublished
-bundles, such as a not-yet-published `2.8.0`.
+Start after the KM version is published and available from the DSW Registry or
+another official upstream source.
 
 The scheduled KM version auto-update workflow is the normal update mechanism.
 It runs `sync_latest_km.py`, no-ops when the configured KM is current, and only

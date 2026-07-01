@@ -15,9 +15,8 @@ command reference; durable design and operating procedures live here.
 | Configure workflow permissions and secrets | [Security and Permissions](security-and-permissions.md) |
 | Monitor, automatically update, or manually repair a future KM version update | [KM Update Runbook](km-update-runbook.md) |
 | Find a Make target or CLI command | [Command Reference](command-reference.md) |
-| Prepare a one-shot repository-to-Weblate migration | [Localize Sync Runbook](localize-sync-runbook.md) and [Command Reference](command-reference.md) |
 
-## Maintenance Rules
+## Maintenance Notes
 
 - Keep Localize/Weblate as the latest translation authority for zh-Hant
   production work.
@@ -27,8 +26,3 @@ command reference; durable design and operating procedures live here.
   belongs in `src/dsw_translation_tool/`.
 - Document both the command and the failure mode when adding an automation
   helper.
-- Do not add scheduled Git-to-Weblate uploads. Repository-to-Weblate upload is
-  an explicit migration or repair operation only.
-- Do not rewrite public `master` history to clean up intermediate automation
-  commits. Use forward fixes unless maintainers explicitly coordinate a history
-  rewrite.

@@ -44,10 +44,6 @@ def write_config(path: Path, download_url: str) -> None:
                 "localize:",
                 f"  download_url: {download_url}",
                 "  repository: https://localize.ds-wizard.org/",
-                "migration:",
-                "  mode: exact-only",
-                "  non_exact_policy: leave_empty_needs_translation",
-                "  protected_chapters: []",
                 "",
             ]
         ),

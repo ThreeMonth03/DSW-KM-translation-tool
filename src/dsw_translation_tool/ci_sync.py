@@ -87,8 +87,6 @@ class CiSyncCommitConfig:
             conservative three-way merge before generating the KM.
         localize_merge_report_path: Optional JSON report path for Localize merge
             decisions. Relative paths are resolved inside the host repository.
-        protected_chapters: Chapter numeric prefixes that should keep repo
-            translations during Localize merges.
         localize_conflict_policy: Conflict policy passed to the Localize merge.
             Use ``latest-wins`` when the latest Weblate state is authoritative.
     """
@@ -109,7 +107,6 @@ class CiSyncCommitConfig:
     restore_source_ref: str = "origin/master"
     localize_base_po_path: Path | None = None
     localize_merge_report_path: Path | None = None
-    protected_chapters: tuple[str, ...] = ()
     localize_conflict_policy: str = "conservative"
 
     @property
@@ -250,7 +247,7 @@ class CiSyncCommitConfig:
 
         Args:
             configured_path: User-provided source path, or ``None``.
-            default_path: Fallback path used by legacy single-version repos.
+            default_path: Built-in fallback path.
 
         Returns:
             Absolute path to the source file.
@@ -427,15 +424,12 @@ def _run_localize_merge(config: CiSyncCommitConfig) -> None:
         repo_po_path=config.final_po_path,
         out_po_path=config.final_po_path,
         report_path=merge_report_path,
-        tree_dir=config.tree_dir,
-        protected_chapters=config.protected_chapters,
         conflict_policy=config.localize_conflict_policy,
     )
     print("[ci-sync] Localize merge")
     print(f"[ci-sync]   Conflict policy: {config.localize_conflict_policy}")
     print(f"[ci-sync]   Accepted latest: {result.accepted_latest}")
     print(f"[ci-sync]   Conflicts: {result.conflicts}")
-    print(f"[ci-sync]   Protected skips: {result.protected_skips}")
 
 
 def _run_sync_with_origin_restore(

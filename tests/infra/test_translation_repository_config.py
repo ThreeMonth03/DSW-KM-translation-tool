@@ -4,14 +4,10 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from dsw_translation_tool.translation_repository_config import (
-    TranslationRepositoryConfigError,
     load_translation_repository_config,
     sorted_versions,
     tracking_branch,
-    version_branch,
     version_paths,
 )
 from dsw_translation_tool.versioned_ci_sync import build_versioned_ci_sync_config
@@ -55,14 +51,6 @@ localize:
 
 registry:
   api_url: https://api.registry.ds-wizard.org
-
-migration:
-  mode: exact-only
-  non_exact_policy: leave_empty_needs_translation
-  protected_chapters:
-    - "0003"
-    - "0004"
-    - "0005"
 """,
         encoding="utf-8",
     )
@@ -78,7 +66,6 @@ def test_config_loader_normalizes_versions_and_paths(workspace: Path) -> None:
 
     assert config.knowledge_model.supported_versions == ("2.6.9", "2.6.10", "2.7.0")
     assert config.registry.api_url == "https://api.registry.ds-wizard.org"
-    assert config.migration.protected_chapters == ("0003", "0004", "0005")
     assert tracking_branch(config) == "translation/latest"
 
     paths = version_paths(config, "2.7.0")
@@ -121,39 +108,6 @@ def test_config_loader_uses_default_registry_when_omitted(workspace: Path) -> No
     assert config.registry.api_url == "https://api.registry.ds-wizard.org"
 
 
-def test_config_loader_supports_legacy_version_branch_prefix(workspace: Path) -> None:
-    """Verify existing version-branch configs still load as a tracking branch fallback."""
-
-    config_path = workspace / "translation-config.yml"
-    write_config(config_path)
-    config_path.write_text(
-        config_path.read_text(encoding="utf-8").replace(
-            "  tracking_branch: translation/latest\n",
-            "  version_branch_prefix: translation/v\n",
-        ),
-        encoding="utf-8",
-    )
-
-    config = load_translation_repository_config(config_path)
-
-    assert tracking_branch(config) == "translation/v2.7.0"
-    assert version_branch(config, "v2.7.0") == "translation/v2.7.0"
-
-
-def test_config_loader_rejects_unsupported_migration_mode(workspace: Path) -> None:
-    """Verify that only conservative exact migration is accepted."""
-
-    config_path = workspace / "translation-config.yml"
-    write_config(config_path)
-    config_path.write_text(
-        config_path.read_text(encoding="utf-8").replace("mode: exact-only", "mode: fuzzy"),
-        encoding="utf-8",
-    )
-
-    with pytest.raises(TranslationRepositoryConfigError, match="exact-only"):
-        load_translation_repository_config(config_path)
-
-
 def test_validate_translation_config_cli_reports_summary(
     repo_root: Path,
     workspace: Path,
@@ -178,7 +132,6 @@ def test_validate_translation_config_cli_reports_summary(
     assert "Tracking branch: translation/latest" in result.stdout
     assert "Localize PO URL: https://localize.ds-wizard.org/download/" in result.stdout
     assert "Registry API: https://api.registry.ds-wizard.org" in result.stdout
-    assert "Protected chapters: 0003, 0004, 0005" in result.stdout
     assert "## KM Translation Config" in summary_path.read_text(encoding="utf-8")
 
 
@@ -214,7 +167,6 @@ def test_versioned_ci_sync_config_derives_tracking_branch_and_source_paths(
     )
     assert config.localize_base_po_path == Path("sources/localize/zh_Hant/base.po")
     assert config.localize_merge_report_path == Path("reviews/localize_merge_report.json")
-    assert config.protected_chapters == ("0003", "0004", "0005")
     assert config.localize_conflict_policy == "latest-wins"
     assert config.original_po_path == host_repo / "sources/localize/zh_Hant/latest.po"
     assert config.original_model_path == (

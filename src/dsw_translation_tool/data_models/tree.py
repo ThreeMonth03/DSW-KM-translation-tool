@@ -90,8 +90,7 @@ class TranslationStatusSummary:
         """Convert the summary to a JSON-friendly dictionary.
 
         Returns:
-            A dictionary using the legacy camelCase keys expected by CLI
-            wrappers and compatibility helpers.
+            A dictionary using the camelCase keys emitted by CLI JSON output.
         """
 
         return {
@@ -117,19 +116,6 @@ class TranslationStatusReport:
     summary: TranslationStatusSummary
     folders: tuple[TranslationStatusFolder, ...]
 
-    def to_legacy_dict(self) -> dict[str, Any]:
-        """Convert the report to the previous dictionary format.
-
-        Returns:
-            A dictionary compatible with the existing CLI and compatibility
-            facade code paths.
-        """
-
-        return {
-            "summary": self.summary.to_dict(),
-            "folders": list(self.folders),
-        }
-
 
 @dataclass(frozen=True)
 class TreeScanResult:
@@ -149,17 +135,6 @@ class TreeScanResult:
     duplicate_uuids: tuple[tuple[str, str, str], ...]
     folders_by_uuid: dict[str, TreeFolderSnapshot]
 
-    def to_legacy_dict(self) -> dict[str, Any]:
-        """Convert the scan result to the previous dictionary format."""
-
-        return {
-            "manifest": self.manifest,
-            "nodeDirs": self.node_dirs,
-            "translations": self.translations,
-            "duplicateUuids": list(self.duplicate_uuids),
-            "foldersByUuid": self.folders_by_uuid,
-        }
-
 
 @dataclass(frozen=True)
 class TreeValidationResult:
@@ -172,14 +147,6 @@ class TreeValidationResult:
 
     scan_result: TreeScanResult
     errors: tuple[str, ...]
-
-    def to_legacy_dict(self) -> dict[str, Any]:
-        """Convert the validation result to the previous dictionary format."""
-
-        return {
-            **self.scan_result.to_legacy_dict(),
-            "errors": list(self.errors),
-        }
 
 
 @dataclass(frozen=True)

@@ -19,7 +19,6 @@ class LocalizeMergeDecision:
     uuid: str
     field: str
     decision: str
-    protected: bool
     msgid: str
     base: str
     latest: str
@@ -38,7 +37,6 @@ class LocalizeMergeResult:
     accepted_latest: int
     kept_repo: int
     conflicts: int
-    protected_skips: int
     empty_overwrite_skips: int
     source_mismatches: int
     fuzzy_skips: int
@@ -73,8 +71,6 @@ class LocalizePoMerger:
         repo_po_path: str | Path,
         out_po_path: str | Path,
         report_path: str | Path,
-        tree_dir: str | Path | None = None,
-        protected_chapters: tuple[str, ...] = (),
         conflict_policy: str = "conservative",
     ) -> LocalizeMergeResult:
         """Merge a pulled Localize PO into the repo-generated PO.
@@ -85,14 +81,10 @@ class LocalizePoMerger:
             repo_po_path: PO generated from the repository translation tree.
             out_po_path: Output merged PO path.
             report_path: Output JSON report path.
-            tree_dir: Optional translation tree used to identify protected
-                chapter UUIDs.
-            protected_chapters: Chapter numeric prefixes that should keep repo
-                translations.
             conflict_policy: ``conservative`` keeps repository translations
                 when both the repository and Weblate changed the same entry;
                 ``latest-wins`` accepts non-fuzzy Weblate text as the source of
-                truth. Protected chapter entries are still kept.
+                truth.
 
         Returns:
             Merge summary.
@@ -103,11 +95,6 @@ class LocalizePoMerger:
         base_entries = parse_po_entry_states(base_po_path)
         latest_entries = parse_po_entry_states(latest_po_path)
         repo_entries = parse_po_entry_states(repo_po_path)
-        protected_keys = collect_protected_po_keys(
-            tree_dir=Path(tree_dir) if tree_dir is not None else None,
-            protected_chapters=protected_chapters,
-            repo_keys=frozenset(repo_entries),
-        )
 
         merged_translations: dict[PoKey, str] = {}
         decisions: list[LocalizeMergeDecision] = []
@@ -119,7 +106,6 @@ class LocalizePoMerger:
                 base_state=base_state,
                 latest_state=latest_state,
                 repo_state=repo_state,
-                protected=key in protected_keys,
                 conflict_policy=conflict_policy,
             )
             merged_translations[key] = result_text
@@ -152,7 +138,6 @@ class LocalizePoMerger:
         base_state: PoEntryState | None,
         latest_state: PoEntryState | None,
         repo_state: PoEntryState,
-        protected: bool,
         conflict_policy: str,
     ) -> tuple[str, LocalizeMergeDecision]:
         uuid, field = key
@@ -160,7 +145,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="missing-localize-entry",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr if base_state else "",
                 latest=latest_state.msgstr if latest_state else "",
@@ -171,7 +155,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="source-mismatch",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -182,7 +165,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="unchanged",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -193,7 +175,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="unchanged",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -204,18 +185,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="latest-fuzzy",
-                protected=protected,
-                msgid=repo_state.msgid,
-                base=base_state.msgstr,
-                latest=latest_state.msgstr,
-                repo=repo_state.msgstr,
-                result=repo_state.msgstr,
-            )
-        if protected:
-            return repo_state.msgstr, make_decision(
-                key=key,
-                decision="protected",
-                protected=True,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -226,7 +195,6 @@ class LocalizePoMerger:
             return latest_state.msgstr, make_decision(
                 key=key,
                 decision="accepted-latest",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -237,7 +205,6 @@ class LocalizePoMerger:
             return repo_state.msgstr, make_decision(
                 key=key,
                 decision="empty-overwrite-skip",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -248,7 +215,6 @@ class LocalizePoMerger:
             return latest_state.msgstr, make_decision(
                 key=key,
                 decision="accepted-latest",
-                protected=protected,
                 msgid=repo_state.msgid,
                 base=base_state.msgstr,
                 latest=latest_state.msgstr,
@@ -258,7 +224,6 @@ class LocalizePoMerger:
         return repo_state.msgstr, make_decision(
             key=key,
             decision="conflict",
-            protected=protected,
             msgid=repo_state.msgid,
             base=base_state.msgstr,
             latest=latest_state.msgstr,
@@ -284,7 +249,6 @@ class LocalizePoMerger:
             accepted_latest=counts["accepted-latest"],
             kept_repo=len(decisions) - changed_entries,
             conflicts=counts["conflict"],
-            protected_skips=counts["protected"],
             empty_overwrite_skips=counts["empty-overwrite-skip"],
             source_mismatches=counts["source-mismatch"],
             fuzzy_skips=counts["latest-fuzzy"],
@@ -314,27 +278,6 @@ def parse_po_entry_states(po_path: str | Path) -> dict[PoKey, PoEntryState]:
     return states
 
 
-def collect_protected_po_keys(
-    *,
-    tree_dir: Path | None,
-    protected_chapters: tuple[str, ...],
-    repo_keys: frozenset[PoKey],
-) -> frozenset[PoKey]:
-    """Collect PO keys whose UUIDs live below protected chapter paths."""
-
-    if tree_dir is None or not protected_chapters or not tree_dir.exists():
-        return frozenset()
-    protected_prefixes = tuple(f"{chapter} " for chapter in protected_chapters)
-    protected_uuids: set[str] = set()
-    for uuid_file in tree_dir.rglob("_uuid.txt"):
-        relative_parts = uuid_file.relative_to(tree_dir).parts[:-1]
-        if any(part.startswith(protected_prefixes) for part in relative_parts):
-            uuid_value = uuid_file.read_text(encoding="utf-8").strip()
-            if uuid_value:
-                protected_uuids.add(uuid_value)
-    return frozenset(key for key in repo_keys if key[0] in protected_uuids)
-
-
 def write_merge_report(result: LocalizeMergeResult) -> None:
     """Write a Localize merge result as JSON."""
 
@@ -352,7 +295,6 @@ def make_decision(
     *,
     key: PoKey,
     decision: str,
-    protected: bool,
     msgid: str,
     base: str,
     latest: str,
@@ -366,7 +308,6 @@ def make_decision(
         uuid=uuid,
         field=field,
         decision=decision,
-        protected=protected,
         msgid=msgid,
         base=base,
         latest=latest,

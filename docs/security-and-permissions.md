@@ -9,8 +9,7 @@ Latest zh-Hant translation text is governed by Localize/Weblate. The Git
 translation repository is a reproducible mirror for automation, review, and
 visual inspection.
 
-Scheduled automation may pull from Weblate into Git. Scheduled automation must
-not push from Git to Weblate.
+Scheduled automation pulls from Weblate into Git and uses download-only access.
 
 ## Required Workflow Permissions
 
@@ -20,7 +19,6 @@ not push from Git to Weblate.
 | Localize status report | `contents: read` | none | No |
 | Localize alignment report | `contents: read` | none | No |
 | KM version auto update | `contents: write` | `DSW_REGISTRY_TOKEN` only when a newer KM exists | Writes Git only after validation |
-| Reviewed migration to Weblate | `contents: read` | `LOCALIZE_API_TOKEN` only when applying | Writes Weblate only after manual apply |
 
 The auto-sync writer currently supports direct commits to the tracking branch.
 If branch protection prevents direct writer pushes, keep Weblate as the source
@@ -34,35 +32,23 @@ manual translation editing in Git.
 
 ## Secret Placement
 
-`LOCALIZE_API_TOKEN` belongs in the production translation repository that runs
-the manual reviewed migration workflow. For the public zh-Hant repository, that
-means:
+The normal sync, status, and alignment workflows use download-only Weblate
+access.
 
-```text
-depositar/dsw-root-locales-zh_Hant
-```
-
-Do not store Localize/Weblate tokens in this tooling repository unless this
-repository itself is running an apply workflow. The normal sync, status, and
-alignment workflows do not need that secret.
-
-`DSW_REGISTRY_TOKEN` also belongs in the production translation repository when
-the guarded KM version auto-update workflow is enabled. It is used only to
-download a newly published source KM bundle. It is not used for Weblate access.
+`DSW_REGISTRY_TOKEN` belongs in the production translation repository when the
+guarded KM version auto-update workflow is enabled. It is used only to download
+a newly published source KM bundle. It is not used for Weblate access.
 
 ## Token Handling
 
-- Never commit tokens into `translation-config.yml`, workflow files, logs, or
+- Store tokens as GitHub Actions repository secrets.
+- Keep tokens out of `translation-config.yml`, workflow files, logs, and
   generated reports.
-- Prefer GitHub Actions secrets over local shell history.
-- Use the token only with `migrate_reviewed_to_localize.py --apply`.
-- Dry-run migration without a token first and review
-  `reviews/localize_migration_report.json`.
 
 ## Branch Protection and History
 
-Do not rewrite public `master` history to clean up intermediate automation
-commits. Use forward commits for workflow or generated-artifact corrections.
+Use forward commits for workflow or generated-artifact corrections on public
+branches.
 
 If GitHub branch-protection APIs are unavailable or return not-found responses
 for the current account, rely on observed workflow behavior and repository

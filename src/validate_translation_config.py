@@ -55,7 +55,6 @@ def main() -> None:
         f"Localize PO URL: {config.localize.download_url}",
         f"Registry API: {config.registry.api_url}",
         f"Translation tree path: {latest_paths.translation_tree_dir.as_posix()}",
-        f"Protected chapters: {', '.join(config.migration.protected_chapters) or '(none)'}",
     ]
     print("\n".join(lines))
     if args.summary:

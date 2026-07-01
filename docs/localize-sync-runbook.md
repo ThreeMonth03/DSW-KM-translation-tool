@@ -1,6 +1,6 @@
 # Localize Sync Runbook
 
-Use this runbook for production zh-Hant sync and one-shot migration work.
+Use this runbook for production zh-Hant sync.
 
 ## Operating Model
 
@@ -13,10 +13,6 @@ Normal automation is one-way:
 ```text
 Localize/Weblate -> GitHub translation repository
 ```
-
-Repository-to-Weblate upload is not scheduled. Use it only for migration,
-emergency repair, or an explicit maintainer decision that reviewed Git content
-must be pushed to Weblate first.
 
 ## Scheduled Pull Sync
 
@@ -59,10 +55,10 @@ a separate exception baseline.
 The same workflow can also run `src/report_weblate_checks.py` with the Weblate
 query `has:check`. That catches website-side quality-check warnings that are
 not always visible from PO fuzzy flags alone. The check report is diagnostic and
-should use `--allow-api-failure` so Weblate API rate limits do not block Git
-sync monitoring.
+uses `--allow-api-failure` so Weblate API rate limits are captured in the
+report while Git sync monitoring continues.
 
-It requires only `contents: read` and does not use `LOCALIZE_API_TOKEN`.
+It requires only `contents: read`.
 
 Use the alignment report workflow to verify artifact consistency without
 changing Git or Weblate. It:
@@ -77,7 +73,7 @@ changing Git or Weblate. It:
 The alignment report is allowed to fail when drift is detected. That failure
 means a pull sync, tree rebuild, or KM rebuild should run before maintainers
 trust the repository artifacts. It also requires only `contents: read` and does
-not use `LOCALIZE_API_TOKEN`.
+not change translations.
 
 ## Merge Gate Behavior
 
@@ -90,9 +86,7 @@ switch the workflow to open or update an auto-merged sync pull request. The
 user-facing result should still be that Git mirrors Weblate without manual
 translation review in Git.
 
-Do not rewrite public `master` to compress earlier automation commits. Once
-published, sync and workflow corrections should be forward-only commits unless
-repository maintainers explicitly coordinate a history rewrite.
+Use forward commits for sync and workflow corrections on public branches.
 
 ## Conflict Policy
 
@@ -104,53 +98,11 @@ Normal sync is Weblate-first:
 - Fuzzy or needs-editing translations stay in Weblate for translators to
   resolve on the website.
 
-Do not reintroduce chapter protection for normal daily sync. Reviewed chapter
-protection was a migration tool, not the steady-state policy.
-
-## One-Shot Repository-To-Weblate Migration
-
-Use `src/migrate_reviewed_to_localize.py` only when reviewed Git translations
-are ahead of Weblate and must be uploaded.
-
-Dry-run first:
-
-```shell
-.venv/bin/python src/migrate_reviewed_to_localize.py \
-  --repo-root /path/to/translation-repo \
-  --config translation-config.yml \
-  --chapters 0004 0005 0006 \
-  --fill-localize-blanks-from-repo
-```
-
-Review:
-
-```text
-reviews/localize_migration_upload.po
-reviews/localize_migration_report.json
-```
-
-Apply only after human review:
-
-```shell
-LOCALIZE_API_TOKEN=... \
-.venv/bin/python src/migrate_reviewed_to_localize.py \
-  --repo-root /path/to/translation-repo \
-  --config translation-config.yml \
-  --chapters 0004 0005 0006 \
-  --fill-localize-blanks-from-repo \
-  --apply
-```
-
-After upload, run the normal scheduled pull sync or trigger the sync workflow
-manually. Weblate becomes authoritative again immediately after migration.
-
 ## KM Updates
 
 The current production policy is latest-only. Use
 [KM Update Runbook](km-update-runbook.md) when the DSW Registry publishes a new
 Common DSW KM.
-
-Do not add unpublished versions such as draft `2.8.0` bundles.
 
 ## Troubleshooting
 
@@ -158,7 +110,5 @@ Do not add unpublished versions such as draft `2.8.0` bundles.
 - If `translation-config.yml` fails validation, fix config before running sync.
 - If tree parsing fails in CI, the writer may restore malformed files from the
   tracking branch once and retry.
-- If Weblate upload returns authorization errors, check the
-  `LOCALIZE_API_TOKEN` secret and account permissions.
 - If Weblate has untranslated strings after sync, check whether they are empty,
   fuzzy, needs-editing, or missing from the current KM source.
