@@ -10,13 +10,21 @@ Start only after the KM version is published and available from the DSW
 Registry or another official upstream source. Do not add draft or unpublished
 bundles, such as a not-yet-published `2.8.0`.
 
-The scheduled KM version monitor is the normal alert mechanism. It runs
-`discover_km_versions.py --fail-on-new-version` and uploads
-`reviews/km_version_discovery.*` as artifacts. A failing monitor means the
-Registry has at least one published version that is not yet configured in the
-translation repository. The monitor is intentionally read-only: it does not
-pull KM bundles, edit `translation-config.yml`, rebuild `tree/`, or push Git
-commits.
+The scheduled KM version auto-update workflow is the normal update mechanism.
+It runs `sync_latest_km.py`, no-ops when the configured KM is current, and only
+pushes to Git when every safety check passes. When the Registry has a newer
+published KM, the workflow:
+
+- downloads the new KM bundle using `DSW_REGISTRY_TOKEN`;
+- updates `translation-config.yml` and the conventional source KM path;
+- downloads the current Weblate PO without uploading anything to Weblate;
+- rebuilds `tree/`, `builds/final_translated.po`, and
+  `builds/final_translated.km`;
+- validates config, runs translation tests, and checks repository alignment;
+- commits and pushes to the tracking branch only after those steps pass.
+
+If the token is missing or any validation step fails, no Git commit is pushed.
+The next scheduled run will retry.
 
 ## Dry-Run First
 

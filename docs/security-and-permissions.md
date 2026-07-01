@@ -19,7 +19,7 @@ not push from Git to Weblate.
 | Localize auto sync | `contents: write` | none | Writes Git only |
 | Localize status report | `contents: read` | none | No |
 | Localize alignment report | `contents: read` | none | No |
-| KM version monitor | `contents: read` | none | No |
+| KM version auto update | `contents: write` | `DSW_REGISTRY_TOKEN` only when a newer KM exists | Writes Git only after validation |
 | Reviewed migration to Weblate | `contents: read` | `LOCALIZE_API_TOKEN` only when applying | Writes Weblate only after manual apply |
 
 The auto-sync writer currently supports direct commits to the tracking branch.
@@ -45,6 +45,10 @@ depositar/dsw-root-locales-zh_Hant
 Do not store Localize/Weblate tokens in this tooling repository unless this
 repository itself is running an apply workflow. The normal sync, status, and
 alignment workflows do not need that secret.
+
+`DSW_REGISTRY_TOKEN` also belongs in the production translation repository when
+the guarded KM version auto-update workflow is enabled. It is used only to
+download a newly published source KM bundle. It is not used for Weblate access.
 
 ## Token Handling
 

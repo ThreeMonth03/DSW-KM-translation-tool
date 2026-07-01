@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 from collections.abc import Mapping, Sequence
@@ -12,13 +13,16 @@ from typing import Protocol
 import yaml
 
 from .ci_sync import GITHUB_BOT_EMAIL, GITHUB_BOT_NAME
-from .km_bundle_sync import pull_km_bundle
+from .km_bundle_sync import BundleDownloader, pull_km_bundle
 from .km_registry import Downloader, discover_km_versions
+from .localize_sync import Downloader as LocalizeDownloader
 from .localize_sync import pull_localize_po
 from .translation_repository_config import (
     TranslationRepositoryConfigError,
+    format_package_id,
     load_translation_repository_config,
     sorted_versions,
+    tracking_branch,
     version_paths,
 )
 
@@ -46,9 +50,35 @@ class KmLatestSyncResult:
 
     configured_version: str
     registry_version: str | None
+    target_ref: str | None
     changed: bool
     skipped_reason: str | None = None
     dry_run: bool = False
+
+    @property
+    def status(self) -> str:
+        """Return a compact status label for reports."""
+
+        if self.dry_run:
+            return "dry-run"
+        if self.skipped_reason:
+            return f"skipped:{self.skipped_reason}"
+        if self.changed:
+            return "updated"
+        return "current"
+
+    def to_report_dict(self) -> dict[str, object]:
+        """Return a stable JSON-serializable report."""
+
+        return {
+            "configured_version": self.configured_version,
+            "registry_version": self.registry_version,
+            "target_ref": self.target_ref,
+            "changed": self.changed,
+            "skipped_reason": self.skipped_reason,
+            "dry_run": self.dry_run,
+            "status": self.status,
+        }
 
 
 def sync_latest_km_version(
@@ -57,9 +87,12 @@ def sync_latest_km_version(
     tooling_repo: Path,
     config_path: Path,
     registry_token: str,
+    target_ref: str | None = None,
     skip_without_token: bool = False,
     dry_run: bool = False,
     downloader: Downloader | None = None,
+    bundle_downloader: BundleDownloader | None = None,
+    localize_downloader: LocalizeDownloader | None = None,
     runner: CommandRunner | None = None,
 ) -> KmLatestSyncResult:
     """Update the current translation branch when the Registry has a newer KM."""
@@ -69,12 +102,14 @@ def sync_latest_km_version(
     resolved_config_path = _resolve_repo_path(host_repo, config_path)
     config = load_translation_repository_config(resolved_config_path)
     configured_version = config.knowledge_model.supported_versions[-1]
+    push_ref = target_ref or tracking_branch(config)
     discovery = discover_km_versions(config_path=resolved_config_path, downloader=downloader)
     registry_version = discovery.latest_registry_version
     if registry_version is None or registry_version == configured_version:
         return KmLatestSyncResult(
             configured_version=configured_version,
             registry_version=registry_version,
+            target_ref=push_ref,
             changed=False,
             dry_run=dry_run,
         )
@@ -82,6 +117,7 @@ def sync_latest_km_version(
         return KmLatestSyncResult(
             configured_version=configured_version,
             registry_version=registry_version,
+            target_ref=push_ref,
             changed=False,
             skipped_reason="configured-version-order-is-not-latest",
             dry_run=dry_run,
@@ -91,6 +127,7 @@ def sync_latest_km_version(
             return KmLatestSyncResult(
                 configured_version=configured_version,
                 registry_version=registry_version,
+                target_ref=push_ref,
                 changed=False,
                 skipped_reason="missing-registry-token",
                 dry_run=dry_run,
@@ -100,25 +137,32 @@ def sync_latest_km_version(
         return KmLatestSyncResult(
             configured_version=configured_version,
             registry_version=registry_version,
+            target_ref=push_ref,
             changed=False,
             dry_run=True,
         )
 
     run = runner or default_command_runner
     _ensure_git_repo_is_clean(host_repo, run)
-    branch = _git_current_branch(host_repo, run)
     update_supported_versions_in_config(resolved_config_path, [registry_version])
-    config = load_translation_repository_config(resolved_config_path)
     pull_km_bundle(
         config_path=resolved_config_path,
         repo_root=host_repo,
         token=registry_token,
         km_version=registry_version,
+        downloader=bundle_downloader,
     )
     pull_localize_po(
         config_path=resolved_config_path,
         repo_root=host_repo,
         km_version=registry_version,
+        downloader=localize_downloader,
+    )
+    _run_validate_config(
+        repo_root=host_repo,
+        tooling_repo=tooling_root,
+        config_path=config_path,
+        runner=run,
     )
     _run_export_tree(
         repo_root=host_repo,
@@ -134,16 +178,24 @@ def sync_latest_km_version(
         version=registry_version,
         runner=run,
     )
-    _commit_and_push(
+    _run_alignment_check(
         repo_root=host_repo,
-        branch=branch,
+        tooling_repo=tooling_root,
+        config_path=config_path,
+        version=registry_version,
+        runner=run,
+    )
+    committed = _commit_and_push(
+        repo_root=host_repo,
+        target_ref=push_ref,
         message=f"chore(sync): update source KM to {registry_version}",
         runner=run,
     )
     return KmLatestSyncResult(
         configured_version=configured_version,
         registry_version=registry_version,
-        changed=True,
+        target_ref=push_ref,
+        changed=committed,
         dry_run=False,
     )
 
@@ -164,6 +216,10 @@ def update_supported_versions_in_config(
         raise TranslationRepositoryConfigError("Expected string list at `supported_versions`")
     merged = tuple(dict.fromkeys(sorted_versions([*(str(item) for item in existing), *versions])))
     knowledge_model["supported_versions"] = list(merged)
+    knowledge_model["bundle_path"] = _source_km_path_from_config_payload(
+        knowledge_model,
+        merged[-1],
+    ).as_posix()
     config_path.write_text(
         yaml.safe_dump(payload, allow_unicode=True, sort_keys=False),
         encoding="utf-8",
@@ -189,6 +245,92 @@ def default_command_runner(
         capture_output=True,
         text=True,
         check=False,
+    )
+
+
+def render_km_latest_sync_markdown(result: KmLatestSyncResult) -> str:
+    """Render latest-KM sync results as maintainer-readable Markdown."""
+
+    lines = [
+        "## KM Version Auto Update",
+        "",
+        f"Status: **{result.status}**",
+        "",
+        "| Metric | Value |",
+        "| --- | --- |",
+        f"| Configured version before run | {_format_value(result.configured_version)} |",
+        f"| Registry latest version | {_format_value(result.registry_version)} |",
+        f"| Target ref | {_format_value(result.target_ref)} |",
+        f"| Changed Git | {'yes' if result.changed else 'no'} |",
+        f"| Dry run | {'yes' if result.dry_run else 'no'} |",
+        f"| Skipped reason | {_format_value(result.skipped_reason)} |",
+    ]
+    if result.changed:
+        lines.extend(
+            [
+                "",
+                "The newer published KM was pulled, Localize/Weblate was mirrored, "
+                "translation artifacts were rebuilt, validation passed, and the update "
+                "was pushed to Git.",
+            ]
+        )
+    elif result.skipped_reason:
+        lines.extend(
+            [
+                "",
+                "No Git update was pushed. Fix the skipped condition and let the next "
+                "scheduled run retry.",
+            ]
+        )
+    elif result.registry_version == result.configured_version:
+        lines.extend(["", "The configured KM is already current."])
+    return "\n".join(lines) + "\n"
+
+
+def write_km_latest_sync_report(
+    *,
+    result: KmLatestSyncResult,
+    report_path: Path,
+) -> None:
+    """Write latest-KM sync results as pretty JSON."""
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(
+        json.dumps(result.to_report_dict(), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def write_km_latest_sync_markdown(
+    *,
+    result: KmLatestSyncResult,
+    report_path: Path,
+) -> None:
+    """Append latest-KM sync results as Markdown."""
+
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    with report_path.open("a", encoding="utf-8") as handle:
+        handle.write(render_km_latest_sync_markdown(result))
+
+
+def _run_validate_config(
+    *,
+    repo_root: Path,
+    tooling_repo: Path,
+    config_path: Path,
+    runner: CommandRunner,
+) -> None:
+    _run_checked(
+        runner,
+        [
+            str(_tooling_python(tooling_repo)),
+            "src/validate_translation_config.py",
+            "--config",
+            str(_resolve_repo_path(repo_root, config_path)),
+        ],
+        cwd=tooling_repo,
+        description="validate updated translation config",
+        echo_output=True,
     )
 
 
@@ -321,13 +463,40 @@ def _run_sync_merge_build_and_tests(
     )
 
 
+def _run_alignment_check(
+    *,
+    repo_root: Path,
+    tooling_repo: Path,
+    config_path: Path,
+    version: str,
+    runner: CommandRunner,
+) -> None:
+    _run_checked(
+        runner,
+        [
+            str(_tooling_python(tooling_repo)),
+            "src/report_alignment_status.py",
+            "--repo-root",
+            str(repo_root),
+            "--config",
+            config_path.as_posix(),
+            "--km-version",
+            version,
+            "--fail-on-mismatch",
+        ],
+        cwd=tooling_repo,
+        description=f"verify Localize/repository alignment for KM {version}",
+        echo_output=True,
+    )
+
+
 def _commit_and_push(
     *,
     repo_root: Path,
-    branch: str,
+    target_ref: str,
     message: str,
     runner: CommandRunner,
-) -> None:
+) -> bool:
     _configure_git_identity(repo_root, runner)
     _run_checked(
         runner,
@@ -342,7 +511,7 @@ def _commit_and_push(
         description="inspect repository changes",
     )
     if not status.stdout.strip():
-        return
+        return False
     _run_checked(
         runner,
         ["git", "commit", "-m", message],
@@ -351,10 +520,11 @@ def _commit_and_push(
     )
     _run_checked(
         runner,
-        ["git", "push", "origin", f"HEAD:{branch}"],
+        ["git", "push", "origin", f"HEAD:{target_ref}"],
         cwd=repo_root,
-        description=f"push latest-KM sync commit to {branch}",
+        description=f"push latest-KM sync commit to {target_ref}",
     )
+    return True
 
 
 def _ensure_git_repo_is_clean(repo_root: Path, runner: CommandRunner) -> None:
@@ -366,19 +536,6 @@ def _ensure_git_repo_is_clean(repo_root: Path, runner: CommandRunner) -> None:
     )
     if status.stdout.strip():
         raise KmLatestSyncError("Repository has uncommitted changes; refusing latest-KM sync")
-
-
-def _git_current_branch(repo_root: Path, runner: CommandRunner) -> str:
-    result = _run_checked(
-        runner,
-        ["git", "branch", "--show-current"],
-        cwd=repo_root,
-        description="read current branch",
-    )
-    branch = result.stdout.strip()
-    if not branch:
-        raise KmLatestSyncError("Cannot sync latest KM from a detached HEAD")
-    return branch
 
 
 def _configure_git_identity(repo_root: Path, runner: CommandRunner) -> None:
@@ -425,6 +582,32 @@ def _resolve_repo_path(repo_root: Path, path: Path) -> Path:
     if path.is_absolute():
         return path.resolve()
     return (repo_root / path).resolve()
+
+
+def _source_km_path_from_config_payload(
+    knowledge_model: Mapping[str, object],
+    version: str,
+) -> Path:
+    organization_id = str(knowledge_model.get("organization_id", "")).strip()
+    km_id = str(knowledge_model.get("km_id", "")).strip()
+    if not organization_id or not km_id:
+        raise TranslationRepositoryConfigError(
+            "knowledge_model.organization_id and knowledge_model.km_id are required"
+        )
+    normalized = sorted_versions([version])[-1]
+    package_id = format_package_id(
+        organization_id=organization_id,
+        km_id=km_id,
+        version=normalized,
+    )
+    source_slug = package_id.replace(":", "-")
+    return Path("sources") / "knowledge-models" / source_slug / f"{source_slug}.km"
+
+
+def _format_value(value: object | None) -> str:
+    if value is None or value == "":
+        return "(none)"
+    return f"`{value}`"
 
 
 def _tooling_python(tooling_repo: Path) -> Path:

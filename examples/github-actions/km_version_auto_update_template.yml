@@ -1,4 +1,4 @@
-name: KM Version Monitor
+name: KM Version Auto Update
 
 on:
   schedule:
@@ -6,7 +6,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: km-version-auto-update-master
+  cancel-in-progress: false
 
 env:
   TOOLING_REPOSITORY: ThreeMonth03/DSW_Translation_tool
@@ -15,7 +19,8 @@ env:
   TRANSLATION_CONFIG: translation-config.yml
 
 jobs:
-  monitor-km-version:
+  update-km-version:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +29,7 @@ jobs:
         with:
           ref: ${{ env.TRACKING_BRANCH }}
           path: translation-repo
+          fetch-depth: 0
 
       - name: Checkout KM translation tooling
         uses: actions/checkout@v5
@@ -41,21 +47,25 @@ jobs:
         working-directory: tooling-repo
         run: make install-dev BOOTSTRAP_PYTHON=python
 
-      - name: Discover published KM versions
+      - name: Update to latest published KM when safe
+        env:
+          DSW_REGISTRY_TOKEN: ${{ secrets.DSW_REGISTRY_TOKEN }}
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/discover_km_versions.py
+          tooling-repo/.venv/bin/python tooling-repo/src/sync_latest_km.py
           --repo-root "$GITHUB_WORKSPACE/translation-repo"
+          --tooling-repo "$GITHUB_WORKSPACE/tooling-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"
-          --report "$GITHUB_WORKSPACE/translation-repo/reviews/km_version_discovery.json"
-          --details-out "$GITHUB_WORKSPACE/translation-repo/reviews/km_version_discovery.md"
+          --target-ref "${{ env.TRACKING_BRANCH }}"
+          --report "$RUNNER_TEMP/km_auto_update_report.json"
+          --details-out "$RUNNER_TEMP/km_auto_update_report.md"
           --summary "$GITHUB_STEP_SUMMARY"
-          --fail-on-new-version
 
-      - name: Upload KM version report artifact
+      - name: Upload KM auto-update report artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: km-version-monitor
+          name: km-version-auto-update
+          if-no-files-found: ignore
           path: |
-            translation-repo/reviews/km_version_discovery.json
-            translation-repo/reviews/km_version_discovery.md
+            ${{ runner.temp }}/km_auto_update_report.json
+            ${{ runner.temp }}/km_auto_update_report.md

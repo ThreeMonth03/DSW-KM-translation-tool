@@ -92,9 +92,10 @@ The reverse direction is intentionally manual.
   read-only status workflow for scheduled Localize/Weblate health reports.
 - `examples/github-actions/localize_alignment_report_template.yml` is the
   read-only artifact alignment workflow.
-- `examples/github-actions/km_version_monitor_template.yml` is the read-only
-  KM Registry monitor. It alerts when the Registry has a newer published KM;
-  it does not pull bundles, change config, or rewrite translations.
+- `examples/github-actions/km_version_auto_update_template.yml` is the guarded
+  KM Registry writer. It no-ops when the configured KM is current, and only
+  pushes a newer published KM after the bundle pull, Weblate mirror, rebuild,
+  config validation, translation tests, and alignment check all pass.
 - `examples/github-actions/localize_reviewed_migration_template.yml` is the
   manual repository-to-Weblate migration workflow.
 

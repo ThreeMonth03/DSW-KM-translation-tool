@@ -159,7 +159,7 @@ Discover configured or registry-published KM versions:
   --config "$TRANSLATION_REPO_DIR/translation-config.yml"
 ```
 
-Generate the read-only KM version monitor reports used by CI:
+Generate a read-only KM version discovery report:
 
 ```shell
 "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/discover_km_versions.py" \
@@ -169,6 +169,21 @@ Generate the read-only KM version monitor reports used by CI:
   --details-out "$TRANSLATION_REPO_DIR/reviews/km_version_discovery.md" \
   --summary "$TRANSLATION_REPO_DIR/reviews/km_version_discovery_summary.md" \
   --fail-on-new-version
+```
+
+Run the guarded latest-KM auto-update writer. It commits and pushes only when
+the Registry has a newer published KM and all validation steps pass:
+
+```shell
+DSW_REGISTRY_TOKEN=... \
+"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/sync_latest_km.py" \
+  --repo-root "$TRANSLATION_REPO_DIR" \
+  --tooling-repo "$TOOL_REPO_DIR" \
+  --config translation-config.yml \
+  --target-ref master \
+  --report "$TRANSLATION_REPO_DIR/reviews/km_auto_update_report.json" \
+  --details-out "$TRANSLATION_REPO_DIR/reviews/km_auto_update_report.md" \
+  --summary "$TRANSLATION_REPO_DIR/reviews/km_auto_update_summary.md"
 ```
 
 Pull the latest configured KM bundle when repository policy allows it:
