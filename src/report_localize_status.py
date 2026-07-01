@@ -8,6 +8,7 @@ from pathlib import Path
 
 from dsw_translation_tool.localize_status import (
     build_localize_po_status_report,
+    load_known_fuzzy_references,
     render_localize_po_status_markdown,
     write_localize_po_status_json,
     write_localize_po_status_markdown,
@@ -38,6 +39,12 @@ def build_argument_parser() -> argparse.ArgumentParser:
         help="Optional path to write a full Markdown issue report.",
     )
     parser.add_argument(
+        "--known-fuzzy-references",
+        help=(
+            "Optional text file containing acknowledged fuzzy PO reference tokens, one per line."
+        ),
+    )
+    parser.add_argument(
         "--issue-limit",
         type=int,
         default=20,
@@ -50,7 +57,10 @@ def main() -> None:
     """Run the Localize/Weblate PO status CLI."""
 
     args = build_argument_parser().parse_args()
-    report = build_localize_po_status_report(Path(args.po))
+    report = build_localize_po_status_report(
+        Path(args.po),
+        known_fuzzy_references=load_known_fuzzy_references(args.known_fuzzy_references),
+    )
     issue_limit = None if args.issue_limit == 0 else args.issue_limit
     print(render_localize_po_status_markdown(report, issue_limit=issue_limit), end="")
     if args.json_out:

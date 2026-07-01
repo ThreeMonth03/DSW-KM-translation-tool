@@ -52,6 +52,12 @@ Git or Weblate. It:
    `reviews/localize_status_report.json` and
    `reviews/localize_status_report.md` as artifacts.
 
+The optional known-fuzzy baseline file, such as
+`config/localize_known_fuzzy_references.txt`, separates intentionally retained
+fuzzy entries from newly introduced fuzzy entries. It does not change the PO
+file and does not prevent future Weblate edits from replacing or clearing those
+entries.
+
 It requires only `contents: read` and does not use `LOCALIZE_API_TOKEN`.
 
 ## Merge Gate Behavior
