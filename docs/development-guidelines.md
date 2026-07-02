@@ -49,7 +49,7 @@ workspace for translators and maintainers.
 - Treat the latest Weblate state as authoritative for zh-Hant production sync.
 - Keep production automation one-way from Weblate to Git.
 - Store Weblate and DSW API tokens in repository secrets.
-- Preserve `fuzzy` and `needs editing` semantics during sync.
+- Preserve Weblate review-state flags during sync.
 
 ## KM Version Policy
 

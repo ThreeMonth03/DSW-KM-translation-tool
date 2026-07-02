@@ -48,9 +48,8 @@ Git or Weblate. It:
    `reviews/localize_status_report.json` and
    `reviews/localize_status_report.md` as artifacts.
 
-Weblate exports entries that need editing through the PO `fuzzy` flag. The
-status report lists all fuzzy entries as current review items; it does not keep
-a separate exception baseline.
+The PO `fuzzy` flag is the review-state signal exported by Weblate. The status
+report includes those entries as part of current translation health.
 
 The same workflow can also run `src/report_weblate_checks.py` with the Weblate
 query `has:check`. That catches website-side quality-check warnings that are
@@ -88,11 +87,11 @@ Use forward commits for sync and workflow corrections on public branches.
 
 Normal sync is Weblate-first:
 
-- Non-fuzzy Weblate changes win.
+- Weblate entries that are ready for use win.
 - Checked-in tree translations that differ from Weblate are replaced during
   force-refresh.
-- Fuzzy or needs-editing translations stay in Weblate for translators to
-  resolve on the website.
+- Entries marked for review stay in Weblate for translators to resolve on the
+  website.
 
 ## KM Updates
 
@@ -107,4 +106,4 @@ Common DSW KM.
 - If tree parsing fails in CI, the writer may restore malformed files from the
   tracking branch once and retry.
 - If Weblate has untranslated strings after sync, check whether they are empty,
-  fuzzy, needs-editing, or missing from the current KM source.
+  marked for review, or missing from the current KM source.

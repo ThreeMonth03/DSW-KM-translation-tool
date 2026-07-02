@@ -97,7 +97,7 @@ Pay special attention to:
 - source mismatches, which may indicate changed English strings;
 - missing entries, which may indicate new KM fields or removed old fields;
 - newly empty translations;
-- newly fuzzy or needs-editing translations reported by Weblate.
+- newly review-marked translations reported by Weblate.
 
 Merge only after the dry-run branch produces aligned artifacts. After merge,
 trigger the scheduled sync and alignment report once manually to verify the
