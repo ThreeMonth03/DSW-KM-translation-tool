@@ -68,6 +68,8 @@ These modules connect the translation repository to the Weblate website:
   Git sync commits.
 - `km_bundle_sync.py`, `km_latest_sync.py`, `km_registry.py`: support KM bundle
   discovery and update operations.
+- `command.py`: shared subprocess and Git identity helpers used by automation
+  writers.
 
 Production zh-Hant sync is Localize/Weblate-first. The normal automation path
 is:

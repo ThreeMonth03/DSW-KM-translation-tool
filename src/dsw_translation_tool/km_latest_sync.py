@@ -3,16 +3,18 @@
 from __future__ import annotations
 
 import json
-import os
-import subprocess
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
 
 import yaml
 
-from .ci_sync import GITHUB_BOT_EMAIL, GITHUB_BOT_NAME
+from .command import (
+    CommandRunner,
+    configure_github_actions_git_identity,
+    default_command_runner,
+    make_checked_runner,
+)
 from .km_bundle_sync import BundleDownloader, pull_km_bundle
 from .km_registry import Downloader, discover_km_versions
 from .localize_sync import Downloader as LocalizeDownloader
@@ -27,21 +29,11 @@ from .translation_repository_config import (
 )
 
 
-class CommandRunner(Protocol):
-    """Protocol for command execution used by latest-KM synchronization."""
-
-    def __call__(
-        self,
-        args: Sequence[str],
-        *,
-        cwd: Path,
-        env: Mapping[str, str] | None = None,
-    ) -> subprocess.CompletedProcess[str]:
-        """Run one command and return its completed process."""
-
-
 class KmLatestSyncError(RuntimeError):
     """Raised when latest-KM synchronization cannot complete."""
+
+
+_run_checked = make_checked_runner(KmLatestSyncError, include_command=False)
 
 
 @dataclass(frozen=True)
@@ -225,27 +217,6 @@ def update_supported_versions_in_config(
         encoding="utf-8",
     )
     return merged
-
-
-def default_command_runner(
-    args: Sequence[str],
-    *,
-    cwd: Path,
-    env: Mapping[str, str] | None = None,
-) -> subprocess.CompletedProcess[str]:
-    """Run a subprocess command."""
-
-    command_env = os.environ.copy()
-    if env:
-        command_env.update(env)
-    return subprocess.run(
-        list(args),
-        cwd=str(cwd),
-        env=command_env,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
 
 
 def render_km_latest_sync_markdown(result: KmLatestSyncResult) -> str:
@@ -497,7 +468,12 @@ def _commit_and_push(
     message: str,
     runner: CommandRunner,
 ) -> bool:
-    _configure_git_identity(repo_root, runner)
+    configure_github_actions_git_identity(
+        repo_root=repo_root,
+        runner=runner,
+        error_factory=KmLatestSyncError,
+        include_command=False,
+    )
     _run_checked(
         runner,
         ["git", "add", "-A", "--", "."],
@@ -536,46 +512,6 @@ def _ensure_git_repo_is_clean(repo_root: Path, runner: CommandRunner) -> None:
     )
     if status.stdout.strip():
         raise KmLatestSyncError("Repository has uncommitted changes; refusing latest-KM sync")
-
-
-def _configure_git_identity(repo_root: Path, runner: CommandRunner) -> None:
-    _run_checked(
-        runner,
-        ["git", "config", "user.name", GITHUB_BOT_NAME],
-        cwd=repo_root,
-        description="configure git bot name",
-    )
-    _run_checked(
-        runner,
-        ["git", "config", "user.email", GITHUB_BOT_EMAIL],
-        cwd=repo_root,
-        description="configure git bot email",
-    )
-
-
-def _run_checked(
-    runner: CommandRunner,
-    args: Sequence[str],
-    *,
-    cwd: Path,
-    description: str,
-    env: Mapping[str, str] | None = None,
-    echo_output: bool = False,
-) -> subprocess.CompletedProcess[str]:
-    result = runner(args, cwd=cwd, env=env)
-    if echo_output:
-        _print_process_output(result)
-    if result.returncode == 0:
-        return result
-    output = (result.stderr or result.stdout or "").strip()
-    raise KmLatestSyncError(f"Failed to {description}: {output}")
-
-
-def _print_process_output(result: subprocess.CompletedProcess[str]) -> None:
-    if result.stdout:
-        print(result.stdout, end="" if result.stdout.endswith("\n") else "\n")
-    if result.stderr:
-        print(result.stderr, end="" if result.stderr.endswith("\n") else "\n")
 
 
 def _resolve_repo_path(repo_root: Path, path: Path) -> Path:

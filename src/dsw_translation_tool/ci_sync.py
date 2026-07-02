@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
-import os
 import re
-import subprocess
-from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
 
+from .command import (
+    CommandRunner,
+    configure_github_actions_git_identity,
+    default_command_runner,
+    make_checked_runner,
+)
 from .constants import SHARED_BLOCK_CONTEXT_FILENAME, TRANSLATION_FILENAME
 from .layout import (
     DEFAULT_MODEL_PATH,
@@ -21,8 +23,6 @@ from .layout import (
 from .localize_merge import LocalizePoMerger
 
 DEFAULT_SYNC_COMMIT_MESSAGE = "chore(sync): refresh translation artifacts"
-GITHUB_BOT_NAME = "github-actions[bot]"
-GITHUB_BOT_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com"
 RESTORABLE_SYNC_FILENAMES = frozenset(
     {
         TRANSLATION_FILENAME,
@@ -32,30 +32,11 @@ RESTORABLE_SYNC_FILENAMES = frozenset(
 SYNC_FILE_LINE_RE = re.compile(r"^File: (?P<path>.+)$", re.MULTILINE)
 
 
-class CommandRunner(Protocol):
-    """Protocol for subprocess execution used by the CI sync helper."""
-
-    def __call__(
-        self,
-        args: Sequence[str],
-        *,
-        cwd: Path,
-        env: Mapping[str, str] | None = None,
-    ) -> subprocess.CompletedProcess[str]:
-        """Run one command and return the completed-process result.
-
-        Args:
-            args: Command argument vector.
-            cwd: Working directory for the command.
-            env: Optional environment overrides.
-
-        Returns:
-            Completed process result.
-        """
-
-
 class CiSyncError(RuntimeError):
     """Raised when CI sync-and-commit automation cannot complete."""
+
+
+_run_checked = make_checked_runner(CiSyncError, include_command=True)
 
 
 @dataclass(frozen=True)
@@ -308,36 +289,6 @@ class CiSyncCommitConfig:
             )
 
 
-def default_command_runner(
-    args: Sequence[str],
-    *,
-    cwd: Path,
-    env: Mapping[str, str] | None = None,
-) -> subprocess.CompletedProcess[str]:
-    """Run one subprocess command for CI sync orchestration.
-
-    Args:
-        args: Command argument vector.
-        cwd: Working directory for the command.
-        env: Optional environment overrides.
-
-    Returns:
-        Completed process result.
-    """
-
-    command_env = os.environ.copy()
-    if env:
-        command_env.update(env)
-    return subprocess.run(
-        list(args),
-        cwd=str(cwd),
-        env=command_env,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-
-
 def run_ci_sync_commit(
     config: CiSyncCommitConfig,
     *,
@@ -388,7 +339,12 @@ def run_ci_sync_commit(
         print("[ci-sync] No tracked translation changes detected after sync.")
         return False
 
-    _configure_git_identity(config, runner)
+    configure_github_actions_git_identity(
+        repo_root=config.host_repo_dir,
+        runner=runner,
+        error_factory=CiSyncError,
+        include_command=True,
+    )
     _run_checked(
         runner,
         ["git", "add", "--", config.translation_root_arg],
@@ -620,34 +576,6 @@ def _translation_root_has_tracked_changes(
     return bool(result.stdout.strip())
 
 
-def _configure_git_identity(
-    config: CiSyncCommitConfig,
-    runner: CommandRunner,
-) -> None:
-    """Configure the GitHub Actions bot identity inside the host repository.
-
-    Args:
-        config: Sync-and-commit configuration.
-        runner: Injectable subprocess runner.
-
-    Raises:
-        CiSyncError: If git config fails.
-    """
-
-    _run_checked(
-        runner,
-        ["git", "config", "user.name", GITHUB_BOT_NAME],
-        cwd=config.host_repo_dir,
-        description="configure git bot name",
-    )
-    _run_checked(
-        runner,
-        ["git", "config", "user.email", GITHUB_BOT_EMAIL],
-        cwd=config.host_repo_dir,
-        description="configure git bot email",
-    )
-
-
 def _extract_origin_restore_candidate(
     error_message: str,
     config: CiSyncCommitConfig,
@@ -729,56 +657,3 @@ def _is_relative_to(path: Path, root: Path) -> bool:
     except ValueError:
         return False
     return True
-
-
-def _run_checked(
-    runner: CommandRunner,
-    args: Sequence[str],
-    *,
-    cwd: Path,
-    description: str,
-    env: Mapping[str, str] | None = None,
-    echo_output: bool = False,
-) -> subprocess.CompletedProcess[str]:
-    """Run one command and raise a readable error on failure.
-
-    Args:
-        runner: Injectable subprocess runner.
-        args: Command argument vector.
-        cwd: Working directory for the command.
-        description: Human-readable operation description.
-        env: Optional environment overrides.
-        echo_output: Whether stdout/stderr should be relayed to the current
-            process output stream.
-
-    Returns:
-        Completed process result.
-
-    Raises:
-        CiSyncError: If the command exits with a non-zero status.
-    """
-
-    result = runner(args, cwd=cwd, env=env)
-    if echo_output:
-        _print_process_output(result)
-    if result.returncode == 0:
-        return result
-
-    output = (result.stderr or result.stdout or "").strip()
-    command = " ".join(str(part) for part in args)
-    if output:
-        raise CiSyncError(f"Failed to {description}: {command}\n{output}")
-    raise CiSyncError(f"Failed to {description}: {command}")
-
-
-def _print_process_output(result: subprocess.CompletedProcess[str]) -> None:
-    """Relay captured subprocess output to the current stdout/stderr.
-
-    Args:
-        result: Completed process whose output should be printed.
-    """
-
-    if result.stdout:
-        print(result.stdout, end="")
-    if result.stderr:
-        print(result.stderr, end="")
