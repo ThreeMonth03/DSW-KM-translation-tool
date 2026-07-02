@@ -22,7 +22,11 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("--config", default="translation-config.yml")
     parser.add_argument("--repo-root", default=".")
     parser.add_argument("--km-version", default=None)
-    parser.add_argument("--base-po", default=None)
+    parser.add_argument(
+        "--base-po",
+        required=True,
+        help="Previous Localize PO snapshot. The normal sync workflow passes a temporary file.",
+    )
     parser.add_argument("--latest-po", default=None)
     parser.add_argument("--repo-po", default=None)
     parser.add_argument("--out-po", default=None)
@@ -49,11 +53,7 @@ def main() -> None:
     version = args.km_version or repository_config.knowledge_model.supported_versions[-1]
     paths = version_paths(repository_config, version)
     result = LocalizePoMerger().merge(
-        base_po_path=_resolve_optional_repo_path(
-            repo_root,
-            args.base_po,
-            paths.localize_base_po_path,
-        ),
+        base_po_path=_resolve_repo_path(repo_root, Path(args.base_po)),
         latest_po_path=_resolve_optional_repo_path(
             repo_root,
             args.latest_po,

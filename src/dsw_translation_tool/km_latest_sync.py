@@ -6,6 +6,7 @@ import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import yaml
 
@@ -144,39 +145,42 @@ def sync_latest_km_version(
         km_version=registry_version,
         downloader=bundle_downloader,
     )
-    pull_localize_po(
-        config_path=resolved_config_path,
-        repo_root=host_repo,
-        km_version=registry_version,
-        downloader=localize_downloader,
-    )
-    _run_validate_config(
-        repo_root=host_repo,
-        tooling_repo=tooling_root,
-        config_path=config_path,
-        runner=run,
-    )
-    _run_export_tree(
-        repo_root=host_repo,
-        tooling_repo=tooling_root,
-        config_path=resolved_config_path,
-        version=registry_version,
-        runner=run,
-    )
-    _run_sync_merge_build_and_tests(
-        repo_root=host_repo,
-        tooling_repo=tooling_root,
-        config_path=config_path,
-        version=registry_version,
-        runner=run,
-    )
-    _run_alignment_check(
-        repo_root=host_repo,
-        tooling_repo=tooling_root,
-        config_path=config_path,
-        version=registry_version,
-        runner=run,
-    )
+    with TemporaryDirectory(prefix="dsw-localize-") as temp_dir:
+        pull_result = pull_localize_po(
+            config_path=resolved_config_path,
+            repo_root=host_repo,
+            km_version=registry_version,
+            downloader=localize_downloader,
+            base_snapshot_path=Path(temp_dir) / "base.po",
+        )
+        _run_validate_config(
+            repo_root=host_repo,
+            tooling_repo=tooling_root,
+            config_path=config_path,
+            runner=run,
+        )
+        _run_export_tree(
+            repo_root=host_repo,
+            tooling_repo=tooling_root,
+            config_path=resolved_config_path,
+            version=registry_version,
+            runner=run,
+        )
+        _run_sync_merge_build_and_tests(
+            repo_root=host_repo,
+            tooling_repo=tooling_root,
+            config_path=config_path,
+            version=registry_version,
+            localize_base_po_path=pull_result.base_po_path,
+            runner=run,
+        )
+        _run_alignment_check(
+            repo_root=host_repo,
+            tooling_repo=tooling_root,
+            config_path=config_path,
+            version=registry_version,
+            runner=run,
+        )
     committed = _commit_and_push(
         repo_root=host_repo,
         target_ref=push_ref,
@@ -347,6 +351,7 @@ def _run_sync_merge_build_and_tests(
     tooling_repo: Path,
     config_path: Path,
     version: str,
+    localize_base_po_path: Path | None,
     runner: CommandRunner,
 ) -> None:
     config = load_translation_repository_config(_resolve_repo_path(repo_root, config_path))
@@ -382,18 +387,23 @@ def _run_sync_merge_build_and_tests(
         description=f"sync translation artifacts for KM {version}",
         echo_output=True,
     )
+    if localize_base_po_path is None:
+        raise KmLatestSyncError("Missing transient Localize base PO for latest-KM merge")
+    merge_command = [
+        str(python),
+        "src/merge_localize_po.py",
+        "--repo-root",
+        str(repo_root),
+        "--config",
+        config_path.as_posix(),
+        "--km-version",
+        version,
+        "--base-po",
+        str(localize_base_po_path),
+    ]
     _run_checked(
         runner,
-        [
-            str(python),
-            "src/merge_localize_po.py",
-            "--repo-root",
-            str(repo_root),
-            "--config",
-            config_path.as_posix(),
-            "--km-version",
-            version,
-        ],
+        merge_command,
         cwd=tooling_repo,
         description=f"merge Localize PO for KM {version}",
         echo_output=True,

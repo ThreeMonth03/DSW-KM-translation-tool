@@ -28,7 +28,6 @@ def prepare_translation_repo_fixture(
 
     repo_root = workspace / "translation-repo"
     latest_po = repo_root / "sources" / "localize" / "zh_Hant" / "latest.po"
-    base_po = repo_root / "sources" / "localize" / "zh_Hant" / "base.po"
     source_km = repo_root / "sources" / "knowledge-models" / "dsw-root-2.7.0" / "dsw-root-2.7.0.km"
     final_po = repo_root / "builds" / "final_translated.po"
     final_km = repo_root / "builds" / "final_translated.km"
@@ -38,7 +37,6 @@ def prepare_translation_repo_fixture(
     source_km.parent.mkdir(parents=True, exist_ok=True)
     final_po.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(po_path, latest_po)
-    shutil.copyfile(po_path, base_po)
     shutil.copyfile(model_path, source_km)
 
     workflow.export_tree(

@@ -289,12 +289,13 @@ def test_ci_sync_commit_merges_localize_latest_before_building_km(workspace) -> 
     """
 
     config = build_ci_sync_config(workspace, translation_root=".")
-    base_po = Path("sources/localize/zh_Hant/base.po")
+    base_po = workspace / "tmp" / "localize-base.po"
     latest_po = Path("sources/localize/zh_Hant/latest.po")
     report_path = Path("reviews/localize_merge_report.json")
-    (config.host_repo_dir / base_po).parent.mkdir(parents=True)
+    base_po.parent.mkdir(parents=True)
+    (config.host_repo_dir / latest_po).parent.mkdir(parents=True)
     (config.host_repo_dir / report_path).parent.mkdir(parents=True)
-    write_po(config.host_repo_dir / base_po, [(UUID_A, "text", "Hello", "舊")])
+    write_po(base_po, [(UUID_A, "text", "Hello", "舊")])
     write_po(config.host_repo_dir / latest_po, [(UUID_A, "text", "Hello", "新")])
     config.final_po_path.parent.mkdir(parents=True)
     write_po(config.final_po_path, [(UUID_A, "text", "Hello", "舊")])

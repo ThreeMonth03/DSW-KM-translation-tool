@@ -71,7 +71,6 @@ def test_config_loader_normalizes_versions_and_paths(workspace: Path) -> None:
     paths = version_paths(config, "2.7.0")
     assert paths.package_id == "dsw:root:2.7.0"
     assert paths.source_km_path == Path("sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km")
-    assert paths.localize_base_po_path == Path("sources/localize/zh_Hant/base.po")
     assert paths.localize_latest_po_path == Path("sources/localize/zh_Hant/latest.po")
     assert paths.translation_tree_dir == Path("tree")
     assert paths.final_po_path == Path("builds/final_translated.po")
@@ -165,8 +164,8 @@ def test_repository_ci_sync_config_derives_tracking_branch_and_source_paths(
     assert config.source_km_path == Path(
         "sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km"
     )
-    assert config.localize_base_po_path == Path("sources/localize/zh_Hant/base.po")
-    assert config.localize_merge_report_path == Path("reviews/localize_merge_report.json")
+    assert config.localize_base_po_path is None
+    assert config.localize_merge_report_path is None
     assert config.localize_conflict_policy == "latest-wins"
     assert config.original_po_path == host_repo / "sources/localize/zh_Hant/latest.po"
     assert config.original_model_path == (
@@ -174,3 +173,29 @@ def test_repository_ci_sync_config_derives_tracking_branch_and_source_paths(
     )
     assert config.output_organization_id == "dsw"
     assert config.output_km_id == "root-zh-hant"
+
+
+def test_repository_ci_sync_config_accepts_transient_localize_base(
+    workspace: Path,
+) -> None:
+    """Verify callers can opt into Localize merge with a temporary base PO."""
+
+    host_repo = workspace / "translation-repo"
+    tooling_repo = workspace / "tooling-repo"
+    host_repo.mkdir()
+    tooling_repo.mkdir()
+    config_path = host_repo / "translation-config.yml"
+    transient_base = workspace / "tmp" / "base.po"
+    write_config(config_path, supported_versions=["2.7.0"])
+
+    config = build_repository_ci_sync_config(
+        host_repo_path=host_repo,
+        tooling_repo_path=tooling_repo,
+        config_path=Path("translation-config.yml"),
+        mode="schedule",
+        km_version="2.7.0",
+        localize_base_po_path=transient_base,
+    )
+
+    assert config.localize_base_po_path == transient_base
+    assert config.localize_merge_report_path == Path("reviews/localize_merge_report.json")

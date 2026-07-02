@@ -49,7 +49,8 @@ def main() -> None:
     print(f"Localize PO pull for KM {result.version}")
     print(f"  URL        : {result.url}")
     print(f"  Latest PO  : {result.latest_po_path}")
-    print(f"  Base PO    : {result.base_po_path}")
+    if result.base_po_path is not None:
+        print(f"  Merge base : {result.base_po_path}")
     print(f"  Downloaded : {result.bytes_downloaded} bytes")
     print(f"  Changed    : {result.changed}")
     print(f"  Initialized: {result.initialized}")

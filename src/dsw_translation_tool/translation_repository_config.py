@@ -75,7 +75,6 @@ class KmVersionWorkspacePaths:
     package_id: str
     source_slug: str
     source_km_path: Path
-    localize_base_po_path: Path
     localize_latest_po_path: Path
     translation_tree_dir: Path
     final_po_path: Path
@@ -225,7 +224,6 @@ def version_paths(config: TranslationRepositoryConfig, version: str) -> KmVersio
         package_id=package_id,
         source_slug=source_slug,
         source_km_path=Path("sources") / "knowledge-models" / source_slug / f"{source_slug}.km",
-        localize_base_po_path=Path("sources") / "localize" / target_lang / "base.po",
         localize_latest_po_path=Path("sources") / "localize" / target_lang / "latest.po",
         translation_tree_dir=Path("tree"),
         final_po_path=Path("builds") / "final_translated.po",

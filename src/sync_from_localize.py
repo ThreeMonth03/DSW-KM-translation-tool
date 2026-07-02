@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from dsw_translation_tool.ci_sync import (
     DEFAULT_SYNC_COMMIT_MESSAGE,
@@ -78,42 +79,47 @@ def main() -> None:
     tooling_repo = Path(args.tooling_repo).resolve()
     config_path = Path(args.config)
 
-    pull_result = pull_localize_po(
-        config_path=_resolve_host_path(host_repo, config_path),
-        repo_root=host_repo,
-        km_version=args.km_version,
-    )
-    print("Localize PO pull")
-    print(f"  Version         : {pull_result.version}")
-    print(f"  Changed         : {pull_result.changed}")
-    print(f"  Latest PO       : {pull_result.latest_po_path}")
+    with TemporaryDirectory(prefix="dsw-localize-") as temp_dir:
+        base_snapshot_path = Path(temp_dir) / "base.po"
+        pull_result = pull_localize_po(
+            config_path=_resolve_host_path(host_repo, config_path),
+            repo_root=host_repo,
+            km_version=args.km_version,
+            base_snapshot_path=base_snapshot_path,
+        )
+        print("Localize PO pull")
+        print(f"  Version         : {pull_result.version}")
+        print(f"  Changed         : {pull_result.changed}")
+        print(f"  Latest PO       : {pull_result.latest_po_path}")
+        print(f"  Merge base      : {pull_result.base_po_path}")
 
-    sync_config = build_repository_ci_sync_config(
-        host_repo_path=host_repo,
-        tooling_repo_path=tooling_repo,
-        config_path=config_path,
-        mode=args.mode,
-        km_version=args.km_version,
-        translation_root=args.translation_root,
-        target_ref=args.target_ref,
-        commit_message=args.commit_message,
-        restore_source_ref=args.restore_source_ref,
-    )
-    refresh_result = refresh_tree_from_localize(
-        config=sync_config,
-        km_version=pull_result.version,
-    )
-    print("Localize tree refresh")
-    print(f"  Version         : {refresh_result.version}")
-    print(f"  Tree            : {refresh_result.tree_dir}")
-    print(f"  Folders         : {refresh_result.folder_count}")
-    print(f"  Root folders    : {refresh_result.root_count}")
-    print(f"  Shared blocks   : {refresh_result.shared_block_file_count}")
+        sync_config = build_repository_ci_sync_config(
+            host_repo_path=host_repo,
+            tooling_repo_path=tooling_repo,
+            config_path=config_path,
+            mode=args.mode,
+            km_version=args.km_version,
+            translation_root=args.translation_root,
+            target_ref=args.target_ref,
+            commit_message=args.commit_message,
+            restore_source_ref=args.restore_source_ref,
+            localize_base_po_path=pull_result.base_po_path,
+        )
+        refresh_result = refresh_tree_from_localize(
+            config=sync_config,
+            km_version=pull_result.version,
+        )
+        print("Localize tree refresh")
+        print(f"  Version         : {refresh_result.version}")
+        print(f"  Tree            : {refresh_result.tree_dir}")
+        print(f"  Folders         : {refresh_result.folder_count}")
+        print(f"  Root folders    : {refresh_result.root_count}")
+        print(f"  Shared blocks   : {refresh_result.shared_block_file_count}")
 
-    try:
-        committed = run_ci_sync_commit(sync_config)
-    except CiSyncError as error:
-        raise SystemExit(str(error)) from error
+        try:
+            committed = run_ci_sync_commit(sync_config)
+        except CiSyncError as error:
+            raise SystemExit(str(error)) from error
 
     if committed:
         print("[localize-sync] Localize changes were committed and pushed to Git.")
