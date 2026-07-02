@@ -10,7 +10,19 @@ logic.
 
 .. toctree::
    :maxdepth: 2
-   :caption: API Reference
+   :caption: Maintainer Docs
+
+   maintainer/docs-index
+   maintainer/architecture
+   maintainer/command-reference
+   maintainer/development-guidelines
+   maintainer/localize-sync-runbook
+   maintainer/km-update-runbook
+   maintainer/security-and-permissions
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Developer API
 
    api/translation-workflow
    api/localize-sync

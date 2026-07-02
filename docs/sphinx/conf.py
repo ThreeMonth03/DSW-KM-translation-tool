@@ -16,10 +16,12 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
+    "myst_parser",
 ]
 
 exclude_patterns = ["_build"]
-html_theme = "alabaster"
+html_theme = "furo"
+html_title = "DSW Translation Tooling"
 
 autodoc_class_signature = "separated"
 autodoc_member_order = "bysource"
@@ -27,3 +29,6 @@ autodoc_typehints = "description"
 autodoc_typehints_format = "short"
 napoleon_google_docstring = True
 napoleon_numpy_docstring = False
+myst_enable_extensions = [
+    "colon_fence",
+]

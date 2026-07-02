@@ -2,6 +2,8 @@
 
 Python tooling for DSW Knowledge Model translation maintenance.
 
+Documentation site: https://www.threemonth03.com/DSW_Translation_tool/
+
 For zh-Hant production work, the latest translation state is maintained in
 Localize/Weblate. This repository provides automation and visualization around
 that workflow:
