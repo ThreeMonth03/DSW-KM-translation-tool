@@ -1,4 +1,10 @@
-"""Configuration helpers for KM translation repositories."""
+"""Configuration contract for dedicated KM translation repositories.
+
+The tooling repository is reusable, while each production translation
+repository provides a ``translation-config.yml`` file. This module validates
+that file and derives conventional artifact paths used by sync, report, and KM
+update commands.
+"""
 
 from __future__ import annotations
 

@@ -1,4 +1,10 @@
-"""Conservative three-way merge for Localize/Weblate PO updates."""
+"""Merge Weblate PO updates with repository-generated PO files.
+
+The sync workflow uses this module after it downloads a fresh Localize/Weblate
+PO snapshot and rebuilds a PO from the checked-in translation tree. The merge is
+download-only with respect to Weblate: it decides which text should be written
+to Git artifacts, but it never uploads translations back to the website.
+"""
 
 from __future__ import annotations
 

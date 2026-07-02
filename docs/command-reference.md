@@ -49,10 +49,14 @@ Important variables:
 
 ```shell
 PO=files/knowledge-models-common-dsw-knowledge-model-zh_Hant.po
-MODEL=files/dsw_root_2.7.0.km
+MODEL=files/<source-km>.km
 TARGET_LANG=zh_Hant
 OUTPUT_ROOT=translation/zh_Hant
 ```
+
+For production translation repositories, prefer `translation-config.yml` and
+the external-repository commands below instead of hard-coding a local `MODEL`
+path.
 
 Translation round-trip tests use the checked-in fixture under
 `tests/fixtures/translation_tree/zh_Hant/`. Override `DSW_TRANSLATION_OUTPUT_ROOT` when

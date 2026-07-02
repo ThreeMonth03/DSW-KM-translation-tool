@@ -8,6 +8,7 @@ command reference; durable design and operating procedures live here.
 
 | Task | Read |
 | --- | --- |
+| Get oriented before changing code | [First-Time Maintainer Guide](first-time-maintainer.md) |
 | Understand which module owns a behavior | [Architecture](architecture.md) |
 | Change code safely | [Development Guidelines](development-guidelines.md) |
 | Operate Localize/Weblate-to-Git sync | [Localize Sync Runbook](localize-sync-runbook.md) |
@@ -25,6 +26,8 @@ command reference; durable design and operating procedures live here.
   Python helpers with tests.
 - Keep root CLI scripts in `src/*.py` as small entry points; reusable behavior
   belongs in `src/dsw_translation_tool/`.
+- Give new maintainers a task-oriented path before sending them into the API
+  reference.
 - Document both the command and the failure mode when adding an automation
   helper.
 - Keep Sphinx pages focused on stable package modules. Put operational

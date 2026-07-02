@@ -19,6 +19,7 @@ GitHub Pages is enabled for the repository.
 
 Start here:
 
+- [First-Time Maintainer Guide](docs/first-time-maintainer.md)
 - [Documentation Index](docs/README.md)
 - [Architecture](docs/architecture.md)
 - [Development Guidelines](docs/development-guidelines.md)
