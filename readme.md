@@ -1,4 +1,4 @@
-## DSW Translation Tool
+# DSW Translation Tool
 
 Python tooling for DSW Knowledge Model translation maintenance.
 
