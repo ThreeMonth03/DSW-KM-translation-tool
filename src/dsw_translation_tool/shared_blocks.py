@@ -94,7 +94,7 @@ class SharedBlockRecord:
 
 
 class SharedBlocksCatalogParser:
-    """Parse shared-block collaboration artifacts into canonical translations.
+    """Parse shared-block translation artifacts into canonical translations.
 
     Args:
         source_lang: Source language code used by the markdown template.
@@ -574,7 +574,7 @@ def resolve_shared_blocks_backup_root(
 
 
 class SharedBlocksCatalogBuilder:
-    """Build shared-block collaboration artifacts from the current tree and PO.
+    """Build shared-block translation artifacts from the current tree and PO.
 
     Args:
         tree_repository: Translation tree repository used to scan the tree.

@@ -13,7 +13,7 @@ from dsw_translation_tool.ci_sync import (
 )
 from dsw_translation_tool.localize_sync import pull_localize_po
 from dsw_translation_tool.localize_tree_sync import refresh_tree_from_localize
-from dsw_translation_tool.versioned_ci_sync import build_versioned_ci_sync_config
+from dsw_translation_tool.repository_ci_sync import build_repository_ci_sync_config
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -88,7 +88,7 @@ def main() -> None:
     print(f"  Changed         : {pull_result.changed}")
     print(f"  Latest PO       : {pull_result.latest_po_path}")
 
-    sync_config = build_versioned_ci_sync_config(
+    sync_config = build_repository_ci_sync_config(
         host_repo_path=host_repo,
         tooling_repo_path=tooling_repo,
         config_path=config_path,

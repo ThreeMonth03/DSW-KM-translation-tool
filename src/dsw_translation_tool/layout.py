@@ -1,4 +1,4 @@
-"""Canonical path layout helpers for translation collaboration artifacts."""
+"""Canonical path layout helpers for local translation workspaces."""
 
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ DEFAULT_MODEL_PATH = Path("files/dsw_root_2.7.0.km")
 
 @dataclass(frozen=True)
 class TranslationOutputLayout:
-    """Describe the default collaboration output layout for one language.
+    """Describe the default local output layout for one language.
 
     Args:
-        output_root: Root directory containing the collaboration artifacts.
+        output_root: Root directory containing local translation files.
         target_lang: Target language code for this layout.
     """
 
@@ -104,7 +104,7 @@ class TranslationOutputLayout:
 
     @property
     def backup_root(self) -> Path:
-        """Return the local backup root for this collaboration tree."""
+        """Return the local backup root for this translation tree."""
 
         return self.output_root / "backups" / "tree"
 

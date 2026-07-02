@@ -147,7 +147,7 @@ def build_alignment_status_report(
                 actual_path=checked_in_localize_po,
                 guidance=(
                     "Run the Localize pull/sync workflow, then commit the refreshed "
-                    "sources/localize snapshot and generated artifacts."
+                    "sources/localize snapshot, tree, final PO, and final KM."
                 ),
             ),
             _build_file_check(

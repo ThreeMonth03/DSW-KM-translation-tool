@@ -13,6 +13,7 @@ Commit source and durable examples:
 - `examples/`
 - `docs/`
 - small fixture inputs under `files/`
+- durable translation round-trip fixtures under `tests/fixtures/`
 
 Local generated state stays out of normal tooling commits:
 
@@ -21,6 +22,7 @@ Local generated state stays out of normal tooling commits:
 - `.pytest_cache/`
 - `.ruff_cache/`
 - local backup directories
+- local `translation/` workspaces
 
 Dedicated translation repositories may commit generated `tree/`, `builds/`, and
 `reviews/` artifacts because those files are the automation and visualization

@@ -1,4 +1,4 @@
-"""Markdown outline generation for collaboration trees."""
+"""Markdown outline generation for translation trees."""
 
 from __future__ import annotations
 

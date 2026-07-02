@@ -1,4 +1,4 @@
-"""Outline view models used by collaboration-tree markdown rendering."""
+"""Outline view models used by translation-tree markdown rendering."""
 
 from __future__ import annotations
 

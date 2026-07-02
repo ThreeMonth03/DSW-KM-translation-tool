@@ -22,5 +22,7 @@ dist/
 *.egg-info/
 
 output/
+translation/
 translation/**/backups/
 translation/**/reports/
+tests/fixtures/translation_tree/**/backups/

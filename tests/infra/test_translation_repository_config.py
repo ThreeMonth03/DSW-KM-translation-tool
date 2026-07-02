@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from dsw_translation_tool.repository_ci_sync import build_repository_ci_sync_config
 from dsw_translation_tool.translation_repository_config import (
     load_translation_repository_config,
     sorted_versions,
     tracking_branch,
     version_paths,
 )
-from dsw_translation_tool.versioned_ci_sync import build_versioned_ci_sync_config
 from tests.helpers import run_cli_script
 
 
@@ -135,7 +135,7 @@ def test_validate_translation_config_cli_reports_summary(
     assert "## KM Translation Config" in summary_path.read_text(encoding="utf-8")
 
 
-def test_versioned_ci_sync_config_derives_tracking_branch_and_source_paths(
+def test_repository_ci_sync_config_derives_tracking_branch_and_source_paths(
     workspace: Path,
 ) -> None:
     """Verify CI sync config can be derived from translation-config.yml."""
@@ -147,7 +147,7 @@ def test_versioned_ci_sync_config_derives_tracking_branch_and_source_paths(
     config_path = host_repo / "translation-config.yml"
     write_config(config_path, supported_versions=["2.6.0", "2.7.0"])
 
-    config = build_versioned_ci_sync_config(
+    config = build_repository_ci_sync_config(
         host_repo_path=host_repo,
         tooling_repo_path=tooling_repo,
         config_path=Path("translation-config.yml"),

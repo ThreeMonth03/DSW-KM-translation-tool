@@ -74,8 +74,7 @@ make compile
 
 ## Local Translation Tree Tools
 
-The local tree commands are still available for development, inspection, and
-repair workflows:
+The local tree commands are available for development, inspection, and repair:
 
 ```shell
 make export-tree
@@ -87,6 +86,6 @@ make status
 make test-translation
 ```
 
-Generated local files live under `translation/zh_Hant/` when this tooling repo
-is used as a standalone workspace. Production translation repositories use
-their own `translation-config.yml` and repository layout.
+By default these commands write to the ignored local workspace
+`translation/zh_Hant/`. Production translation repositories use their own
+`translation-config.yml` and repository layout.

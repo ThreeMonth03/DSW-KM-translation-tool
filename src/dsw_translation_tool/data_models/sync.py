@@ -56,7 +56,7 @@ class SharedStringSyncResult:
             when requested.
         written_tree_paths: Translation-tree markdown files rewritten during the
             synchronization cycle.
-        written_artifact_paths: Additional generated collaboration-artifact paths
+        written_artifact_paths: Additional generated translation-artifact paths
             refreshed during the synchronization cycle.
     """
 

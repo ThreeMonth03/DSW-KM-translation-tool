@@ -151,7 +151,7 @@ class TreeValidationResult:
 
 @dataclass(frozen=True)
 class OutlineBuildResult:
-    """Result of building a markdown outline for the collaboration tree.
+    """Result of building a markdown outline for the translation tree.
 
     Args:
         markdown_text: Generated outline markdown.
@@ -164,7 +164,7 @@ class OutlineBuildResult:
 
 @dataclass(frozen=True)
 class SharedBlocksBuildResult:
-    """Result of building shared-block collaboration markdown.
+    """Result of building shared-block translation markdown.
 
     Args:
         markdown_text: Generated shared-block markdown.

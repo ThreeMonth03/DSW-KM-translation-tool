@@ -81,7 +81,7 @@ def build_expected_fields_by_uuid(
 
 
 def read_tree_manifest(tree_dir: Path) -> dict[str, object]:
-    """Read the collaboration tree manifest from disk.
+    """Read the translation tree manifest from disk.
 
     Args:
         tree_dir: Translation tree root directory.
@@ -116,7 +116,7 @@ def inspect_translation_tree_disk_state(
         Parsed manifest and flattened translation field states.
     """
 
-    assert tree_dir.is_dir(), f"Missing collaboration tree directory: {tree_dir}"
+    assert tree_dir.is_dir(), f"Missing translation tree directory: {tree_dir}"
     manifest = read_tree_manifest(tree_dir)
     expected_nodes = manifest.get("nodes", {})
     assert isinstance(expected_nodes, dict), "Tree manifest nodes must be a dictionary"

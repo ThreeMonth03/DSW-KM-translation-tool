@@ -1,4 +1,4 @@
-"""Tests that validate checked-in collaboration output state."""
+"""Tests that validate the checked-in translation tree fixture."""
 
 from __future__ import annotations
 
@@ -22,26 +22,26 @@ from tests.helpers import (
 )
 
 
-def test_collaboration_tree_disk_state_matches_expected_uuid_field_mapping(
+def test_translation_fixture_tree_disk_state_matches_expected_uuid_field_mapping(
     workflow,
     po_entries,
-    collaboration_tree_dir,
+    translation_tree_dir,
 ) -> None:
-    """Verify that the checked-in collaboration tree is structurally intact.
+    """Verify that the checked-in tree fixture is structurally intact.
 
-    This test reads `translation/zh_Hant/tree` directly from disk. It is meant to
-    fail when a translator accidentally deletes files, removes folders, edits
-    outside the fenced blocks, or breaks the markdown template.
+    This test reads the real-tree fixture directly from disk. It is meant to
+    fail when files are deleted, folders are removed, fenced blocks are edited
+    incorrectly, or the markdown template breaks.
 
     Args:
         workflow: Workflow service fixture.
         po_entries: Flattened source PO entries fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
     """
 
     _, field_states = inspect_translation_tree_disk_state(
         workflow=workflow,
-        tree_dir=collaboration_tree_dir,
+        tree_dir=translation_tree_dir,
     )
     source_entry_map = build_entry_map(po_entries)
 
@@ -51,36 +51,36 @@ def test_collaboration_tree_disk_state_matches_expected_uuid_field_mapping(
         assert state.source_text == entry.msgid
 
 
-def test_collaboration_translation_markdown_headers_match_manifest_metadata(
-    collaboration_tree_dir,
+def test_translation_fixture_translation_markdown_headers_match_manifest_metadata(
+    translation_tree_dir,
 ) -> None:
-    """Verify that checked-in translation headers match manifest metadata.
+    """Verify that fixture translation headers match manifest metadata.
 
     Args:
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
     """
 
-    manifest = read_tree_manifest(collaboration_tree_dir)
+    manifest = read_tree_manifest(translation_tree_dir)
     for entity_uuid, node in manifest["nodes"].items():
         if not node.get("fields"):
             continue
-        translation_path = collaboration_tree_dir / node["path"] / "translation.md"
+        translation_path = translation_tree_dir / node["path"] / "translation.md"
         header_uuid, header_event_type = read_translation_markdown_header(translation_path)
         assert header_uuid == entity_uuid
         assert header_event_type == node.get("eventType")
 
 
-def test_collaboration_tree_and_generated_po_stay_in_sync(
+def test_translation_fixture_tree_and_generated_po_stay_in_sync(
     workflow,
     po_path,
     po_entries,
     model_path,
-    collaboration_tree_dir,
-    collaboration_final_po_path,
+    translation_tree_dir,
+    translation_final_po_path,
 ) -> None:
-    """Verify that checked-in tree translations match the generated PO file.
+    """Verify that fixture tree translations match the generated PO file.
 
-    This test is intentionally strict for collaboration workflows. If someone
+    This test is intentionally strict for translation-tree workflows. If someone
     edits `translation.md` but forgets to run `make sync`, `make sync-watch`,
     or `make tree-to-po`, the test must fail and point at the mismatch.
 
@@ -89,28 +89,28 @@ def test_collaboration_tree_and_generated_po_stay_in_sync(
         po_path: Fixture PO file path.
         po_entries: Flattened source PO entries fixture.
         model_path: Fixture KM file path.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
-        collaboration_final_po_path: Checked-in generated PO path.
+        translation_tree_dir: Checked-in tree fixture directory.
+        translation_final_po_path: Checked-in generated PO fixture path.
     """
 
     manifest, field_states = inspect_translation_tree_disk_state(
         workflow=workflow,
-        tree_dir=collaboration_tree_dir,
+        tree_dir=translation_tree_dir,
     )
-    assert collaboration_final_po_path.exists(), (
-        "Missing generated collaboration PO file: "
-        f"{collaboration_final_po_path}\n"
+    assert translation_final_po_path.exists(), (
+        "Missing generated fixture PO file: "
+        f"{translation_final_po_path}\n"
         "Run `make sync` or `make tree-to-po` before running translation tests."
     )
 
-    po_entry_map = build_entry_map(parse_po_entries(collaboration_final_po_path))
+    po_entry_map = build_entry_map(parse_po_entries(translation_final_po_path))
     source_entry_map = build_entry_map(po_entries)
 
     assert set(po_entry_map) == set(field_states)
     for key, state in field_states.items():
         uuid, field = key
         node = manifest["nodes"][uuid]
-        translation_path = collaboration_tree_dir / node["path"] / "translation.md"
+        translation_path = translation_tree_dir / node["path"] / "translation.md"
         built_entry = po_entry_map[key]
         source_entry = source_entry_map[key]
         assert built_entry.msgid == source_entry.msgid
@@ -126,7 +126,7 @@ def test_collaboration_tree_and_generated_po_stay_in_sync(
         )
 
     report = workflow.validate_po_against_model(
-        str(collaboration_final_po_path),
+        str(translation_final_po_path),
         str(model_path),
     )
     assert report["missingEntities"] == 0
@@ -135,10 +135,10 @@ def test_collaboration_tree_and_generated_po_stay_in_sync(
 
     review = workflow.review_po_changes(
         original_po_path=str(po_path),
-        generated_po_path=str(collaboration_final_po_path),
+        generated_po_path=str(translation_final_po_path),
     )
     assert review.msgstr_only, (
-        "Generated collaboration PO changed more than msgstr blocks.\n"
+        "Generated fixture PO changed more than msgstr blocks.\n"
         f"Changed msgid blocks: {review.changed_msgid_blocks}\n"
         f"Changed reference blocks: {review.changed_reference_blocks}\n"
         f"Changed fuzzy blocks: {review.changed_fuzzy_blocks}\n"
@@ -147,75 +147,75 @@ def test_collaboration_tree_and_generated_po_stay_in_sync(
     )
 
 
-def test_collaboration_generated_diff_matches_current_po_review(
+def test_translation_fixture_generated_diff_matches_current_po_review(
     workflow,
     po_path,
-    collaboration_final_po_path,
-    collaboration_diff_path,
+    translation_final_po_path,
+    translation_diff_path,
 ) -> None:
-    """Verify that the checked-in diff matches the current generated PO review.
+    """Verify that the fixture diff matches the current generated PO review.
 
     Args:
         workflow: Workflow service fixture.
         po_path: Fixture PO file path.
-        collaboration_final_po_path: Checked-in generated PO path.
-        collaboration_diff_path: Checked-in generated diff path.
+        translation_final_po_path: Checked-in generated PO fixture path.
+        translation_diff_path: Checked-in generated diff fixture path.
     """
 
-    assert collaboration_final_po_path.exists(), (
-        f"Missing generated collaboration PO file: {collaboration_final_po_path}"
+    assert translation_final_po_path.exists(), (
+        f"Missing generated fixture PO file: {translation_final_po_path}"
     )
-    assert collaboration_diff_path.exists(), (
-        "Missing generated collaboration diff file: "
-        f"{collaboration_diff_path}\n"
+    assert translation_diff_path.exists(), (
+        "Missing generated fixture diff file: "
+        f"{translation_diff_path}\n"
         "Run `make sync` or `make review-po` before running translation tests."
     )
 
     review = workflow.review_po_changes(
         original_po_path=str(po_path),
-        generated_po_path=str(collaboration_final_po_path),
+        generated_po_path=str(translation_final_po_path),
     )
-    recorded_diff = collaboration_diff_path.read_text(encoding="utf-8")
+    recorded_diff = translation_diff_path.read_text(encoding="utf-8")
 
     assert recorded_diff == review.diff_text, (
         "Checked-in diff file does not match the current PO review output.\n"
-        f"Diff file: {collaboration_diff_path}\n"
-        f"Generated PO: {collaboration_final_po_path}\n"
+        f"Diff file: {translation_diff_path}\n"
+        f"Generated PO: {translation_final_po_path}\n"
         "Run `make sync` or `make review-po` to refresh the diff."
     )
 
 
-def test_collaboration_outline_matches_current_tree_progress(
+def test_translation_fixture_outline_matches_current_tree_progress(
     workflow,
-    collaboration_tree_dir,
-    collaboration_outline_path,
+    translation_tree_dir,
+    translation_outline_path,
 ) -> None:
-    """Verify that the checked-in outline matches the current tree state.
+    """Verify that the fixture outline matches the current tree state.
 
     Args:
         workflow: Workflow service fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
-        collaboration_outline_path: Checked-in outline markdown path.
+        translation_tree_dir: Checked-in tree fixture directory.
+        translation_outline_path: Checked-in outline markdown path.
     """
 
-    assert collaboration_outline_path.exists(), (
-        "Missing collaboration outline markdown file: "
-        f"{collaboration_outline_path}\n"
+    assert translation_outline_path.exists(), (
+        "Missing fixture outline markdown file: "
+        f"{translation_outline_path}\n"
         "Run `make sync` before running translation tests."
     )
 
-    generated_outline_path = collaboration_outline_path.with_name(".outline.test.generated.md")
+    generated_outline_path = translation_outline_path.with_name(".outline.test.generated.md")
     try:
         result = build_outline_markdown(
             workflow=workflow,
-            tree_dir=collaboration_tree_dir,
+            tree_dir=translation_tree_dir,
             output_outline_path=generated_outline_path,
         )
-        recorded_outline = collaboration_outline_path.read_text(encoding="utf-8")
+        recorded_outline = translation_outline_path.read_text(encoding="utf-8")
 
         assert recorded_outline == result.markdown_text, (
             "Checked-in outline markdown does not match the current tree state.\n"
-            f"Outline file: {collaboration_outline_path}\n"
+            f"Outline file: {translation_outline_path}\n"
             f"Generated file: {generated_outline_path}\n"
             "Run `make sync` to refresh the outline."
         )
@@ -227,24 +227,24 @@ def test_collaboration_outline_matches_current_tree_progress(
         generated_outline_path.unlink(missing_ok=True)
 
 
-def test_collaboration_shared_block_translations_are_fully_synchronized_in_tree(
+def test_translation_fixture_shared_block_translations_are_fully_synchronized_in_tree(
     workflow,
     po_path,
-    collaboration_tree_dir,
-    collaboration_shared_blocks_dir,
+    translation_tree_dir,
+    translation_shared_blocks_dir,
 ) -> None:
-    """Verify every shared PO group matches every linked tree field.
+    """Verify every shared PO group matches every linked fixture field.
 
     Args:
         workflow: Workflow service fixture.
         po_path: Fixture PO file path.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
-        collaboration_shared_blocks_dir: Checked-in shared-block directory path.
+        translation_tree_dir: Checked-in tree fixture directory.
+        translation_shared_blocks_dir: Checked-in shared-block directory path.
     """
 
     _, field_states = inspect_translation_tree_disk_state(
         workflow=workflow,
-        tree_dir=collaboration_tree_dir,
+        tree_dir=translation_tree_dir,
     )
     shared_blocks = [block for block in parse_po_blocks(po_path) if len(block.references) >= 2]
     expected_group_keys = {
@@ -252,7 +252,7 @@ def test_collaboration_shared_block_translations_are_fully_synchronized_in_tree(
         for block in shared_blocks
     }
     shared_blocks_map = SharedBlocksCatalogParser().parse(
-        str(collaboration_shared_blocks_dir),
+        str(translation_shared_blocks_dir),
         expected_group_keys=expected_group_keys,
     )
 
@@ -270,7 +270,7 @@ def test_collaboration_shared_block_translations_are_fully_synchronized_in_tree(
         for reference in block.references:
             tree_key = (reference.uuid, reference.field)
             assert tree_key in field_states, (
-                "Shared-block reference is missing from the collaboration tree.\n"
+                "Shared-block reference is missing from the translation tree.\n"
                 f"Group: {serialized_group_key}\n"
                 f"Missing tree key: {tree_key}"
             )
@@ -286,43 +286,43 @@ def test_collaboration_shared_block_translations_are_fully_synchronized_in_tree(
             )
 
 
-def test_collaboration_shared_blocks_outline_matches_current_tree_state(
+def test_translation_fixture_shared_blocks_outline_matches_current_tree_state(
     workflow,
     po_path,
-    collaboration_tree_dir,
-    collaboration_shared_blocks_outline_path,
+    translation_tree_dir,
+    translation_shared_blocks_outline_path,
 ) -> None:
-    """Verify that checked-in shared-block outline matches the current tree.
+    """Verify that the fixture shared-block outline matches the current tree.
 
     Args:
         workflow: Workflow service fixture.
         po_path: Fixture PO file path.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
-        collaboration_shared_blocks_outline_path: Checked-in shared-block
+        translation_tree_dir: Checked-in tree fixture directory.
+        translation_shared_blocks_outline_path: Checked-in shared-block
             overview markdown path.
     """
 
-    assert collaboration_shared_blocks_outline_path.exists(), (
-        "Missing collaboration shared-block outline markdown file: "
-        f"{collaboration_shared_blocks_outline_path}\n"
+    assert translation_shared_blocks_outline_path.exists(), (
+        "Missing fixture shared-block outline markdown file: "
+        f"{translation_shared_blocks_outline_path}\n"
         "Run `make sync` or `make export-tree` before running translation tests."
     )
 
-    generated_outline_path = collaboration_shared_blocks_outline_path.with_name(
+    generated_outline_path = translation_shared_blocks_outline_path.with_name(
         ".shared_blocks_outline.test.generated.md"
     )
     try:
         result = build_shared_blocks_outline_markdown(
             workflow=workflow,
-            tree_dir=collaboration_tree_dir,
+            tree_dir=translation_tree_dir,
             original_po_path=po_path,
             output_shared_blocks_outline_path=generated_outline_path,
         )
-        recorded_outline = collaboration_shared_blocks_outline_path.read_text(encoding="utf-8")
+        recorded_outline = translation_shared_blocks_outline_path.read_text(encoding="utf-8")
         assert recorded_outline == result.markdown_text, (
             "Checked-in shared-block outline markdown does not match the current "
             "tree state.\n"
-            f"Outline file: {collaboration_shared_blocks_outline_path}\n"
+            f"Outline file: {translation_shared_blocks_outline_path}\n"
             f"Generated file: {generated_outline_path}\n"
             "Run `make sync` to refresh the shared-block outline."
         )
@@ -365,31 +365,31 @@ def _po_block_skeleton(block) -> tuple[tuple[str, ...], str, bool]:
     )
 
 
-def test_collaboration_generated_po_preserves_translation_block_count(
+def test_translation_fixture_generated_po_preserves_translation_block_count(
     po_path,
-    collaboration_final_po_path,
+    translation_final_po_path,
 ) -> None:
-    """Verify that generated collaboration PO keeps the original block count.
+    """Verify that the generated fixture PO keeps the original block count.
 
     This protects shared PO blocks from being silently split into extra
-    translation strings in the checked-in collaboration output.
+    translation strings in the checked-in fixture output.
 
     Args:
         po_path: Fixture PO file path.
-        collaboration_final_po_path: Checked-in generated PO path.
+        translation_final_po_path: Checked-in generated PO fixture path.
     """
 
-    assert collaboration_final_po_path.exists(), (
-        "Missing generated collaboration PO file: "
-        f"{collaboration_final_po_path}\n"
+    assert translation_final_po_path.exists(), (
+        "Missing generated fixture PO file: "
+        f"{translation_final_po_path}\n"
         "Run `make sync` or `make tree-to-po` before running translation tests."
     )
 
     source_blocks = parse_po_blocks(po_path)
-    generated_blocks = parse_po_blocks(collaboration_final_po_path)
+    generated_blocks = parse_po_blocks(translation_final_po_path)
 
     assert len(generated_blocks) == len(source_blocks), (
-        "Generated collaboration PO does not preserve the original translation "
+        "Generated fixture PO does not preserve the original translation "
         "string count.\n"
         f"Source PO blocks: {len(source_blocks)}\n"
         f"Generated PO blocks: {len(generated_blocks)}\n"
@@ -400,28 +400,28 @@ def test_collaboration_generated_po_preserves_translation_block_count(
     assert [_po_block_skeleton(block) for block in generated_blocks] == [
         _po_block_skeleton(block) for block in source_blocks
     ], (
-        "Generated collaboration PO changed non-translation content.\n"
+        "Generated fixture PO changed non-translation content.\n"
         "Only `msgstr` values are allowed to differ from the source PO.\n"
         "Check for changed references, `msgid`, fuzzy flags, block order, or "
         "unexpected shared-block splitting."
     )
 
 
-def test_collaboration_tree_validation_catches_missing_translation_markdown(
+def test_translation_fixture_tree_validation_catches_missing_translation_markdown(
     workflow,
-    collaboration_tree_dir,
+    translation_tree_dir,
     workspace,
 ) -> None:
     """Verify that translation validation fails when `translation.md` is deleted.
 
     Args:
         workflow: Workflow service fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
         workspace: Per-test temporary workspace fixture.
     """
 
     tree_copy = workspace / "tree"
-    shutil.copytree(collaboration_tree_dir, tree_copy)
+    shutil.copytree(translation_tree_dir, tree_copy)
 
     manifest = read_tree_manifest(tree_copy)
     entity_uuid, node = next(
@@ -437,21 +437,21 @@ def test_collaboration_tree_validation_catches_missing_translation_markdown(
         )
 
 
-def test_collaboration_tree_validation_catches_missing_node_folder(
+def test_translation_fixture_tree_validation_catches_missing_node_folder(
     workflow,
-    collaboration_tree_dir,
+    translation_tree_dir,
     workspace,
 ) -> None:
     """Verify that translation validation fails when a node folder is deleted.
 
     Args:
         workflow: Workflow service fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
         workspace: Per-test temporary workspace fixture.
     """
 
     tree_copy = workspace / "tree"
-    shutil.copytree(collaboration_tree_dir, tree_copy)
+    shutil.copytree(translation_tree_dir, tree_copy)
 
     manifest = read_tree_manifest(tree_copy)
     _, node = next(
@@ -466,21 +466,21 @@ def test_collaboration_tree_validation_catches_missing_node_folder(
         )
 
 
-def test_collaboration_tree_validation_catches_text_outside_fence(
+def test_translation_fixture_tree_validation_catches_text_outside_fence(
     workflow,
-    collaboration_tree_dir,
+    translation_tree_dir,
     workspace,
 ) -> None:
     """Verify that translation validation fails on text appended outside fences.
 
     Args:
         workflow: Workflow service fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
         workspace: Per-test temporary workspace fixture.
     """
 
     tree_copy = workspace / "tree"
-    shutil.copytree(collaboration_tree_dir, tree_copy)
+    shutil.copytree(translation_tree_dir, tree_copy)
 
     manifest = read_tree_manifest(tree_copy)
     _, node = next(
@@ -495,21 +495,21 @@ def test_collaboration_tree_validation_catches_text_outside_fence(
         )
 
 
-def test_collaboration_tree_validation_catches_broken_fence(
+def test_translation_fixture_tree_validation_catches_broken_fence(
     workflow,
-    collaboration_tree_dir,
+    translation_tree_dir,
     workspace,
 ) -> None:
     """Verify that translation validation fails when a closing fence is broken.
 
     Args:
         workflow: Workflow service fixture.
-        collaboration_tree_dir: Checked-in collaboration tree directory.
+        translation_tree_dir: Checked-in tree fixture directory.
         workspace: Per-test temporary workspace fixture.
     """
 
     tree_copy = workspace / "tree"
-    shutil.copytree(collaboration_tree_dir, tree_copy)
+    shutil.copytree(translation_tree_dir, tree_copy)
 
     manifest = read_tree_manifest(tree_copy)
     _, node = next(

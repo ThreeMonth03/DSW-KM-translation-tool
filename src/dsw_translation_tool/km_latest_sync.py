@@ -428,7 +428,7 @@ def _run_sync_merge_build_and_tests(
         runner,
         [str(python), "-m", "pytest", "tests/translation"],
         cwd=tooling_repo,
-        env={"DSW_COLLAB_OUTPUT_ROOT": str(repo_root)},
+        env={"DSW_TRANSLATION_OUTPUT_ROOT": str(repo_root)},
         description=f"run translation tests for KM {version}",
         echo_output=True,
     )

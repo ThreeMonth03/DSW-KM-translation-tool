@@ -518,7 +518,7 @@ class TranslationWorkflowService:
         tree_dir: str,
         out_outline_path: str,
     ) -> OutlineBuildResult:
-        """Build a markdown outline for the current collaboration tree.
+        """Build a markdown outline for the current translation tree.
 
         Args:
             tree_dir: Translation tree directory.

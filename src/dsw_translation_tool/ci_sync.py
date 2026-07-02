@@ -326,7 +326,7 @@ def run_ci_sync_commit(
         _build_translation_test_command(config),
         cwd=config.tooling_repo_dir,
         env={
-            "DSW_COLLAB_OUTPUT_ROOT": str(config.translation_root_dir),
+            "DSW_TRANSLATION_OUTPUT_ROOT": str(config.translation_root_dir),
             "DSW_SOURCE_PO_PATH": str(config.original_po_path),
             "DSW_SOURCE_KM_PATH": str(config.original_model_path),
         },

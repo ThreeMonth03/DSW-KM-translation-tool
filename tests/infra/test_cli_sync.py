@@ -41,7 +41,7 @@ def test_sync_cli_seeds_local_backups_for_tree_without_tracked_backup_files(
     model_path,
     workspace,
 ) -> None:
-    """Verify that sync recreates local backups from a clean collaboration tree.
+    """Verify that sync recreates local backups from a clean translation tree.
 
     Args:
         repo_root: Repository root fixture.

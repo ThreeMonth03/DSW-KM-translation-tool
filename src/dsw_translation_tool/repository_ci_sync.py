@@ -12,7 +12,7 @@ from .translation_repository_config import (
 )
 
 
-def build_versioned_ci_sync_config(
+def build_repository_ci_sync_config(
     *,
     host_repo_path: Path,
     tooling_repo_path: Path,
@@ -31,7 +31,7 @@ def build_versioned_ci_sync_config(
     output_name: str | None = None,
     restore_source_ref: str | None = None,
 ) -> CiSyncCommitConfig:
-    """Build sync automation config for the latest-KM tracking branch.
+    """Build sync automation config from a translation repository config.
 
     Args:
         host_repo_path: Translation repository checkout path.

@@ -25,8 +25,8 @@ git diff --check
 
 ## Local Translation Tree
 
-These commands operate on the tooling repository's local
-`translation/zh_Hant/` workspace.
+These commands operate on an ignored local workspace. The default path is
+`translation/zh_Hant/`.
 
 ```shell
 make export-tree
@@ -49,6 +49,10 @@ MODEL=files/dsw_root_2.7.0.km
 TARGET_LANG=zh_Hant
 OUTPUT_ROOT=translation/zh_Hant
 ```
+
+Translation round-trip tests use the checked-in fixture under
+`tests/fixtures/translation_tree/zh_Hant/`. Override `DSW_TRANSLATION_OUTPUT_ROOT` when
+you intentionally want to test another workspace.
 
 ## External Translation Repository Validation
 

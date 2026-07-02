@@ -1,8 +1,7 @@
 # KM Update Runbook
 
 Use this runbook when the DSW Registry publishes a new Common DSW Knowledge
-Model. The production policy is latest-only: the translation repository tracks
-the current published KM rather than maintaining parallel version branches.
+Model. The production translation repository tracks the current published KM.
 
 ## When to Start
 

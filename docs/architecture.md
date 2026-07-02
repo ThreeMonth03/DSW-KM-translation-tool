@@ -14,6 +14,8 @@ when deciding where a change belongs.
 - `examples/` contains copy-ready workflow and config templates for dedicated
   translation repositories.
 - `files/` contains small default source PO/KM inputs for local use and tests.
+- `tests/fixtures/translation_tree/` contains a checked-in real-tree fixture used
+  by translation round-trip tests.
 - `tests/infra/` covers tooling, CLI, config, and automation behavior.
 - `tests/translation/` covers translation-tree and PO/KM round trips.
 
@@ -28,8 +30,8 @@ builds/
 reviews/
 ```
 
-The tooling repo should be able to run against that layout without copying
-production data into this repository.
+The tooling repo should be able to run against that layout without keeping
+production translation state in the repository root.
 
 ## PO, KM, and Tree Layer
 
@@ -64,8 +66,8 @@ These modules connect the translation repository to the Weblate website:
   the translation tree, the final PO, and the final KM are mutually aligned.
 - `localize_tree_sync.py`: force-refreshes `tree/` from the latest Weblate PO.
 - `localize_merge.py`: contains PO merge decisions.
-- `ci_sync.py`, `versioned_ci_sync.py`: rebuild generated artifacts and make
-  Git sync commits.
+- `ci_sync.py`, `repository_ci_sync.py`: rebuild the translation tree, final PO,
+  and final KM, then make Git sync commits.
 - `km_bundle_sync.py`, `km_latest_sync.py`, `km_registry.py`: support KM bundle
   discovery and update operations.
 - `command.py`: shared subprocess and Git identity helpers used by automation

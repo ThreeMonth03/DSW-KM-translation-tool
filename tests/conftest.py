@@ -17,7 +17,7 @@ SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-COLLAB_OUTPUT_ROOT_ENV = "DSW_COLLAB_OUTPUT_ROOT"
+TRANSLATION_OUTPUT_ROOT_ENV = "DSW_TRANSLATION_OUTPUT_ROOT"
 SOURCE_PO_PATH_ENV = "DSW_SOURCE_PO_PATH"
 SOURCE_KM_PATH_ENV = "DSW_SOURCE_KM_PATH"
 
@@ -84,27 +84,24 @@ def model_path(repo_root: Path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def collaboration_output_root(repo_root: Path) -> Path:
-    """Return the collaboration output root used by translation tests.
+def translation_output_root(repo_root: Path) -> Path:
+    """Return the fixture output root used by translation tests.
 
     Args:
         repo_root: Repository root fixture.
 
     Returns:
-        Absolute collaboration output root containing `tree/`, `builds/`, and
-        `reviews/`.
+        Absolute fixture root containing `tree/`, `builds/`, and `reviews/`.
     """
 
-    from dsw_translation_tool import DEFAULT_LAYOUT
-
-    configured_root = os.environ.get(COLLAB_OUTPUT_ROOT_ENV)
+    configured_root = os.environ.get(TRANSLATION_OUTPUT_ROOT_ENV)
     if configured_root:
         output_root = Path(configured_root)
         if not output_root.is_absolute():
             output_root = (repo_root / output_root).resolve()
         return output_root
 
-    return repo_root / DEFAULT_LAYOUT.output_root
+    return repo_root / "tests" / "fixtures" / "translation_tree" / "zh_Hant"
 
 
 def _resolve_fixture_path(repo_root: Path, configured_path: str) -> Path:
@@ -117,87 +114,87 @@ def _resolve_fixture_path(repo_root: Path, configured_path: str) -> Path:
 
 
 @pytest.fixture(scope="session")
-def collaboration_tree_dir(collaboration_output_root: Path) -> Path:
-    """Return the collaboration tree directory used by translation tests.
+def translation_tree_dir(translation_output_root: Path) -> Path:
+    """Return the fixture tree directory used by translation tests.
 
     Args:
-        collaboration_output_root: Collaboration output root fixture.
+        translation_output_root: Translation output root fixture.
 
     Returns:
-        Absolute collaboration tree path.
+        Absolute fixture tree path.
     """
 
-    return collaboration_output_root / "tree"
+    return translation_output_root / "tree"
 
 
 @pytest.fixture(scope="session")
-def collaboration_final_po_path(collaboration_output_root: Path) -> Path:
-    """Return the checked-in generated PO path for collaboration output.
+def translation_final_po_path(translation_output_root: Path) -> Path:
+    """Return the checked-in fixture PO output path.
 
     Args:
-        collaboration_output_root: Collaboration output root fixture.
+        translation_output_root: Translation output root fixture.
 
     Returns:
-        Absolute generated PO path to validate.
+        Absolute generated PO fixture path to validate.
     """
 
-    return collaboration_output_root / "builds" / "final_translated.po"
+    return translation_output_root / "builds" / "final_translated.po"
 
 
 @pytest.fixture(scope="session")
-def collaboration_diff_path(collaboration_output_root: Path) -> Path:
-    """Return the checked-in generated diff path for collaboration output.
+def translation_diff_path(translation_output_root: Path) -> Path:
+    """Return the checked-in fixture diff output path.
 
     Args:
-        collaboration_output_root: Collaboration output root fixture.
+        translation_output_root: Translation output root fixture.
 
     Returns:
-        Absolute generated diff path to validate.
+        Absolute generated diff fixture path to validate.
     """
 
-    return collaboration_output_root / "reviews" / "final_translated.diff"
+    return translation_output_root / "reviews" / "final_translated.diff"
 
 
 @pytest.fixture(scope="session")
-def collaboration_outline_path(collaboration_tree_dir: Path) -> Path:
-    """Return the checked-in outline markdown path for collaboration output.
+def translation_outline_path(translation_tree_dir: Path) -> Path:
+    """Return the checked-in fixture outline markdown path.
 
     Args:
-        collaboration_tree_dir: Collaboration tree directory fixture.
+        translation_tree_dir: Translation tree directory fixture.
 
     Returns:
         Absolute outline markdown path to validate.
     """
 
-    return collaboration_tree_dir / "outline.md"
+    return translation_tree_dir / "outline.md"
 
 
 @pytest.fixture(scope="session")
-def collaboration_shared_blocks_dir(collaboration_tree_dir: Path) -> Path:
+def translation_shared_blocks_dir(translation_tree_dir: Path) -> Path:
     """Return the checked-in canonical shared-block directory path.
 
     Args:
-        collaboration_tree_dir: Collaboration tree directory fixture.
+        translation_tree_dir: Translation tree directory fixture.
 
     Returns:
         Absolute shared-block directory path to validate.
     """
 
-    return collaboration_tree_dir / "shared_blocks"
+    return translation_tree_dir / "shared_blocks"
 
 
 @pytest.fixture(scope="session")
-def collaboration_shared_blocks_outline_path(collaboration_tree_dir: Path) -> Path:
+def translation_shared_blocks_outline_path(translation_tree_dir: Path) -> Path:
     """Return the checked-in shared-block outline markdown path.
 
     Args:
-        collaboration_tree_dir: Collaboration tree directory fixture.
+        translation_tree_dir: Translation tree directory fixture.
 
     Returns:
         Absolute shared-block outline markdown path to validate.
     """
 
-    return collaboration_tree_dir / "shared_blocks_outline.md"
+    return translation_tree_dir / "shared_blocks_outline.md"
 
 
 @pytest.fixture(scope="session")
