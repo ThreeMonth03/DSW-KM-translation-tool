@@ -14,8 +14,8 @@ when deciding where a change belongs.
 - `examples/` contains copy-ready workflow and config templates for dedicated
   translation repositories.
 - `files/` contains small default source PO/KM inputs for local use and tests.
-- `tests/fixtures/translation_tree/` contains a checked-in real-tree fixture used
-  by translation round-trip tests.
+- `tests/fixtures/translation_tree/` contains the checked-in tree, final PO, and
+  review diff used by translation round-trip tests.
 - `tests/infra/` covers tooling, CLI, config, and automation behavior.
 - `tests/translation/` covers translation-tree and PO/KM round trips.
 

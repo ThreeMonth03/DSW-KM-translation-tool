@@ -24,6 +24,10 @@ Local generated state stays out of normal tooling commits:
 - local backup directories
 - local `translation/` workspaces
 
+Translation round-trip fixtures keep the checked-in tree, final PO, and review
+diff. KM bundles are rebuilt by tests and workflows instead of stored in the
+fixture tree.
+
 Dedicated translation repositories may commit generated `tree/`, `builds/`, and
 `reviews/` artifacts because those files are the automation and visualization
 workspace for translators and maintainers.
