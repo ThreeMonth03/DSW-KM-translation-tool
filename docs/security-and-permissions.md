@@ -40,5 +40,5 @@ a newly published source KM bundle. It is not used for Weblate access.
 
 ## Public History
 
-Use forward commits for workflow or generated-artifact corrections on public
-branches.
+Use forward commits for workflow, build output, report, or documentation fixes
+on public branches.

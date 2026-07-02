@@ -56,7 +56,8 @@ The same workflow can also run `src/report_weblate_checks.py` with the Weblate
 query `has:check`. That catches website-side quality-check warnings that are
 not always visible from PO fuzzy flags alone. The check report is diagnostic and
 uses `--allow-api-failure` so Weblate API rate limits are captured in the
-report while Git sync monitoring continues.
+report while Git sync monitoring continues. Configure `LOCALIZE_API_TOKEN` if
+authenticated read-only Weblate API access is available.
 
 It requires only `contents: read`.
 
@@ -80,11 +81,6 @@ not change translations.
 Before a same-repository branch reaches `master`, the pull request writer pulls
 Weblate again and refreshes the branch. This makes the merge candidate include
 the latest website translation state.
-
-If branch protection blocks direct writer pushes, keep the same policy but
-switch the workflow to open or update an auto-merged sync pull request. The
-user-facing result should still be that Git mirrors Weblate without manual
-translation review in Git.
 
 Use forward commits for sync and workflow corrections on public branches.
 
