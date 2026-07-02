@@ -15,6 +15,7 @@ command reference; durable design and operating procedures live here.
 | Configure workflow permissions and secrets | [Security and Permissions](security-and-permissions.md) |
 | Monitor, automatically update, or manually repair a future KM version update | [KM Update Runbook](km-update-runbook.md) |
 | Find a Make target or CLI command | [Command Reference](command-reference.md) |
+| Browse developer API docs | `make docs`, then open `docs/sphinx/_build/html/index.html` |
 
 ## Maintenance Notes
 
@@ -26,3 +27,5 @@ command reference; durable design and operating procedures live here.
   belongs in `src/dsw_translation_tool/`.
 - Document both the command and the failure mode when adding an automation
   helper.
+- Keep Sphinx pages focused on stable package modules. Put operational
+  procedures in the Markdown runbooks.

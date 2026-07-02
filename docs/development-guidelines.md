@@ -43,6 +43,7 @@ workspace for translators and maintainers.
 - Add or update tests under `tests/translation/` when a change affects
   translator-facing tree files or PO/KM output.
 - Update docs in the same commit as behavior changes.
+- Update Sphinx pages or docstrings when stable package APIs change.
 
 ## Localize/Weblate Safety
 
@@ -65,6 +66,7 @@ Before pushing tooling changes:
 make format-check
 make lint
 make test
+make docs
 git diff --check
 ```
 

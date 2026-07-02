@@ -31,6 +31,9 @@ jobs:
       - name: Run linter
         run: make lint
 
+      - name: Build Sphinx docs
+        run: make docs
+
       - name: Run infrastructure unit tests
         run: make test-infra
 

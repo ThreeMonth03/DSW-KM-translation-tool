@@ -20,8 +20,12 @@ make lint
 make test
 make test-infra
 make test-translation
+make docs
 git diff --check
 ```
+
+`make docs` builds the Sphinx developer API reference into
+`docs/sphinx/_build/html/`.
 
 ## Local Translation Tree
 

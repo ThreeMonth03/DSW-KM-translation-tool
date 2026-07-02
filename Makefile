@@ -23,8 +23,12 @@ STATUS_LIMIT ?= 5
 SYNC_GROUP ?= shared-block
 LOCALIZE_PO ?= sources/localize/zh_Hant/latest.po
 LOCALIZE_STATUS_JSON ?= reviews/localize_status_report.json
+SPHINXBUILD ?= $(PYTHON) -m sphinx
+SPHINXOPTS ?= -W --keep-going
+DOCS_SOURCE ?= docs/sphinx
+DOCS_BUILD ?= docs/sphinx/_build/html
 
-.PHONY: help venv install-dev install-hooks compile format format-check lint test test-infra test-translation export-tree export-tree-force status localize-status sync sync-watch tree-to-po po-to-km review-po validate workflow
+.PHONY: help venv install-dev install-hooks compile format format-check lint test test-infra test-translation docs docs-clean export-tree export-tree-force status localize-status sync sync-watch tree-to-po po-to-km review-po validate workflow
 
 venv: $(VENV_PYTHON)
 
@@ -44,6 +48,8 @@ help:
 	'  test              Run all pytest suites' \
 	'  test-infra        Run infrastructure/CLI pytest suites' \
 	'  test-translation  Run translation consistency pytest suites' \
+	'  docs              Build Sphinx developer API docs into $(DOCS_BUILD)' \
+	'  docs-clean        Remove generated Sphinx docs' \
 	'  export-tree       Export PO + model into $(TREE_DIR) and refresh $(OUTLINE_MD) + $(TREE_DIR)/shared_blocks/' \
 	'  export-tree-force Force rebuild $(TREE_DIR) after confirmation' \
 	'  status            Show untranslated fields from $(TREE_DIR)' \
@@ -82,6 +88,12 @@ test-infra: venv
 
 test-translation: venv
 	$(PYTHON) -m pytest tests/translation
+
+docs: venv
+	$(SPHINXBUILD) $(SPHINXOPTS) -b html $(DOCS_SOURCE) $(DOCS_BUILD)
+
+docs-clean:
+	rm -rf docs/sphinx/_build
 
 export-tree: venv
 	$(PYTHON) src/po_json_tree.py \

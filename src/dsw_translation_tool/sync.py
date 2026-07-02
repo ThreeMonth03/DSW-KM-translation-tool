@@ -62,7 +62,7 @@ class SharedStringSynchronizer:
             tree_dir: Translation tree directory.
             original_po_path: Original PO file used as the grouping source.
             out_po_path: Optional output PO path to refresh after sync.
-        shared_blocks_path: Optional canonical shared-block directory path used
+            shared_blocks_path: Optional canonical shared-block directory path used
                 as the source for shared-block synchronization.
             group_by: Grouping strategy for shared strings.
 

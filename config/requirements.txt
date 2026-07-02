@@ -4,4 +4,5 @@ pre-commit>=4,<5
 PyYAML==6.0.3
 pytest>=8,<9
 ruff>=0.12,<1.0
+Sphinx>=8,<9
 watchdog>=6,<7
