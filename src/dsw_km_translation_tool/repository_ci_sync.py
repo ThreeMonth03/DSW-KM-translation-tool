@@ -1,6 +1,6 @@
 """Build CI writer configuration from ``translation-config.yml``.
 
-Root CLI scripts and GitHub Actions should not duplicate path, branch, or
+Packaged CLI commands and GitHub Actions should not duplicate path, branch, or
 language defaults. This module is the adapter between a dedicated translation
 repository config file and the lower-level sync writer.
 """

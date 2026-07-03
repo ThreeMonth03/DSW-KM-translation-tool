@@ -2,7 +2,8 @@ Reports and KM Updates
 ======================
 
 Use this page for maintainer-facing report models, renderers, and guarded KM
-update entrypoints. Use runbooks for operational steps and the internal change
+update entrypoints. It is the code companion to the status/alignment and KM
+update runbooks. Use runbooks for operational steps and the internal change
 guide for helper implementation details.
 
 Alignment Report
@@ -87,7 +88,8 @@ KM Registry and Bundle Sync
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.km_registry.KmRegistryClient
-   :members:
+   :members: list_packages
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 .. autofunction:: dsw_km_translation_tool.km_registry.discover_km_versions

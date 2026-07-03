@@ -2,8 +2,9 @@ Localize and Git Sync
 =====================
 
 Use this page for maintainer-facing config, pull, merge, tree refresh, and CI
-writer entrypoints in Weblate-to-Git synchronization. Use the internal change
-guide for narrow helper behavior behind these entrypoints.
+writer entrypoints in Weblate-to-Git synchronization. It is the code companion
+to the Localize sync runbook. Use the internal change guide for narrow helper
+behavior behind these entrypoints.
 
 Repository Configuration
 ------------------------
@@ -88,7 +89,7 @@ PO Merge
 
 .. autoclass:: dsw_km_translation_tool.localize_merge.LocalizePoMerger
    :members:
-   :exclude-members: __init__
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 CI Writer

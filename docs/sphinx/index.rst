@@ -1,13 +1,13 @@
 DSW KM Translation Tooling
 =======================================
 
-This Sphinx site documents maintainer workflows and stable Python modules used
+This Sphinx site documents maintainer workflows and the Python interfaces used
 by the KM translation tooling and GitHub Actions workflows.
 
 Start with the first-time maintainer guide when you are new to the codebase.
 Use the package reference when checking maintainer-facing services, shared data
-contracts, and report models. Use the internal change guide for implementation
-helpers below those facades.
+contracts, and report models. It is selective rather than exhaustive; use the
+internal change guide for implementation helpers below those facades.
 
 .. toctree::
    :maxdepth: 2

@@ -2,7 +2,8 @@ Translation Tree Reference
 ==========================
 
 Use this page for maintainer-facing services in local PO, KM, translation tree,
-review, and shared-string workflows. Use the internal change guide for parser,
+review, and shared-string workflows. It lists the stable entrypoints that CLI
+commands and tests build around. Use the internal change guide for parser,
 renderer, storage, and other support-module implementation details.
 
 Workflow Service
@@ -14,6 +15,7 @@ those lower-level paths.
 
 .. autoclass:: dsw_km_translation_tool.workflow.TranslationWorkflowService
    :members: export_tree, validate_po_against_model, build_po_from_tree, build_km_from_po, collect_status, sync_shared_strings, review_po_changes
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 Tree Repository
@@ -21,7 +23,7 @@ Tree Repository
 
 .. autoclass:: dsw_km_translation_tool.tree.TranslationTreeRepository
    :members:
-   :exclude-members: __init__
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 Knowledge Model Service
@@ -33,6 +35,7 @@ the internal change guide.
 
 .. autoclass:: dsw_km_translation_tool.knowledge_model_service.KnowledgeModelService
    :members: load_model, annotate_tree_nodes, validate_po_entries
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 PO Facade
@@ -62,7 +65,7 @@ Review and Shared Strings
 
 .. autoclass:: dsw_km_translation_tool.review.PoDiffReviewer
    :members:
-   :exclude-members: __init__
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlockContext
@@ -74,16 +77,16 @@ Review and Shared Strings
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlocksCatalogParser
-   :members:
-   :exclude-members: __init__
+   :members: parse, parse_directory
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlocksCatalogBuilder
-   :members:
-   :exclude-members: __init__
+   :members: build, build_directory, build_outline
+   :exclude-members: __init__, __new__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.sync.SharedStringSynchronizer
-   :members:
-   :exclude-members: __init__
+   :members: sync
+   :exclude-members: __init__, __new__
    :show-inheritance:

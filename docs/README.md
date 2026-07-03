@@ -19,7 +19,7 @@ durable design and operating procedures live here.
 | Move the tooling repository to another GitHub owner | [Repository Transfer Checklist](repository-transfer-checklist.md) |
 | Monitor, automatically update, or manually repair a future KM version update | [KM Update Runbook](km-update-runbook.md) |
 | Find a Make target or CLI command | [Command Reference](command-reference.md) |
-| Browse package reference | `make docs`, then open `docs/sphinx/_build/html/index.html` |
+| Browse maintainer-facing Python interfaces | `make docs`, then open `docs/sphinx/_build/html/index.html` |
 
 ## Documentation Ownership
 
@@ -34,8 +34,9 @@ durable design and operating procedures live here.
 - Use [Security and Permissions](security-and-permissions.md) for secrets and
   workflow permissions.
 - Use [Command Reference](command-reference.md) for command syntax and safety.
-- Use the Sphinx package reference for maintainer-facing services, shared data
-  contracts, and report models.
+- Use the Sphinx package reference for maintainer-facing Python interfaces. It
+  is intentionally selective; use [Internal Change Guide](internal-change-guide.md)
+  when changing lower-level helpers.
 - The files under `docs/sphinx/maintainer/` only include these Markdown pages
   in the published Sphinx site. Edit the pages in this directory.
 

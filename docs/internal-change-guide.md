@@ -56,7 +56,6 @@ the support code.
 [pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
 [repository-ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/repository_ci_sync.py
 [shared-blocks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/shared_blocks.py
-[src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
 [sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/sync.py
 [sync-support-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/sync_support
 [test-ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/tests/infra/test_ci_sync.py

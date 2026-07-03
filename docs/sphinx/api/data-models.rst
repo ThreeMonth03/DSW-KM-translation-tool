@@ -1,8 +1,9 @@
 Data Models
 ===========
 
-Shared data contracts passed between services, CLI scripts, reports, and tests.
-These records are worth documenting because they cross module boundaries.
+Shared data contracts passed between services, CLI commands, reports, and
+tests. These records are worth documenting because they cross module
+boundaries.
 
 PO Models
 ---------
