@@ -48,6 +48,18 @@ def default_command_runner(
     )
 
 
+def tooling_virtualenv_command_path(tooling_repo_dir: Path, command_name: str) -> Path:
+    """Return one console-script path from a tooling repository virtualenv."""
+
+    return tooling_repo_dir / ".venv" / "bin" / command_name
+
+
+def tooling_virtualenv_python_path(tooling_repo_dir: Path) -> Path:
+    """Return the Python executable path from a tooling repository virtualenv."""
+
+    return tooling_virtualenv_command_path(tooling_repo_dir, "python")
+
+
 def make_checked_runner(
     error_factory: ErrorFactory,
     *,

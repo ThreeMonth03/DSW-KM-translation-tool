@@ -35,9 +35,8 @@ In this tooling repository, update:
 - [`examples/translation-config.yml`][example-translation-config]
 - [`examples/github-actions/*_template.yml`][github-actions-templates]
 - [`tests/infra/test_github_workflows.py`][test-github-workflows]
-- Source links in maintainer docs, starting with
-  [`docs/first-time-maintainer.md`][first-time-maintainer], if GitHub redirects
-  will not cover the new location.
+- Source links in maintainer docs, if GitHub redirects will not cover the new
+  location.
 
 ## GitHub Settings
 
@@ -70,6 +69,5 @@ production translation repository. Trigger writer workflows only after read-only
 checks are green.
 
 [example-translation-config]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/translation-config.yml
-[first-time-maintainer]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/docs/first-time-maintainer.md
 [github-actions-templates]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples/github-actions
 [test-github-workflows]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/tests/infra/test_github_workflows.py

@@ -15,6 +15,8 @@ from .command import (
     configure_github_actions_git_identity,
     default_command_runner,
     make_checked_runner,
+    tooling_virtualenv_command_path,
+    tooling_virtualenv_python_path,
 )
 from .km_bundle_sync import BundleDownloader, pull_km_bundle
 from .km_registry import Downloader, discover_km_versions
@@ -298,7 +300,7 @@ def _run_validate_config(
     _run_checked(
         runner,
         [
-            str(_tooling_command(tooling_repo, "dsw-km-validate-config")),
+            str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-validate-config")),
             "--config",
             str(_resolve_repo_path(repo_root, config_path)),
         ],
@@ -321,7 +323,7 @@ def _run_export_tree(
     _run_checked(
         runner,
         [
-            str(_tooling_command(tooling_repo, "dsw-km-export-tree")),
+            str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-export-tree")),
             "--po",
             str(repo_root / paths.localize_latest_po_path),
             "--json",
@@ -357,7 +359,7 @@ def _run_sync_merge_build_and_tests(
     _run_checked(
         runner,
         [
-            str(_tooling_command(tooling_repo, "dsw-km-sync-shared-strings")),
+            str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-sync-shared-strings")),
             "--tree-dir",
             str(repo_root / paths.translation_tree_dir),
             "--original-po",
@@ -386,7 +388,7 @@ def _run_sync_merge_build_and_tests(
     if localize_base_po_path is None:
         raise KmLatestSyncError("Missing transient Localize base PO for latest-KM merge")
     merge_command = [
-        str(_tooling_command(tooling_repo, "dsw-km-merge-localize-po")),
+        str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-merge-localize-po")),
         "--repo-root",
         str(repo_root),
         "--config",
@@ -406,7 +408,7 @@ def _run_sync_merge_build_and_tests(
     _run_checked(
         runner,
         [
-            str(_tooling_command(tooling_repo, "dsw-km-po-to-km")),
+            str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-po-to-km")),
             "--translated-po",
             str(repo_root / paths.final_po_path),
             "--original-km",
@@ -430,7 +432,7 @@ def _run_sync_merge_build_and_tests(
     )
     _run_checked(
         runner,
-        [str(_tooling_python(tooling_repo)), "-m", "pytest", "tests/translation"],
+        [str(tooling_virtualenv_python_path(tooling_repo)), "-m", "pytest", "tests/translation"],
         cwd=tooling_repo,
         env={"DSW_TRANSLATION_OUTPUT_ROOT": str(repo_root)},
         description=f"run translation tests for KM {version}",
@@ -449,7 +451,7 @@ def _run_alignment_check(
     _run_checked(
         runner,
         [
-            str(_tooling_command(tooling_repo, "dsw-km-report-alignment")),
+            str(tooling_virtualenv_command_path(tooling_repo, "dsw-km-report-alignment")),
             "--repo-root",
             str(repo_root),
             "--config",
@@ -547,11 +549,3 @@ def _format_value(value: object | None) -> str:
     if value is None or value == "":
         return "(none)"
     return f"`{value}`"
-
-
-def _tooling_python(tooling_repo: Path) -> Path:
-    return tooling_repo / ".venv" / "bin" / "python"
-
-
-def _tooling_command(tooling_repo: Path, command_name: str) -> Path:
-    return tooling_repo / ".venv" / "bin" / command_name

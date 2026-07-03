@@ -11,6 +11,8 @@ from .command import (
     configure_github_actions_git_identity,
     default_command_runner,
     make_checked_runner,
+    tooling_virtualenv_command_path,
+    tooling_virtualenv_python_path,
 )
 from .constants import SHARED_BLOCK_CONTEXT_FILENAME, TRANSLATION_FILENAME
 from .layout import (
@@ -182,12 +184,12 @@ class CiSyncCommitConfig:
     def tooling_python_path(self) -> Path:
         """Return the tooling virtualenv Python path."""
 
-        return self.tooling_repo_dir / ".venv" / "bin" / "python"
+        return tooling_virtualenv_python_path(self.tooling_repo_dir)
 
     def tooling_command_path(self, command_name: str) -> Path:
         """Return one installed console-script path from the tooling virtualenv."""
 
-        return self.tooling_repo_dir / ".venv" / "bin" / command_name
+        return tooling_virtualenv_command_path(self.tooling_repo_dir, command_name)
 
     @property
     def original_po_path(self) -> Path:
