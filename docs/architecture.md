@@ -75,12 +75,8 @@ These modules connect the translation repository to the Weblate website:
 - `command.py`: shared subprocess and Git identity helpers used by automation
   writers.
 
-Production zh-Hant sync is Localize/Weblate-first. The normal automation path
-is:
-
-```text
-Localize/Weblate PO -> tree/ -> builds/final_translated.po -> builds/final_translated.km -> Git commit
-```
+This layer supports the Weblate-to-Git production sync flow. Operational steps
+belong in [Localize Sync Runbook](localize-sync-runbook.md).
 
 ## GitHub Actions Layer
 
@@ -92,9 +88,8 @@ Localize/Weblate PO -> tree/ -> builds/final_translated.po -> builds/final_trans
 - `examples/github-actions/localize_alignment_report_template.yml` is the
   read-only artifact alignment workflow.
 - `examples/github-actions/km_version_auto_update_template.yml` is the guarded
-  KM Registry writer. It no-ops when the configured KM is current, and only
-  pushes a newer published KM after the bundle pull, Weblate mirror, rebuild,
-  config validation, translation tests, and alignment check all pass.
+  KM Registry writer. Its safety checks are documented in
+  [KM Update Runbook](km-update-runbook.md).
 - `examples/github-actions/validate_translation_config_template.yml` is the
   read-only config validation workflow for dedicated translation repositories.
 

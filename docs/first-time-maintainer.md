@@ -53,15 +53,84 @@ runbook and its tests.
 The [Command Reference](command-reference.md) marks common external-repository
 commands by safety level.
 
-## Where Changes Usually Belong
+## Common Change Paths
 
-| Change | Start Here | Tests |
-| --- | --- | --- |
-| Tree format, shared strings, PO/KM output | `workflow.py`, `tree.py`, `sync.py`, `knowledge_model_service.py` | `tests/translation/` |
-| Weblate download, merge, sync commit behavior | `localize_sync.py`, `localize_merge.py`, `repository_ci_sync.py`, `ci_sync.py` | `tests/infra/` |
-| Translation repository config rules | `translation_repository_config.py` | `tests/infra/` |
-| KM Registry discovery or guarded KM updates | `km_registry.py`, `km_bundle_sync.py`, `km_latest_sync.py` | `tests/infra/` |
-| Workflow wiring | `examples/github-actions/` templates first | `tests/infra/test_github_workflows.py` |
+Use these paths to find the first module and test area for a change. For a
+complete ownership map, see [Architecture](architecture.md).
+
+### Translation Tree or Generated PO/KM Output
+
+Start with:
+
+- `src/dsw_translation_tool/workflow.py`
+- `src/dsw_translation_tool/tree.py`
+- `src/dsw_translation_tool/sync.py`
+- `src/dsw_translation_tool/knowledge_model_service.py`
+
+Test with:
+
+- `tests/translation/`
+
+### Shared Strings
+
+Start with:
+
+- `src/dsw_translation_tool/shared_blocks.py`
+- `src/sync_shared_strings.py`
+
+Test with:
+
+- `tests/translation/test_shared_string_sync.py`
+- `tests/infra/test_cli_sync.py`
+
+### Weblate Download, Merge, or Sync Commits
+
+Start with:
+
+- `src/dsw_translation_tool/localize_sync.py`
+- `src/dsw_translation_tool/localize_merge.py`
+- `src/dsw_translation_tool/repository_ci_sync.py`
+- `src/dsw_translation_tool/ci_sync.py`
+
+Test with:
+
+- `tests/infra/test_localize_sync.py`
+- `tests/infra/test_localize_merge.py`
+- `tests/infra/test_ci_sync.py`
+
+### Translation Repository Config
+
+Start with:
+
+- `src/dsw_translation_tool/translation_repository_config.py`
+
+Test with:
+
+- `tests/infra/test_translation_repository_config.py`
+
+### KM Registry Discovery or Guarded KM Updates
+
+Start with:
+
+- `src/dsw_translation_tool/km_registry.py`
+- `src/dsw_translation_tool/km_bundle_sync.py`
+- `src/dsw_translation_tool/km_latest_sync.py`
+
+Test with:
+
+- `tests/infra/test_km_registry.py`
+- `tests/infra/test_km_bundle_sync.py`
+- `tests/infra/test_km_latest_sync.py`
+
+### GitHub Workflow Wiring
+
+Start with:
+
+- `examples/github-actions/`
+
+Test with:
+
+- `tests/infra/test_github_workflows.py`
 
 If the right place is unclear, add or adjust a small test that describes the
 behavior you expect. The module ownership usually becomes obvious from there.

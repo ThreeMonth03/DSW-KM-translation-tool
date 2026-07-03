@@ -19,19 +19,13 @@ command reference; durable design and operating procedures live here.
 | Find a Make target or CLI command | [Command Reference](command-reference.md) |
 | Browse developer API docs | `make docs`, then open `docs/sphinx/_build/html/index.html` |
 
-## Maintenance Notes
+## Documentation Ownership
 
-- Keep Localize/Weblate as the latest translation authority for zh-Hant
-  production work.
-- Keep workflow YAML thin. Put parsing, merge, Git, and Weblate decisions in
-  Python helpers with tests.
-- Keep root CLI scripts in `src/*.py` as small entry points; reusable behavior
-  belongs in `src/dsw_translation_tool/`.
-- Give new maintainers a task-oriented path before sending them into the API
-  reference.
-- Document both the command and the failure mode when adding an automation
-  helper.
-- Keep repository-owner moves explicit. Update tooling checkout references,
-  workflow templates, tests, and GitHub settings together.
-- Keep Sphinx pages focused on stable package modules. Put operational
-  procedures in the Markdown runbooks.
+- Use [First-Time Maintainer Guide](first-time-maintainer.md) as the newcomer
+  route into the codebase.
+- Use [Architecture](architecture.md) for module ownership.
+- Use runbooks for operating production workflows.
+- Use [Security and Permissions](security-and-permissions.md) for secrets and
+  workflow permissions.
+- Use [Command Reference](command-reference.md) for command syntax and safety.
+- Use Sphinx API pages for stable package modules and docstrings.
