@@ -47,8 +47,7 @@ make check
 Validate a translation repository config:
 
 ```shell
-.venv/bin/python src/validate_translation_config.py \
-  --config /path/to/translation-repo/translation-config.yml
+make repo-validate TRANSLATION_REPO_DIR=/path/to/translation-repo
 ```
 
 Format and lint Python code:

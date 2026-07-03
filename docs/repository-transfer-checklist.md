@@ -10,10 +10,7 @@ changing translation text or uploading anything to Weblate.
 2. Confirm the formal translation repository is aligned with Weblate:
 
    ```shell
-   "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/report_alignment_status.py" \
-     --repo-root "$TRANSLATION_REPO_DIR" \
-     --config translation-config.yml \
-     --fail-on-mismatch
+   make repo-align TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
    ```
 
 3. Record the target tooling repository owner/name and branch policy.
@@ -58,14 +55,9 @@ Run these checks after updating references:
 
 ```shell
 make install-dev
-make test
-make docs
-"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/validate_translation_config.py" \
-  --config "$TRANSLATION_REPO_DIR/translation-config.yml"
-"$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/report_alignment_status.py" \
-  --repo-root "$TRANSLATION_REPO_DIR" \
-  --config translation-config.yml \
-  --fail-on-mismatch
+make check
+make repo-validate TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
+make repo-align TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
 ```
 
 Then trigger the read-only status and alignment workflows manually in the formal

@@ -66,18 +66,10 @@ Before pushing tooling changes:
 make check
 ```
 
-For workflow template or config changes, also validate a real translation
-repository config and compare the template with the formal workflow:
-
-```shell
-.venv/bin/python src/validate_translation_config.py \
-  --config /path/to/translation-repo/translation-config.yml
-diff -u examples/github-actions/localize_auto_sync_template.yml \
-  /path/to/translation-repo/.github/workflows/localize_auto_sync.yml
-```
-
-For Localize/Weblate sync changes, run a dry run against a disposable checkout
-or use a test translation repository before updating the formal public repo.
+For workflow template changes, update the template and the production workflow
+together, then let the normal repository CI validate both sides. For production
+sync behavior changes, test against a disposable translation checkout before
+touching the formal public repository.
 
 [config-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/config
 [docs-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/docs

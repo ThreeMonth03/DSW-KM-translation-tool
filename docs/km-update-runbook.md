@@ -57,8 +57,7 @@ Work in a disposable branch or local clone first.
 4. Validate config:
 
    ```shell
-   "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/validate_translation_config.py" \
-     --config "$TRANSLATION_REPO_DIR/translation-config.yml"
+   make repo-validate TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
    ```
 
 5. Run Localize/Weblate sync on the disposable branch:
@@ -77,11 +76,7 @@ Work in a disposable branch or local clone first.
 6. Run the alignment report:
 
    ```shell
-   "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/report_alignment_status.py" \
-     --repo-root "$TRANSLATION_REPO_DIR" \
-     --config translation-config.yml \
-     --artifact-dir "$TRANSLATION_REPO_DIR/reviews/localize_alignment_artifacts" \
-     --fail-on-mismatch
+   make repo-align TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
    ```
 
 ## Review Before Merge
