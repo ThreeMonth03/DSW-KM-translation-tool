@@ -205,7 +205,7 @@ def workflow() -> Any:
         Configured workflow service instance.
     """
 
-    from dsw_knowledge_model_translation_tool import TranslationWorkflowService
+    from dsw_km_translation_tool import TranslationWorkflowService
 
     return TranslationWorkflowService(source_lang="en", target_lang="zh_Hant")
 
@@ -221,7 +221,7 @@ def po_parser(po_path: Path) -> Any:
         PO catalog parser for the fixture file.
     """
 
-    from dsw_knowledge_model_translation_tool.po import PoCatalogParser
+    from dsw_km_translation_tool.po import PoCatalogParser
 
     return PoCatalogParser(str(po_path))
 

@@ -8,7 +8,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool import (
+from dsw_km_translation_tool import (
     DEFAULT_MODEL_PATH,
     DEFAULT_PO_PATH,
     DEFAULT_SOURCE_LANG,

@@ -1,4 +1,4 @@
-"""Tree- and outline-related data models used by the knowledge model translation tooling."""
+"""Tree- and outline-related data models used by the KM translation tooling."""
 
 from __future__ import annotations
 

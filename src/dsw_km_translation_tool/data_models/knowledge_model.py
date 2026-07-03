@@ -1,4 +1,4 @@
-"""Knowledge-model data models used by the knowledge model translation tooling."""
+"""Knowledge-model data models used by the KM translation tooling."""
 
 from __future__ import annotations
 

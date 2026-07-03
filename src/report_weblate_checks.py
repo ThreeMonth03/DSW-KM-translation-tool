@@ -7,7 +7,7 @@ import argparse
 import os
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.weblate_checks import (
+from dsw_km_translation_tool.weblate_checks import (
     build_weblate_checks_error_report,
     build_weblate_checks_report,
     render_weblate_checks_markdown,

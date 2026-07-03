@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.localize_merge import (
+from dsw_km_translation_tool.localize_merge import (
     LocalizePoMerger,
     parse_po_entry_states,
 )

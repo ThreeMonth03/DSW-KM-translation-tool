@@ -10,7 +10,7 @@ when deciding where a change belongs.
   translation-tree workflow.
 - [`src/*.py`][src-root] contains command-line entry points used by Make targets and
   GitHub Actions. Keep these files thin.
-- [`src/dsw_knowledge_model_translation_tool/`][package-dir] contains reusable package code.
+- [`src/dsw_km_translation_tool/`][package-dir] contains reusable package code.
 - [`examples/`][examples-dir] contains copy-ready workflow templates and an example
   translation repository config.
 - [`files/`][files-dir] contains small default source PO/KM inputs for local use and tests.
@@ -108,41 +108,41 @@ generation, and commit decisions belong in Python helpers.
   workflow in the formal translation repository.
 - If a command changes, update [Command Reference](command-reference.md).
 
-[alignment-status-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/alignment_status.py
-[ci-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/ci_sync.py
-[command-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/command.py
-[dsw-models-adapter-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/dsw_models_adapter.py
-[examples-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/examples
-[files-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/files
-[km-auto-update-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
-[km-bundle-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/km_bundle_sync.py
-[km-latest-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/km_latest_sync.py
-[km-registry-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/km_registry.py
-[knowledge-model-service-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/knowledge_model_service.py
-[localize-alignment-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_alignment_report_template.yml
-[localize-auto-sync-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_auto_sync_template.yml
-[localize-merge-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/localize_merge.py
-[localize-status-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/localize_status.py
-[localize-status-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_status_report_template.yml
-[localize-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/localize_sync.py
-[localize-tree-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/localize_tree_sync.py
-[makefile]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/Makefile
-[outline-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/outline.py
-[package-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/src/dsw_knowledge_model_translation_tool
-[po-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/po.py
-[readme]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/readme.md
-[repository-ci-sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/repository_ci_sync.py
-[review-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/review.py
-[shared-blocks-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/shared_blocks.py
-[sphinx-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/docs/sphinx
-[src-root]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/src
-[sync-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/sync.py
-[tests-infra-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/infra
-[tests-translation-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/translation
-[translation-fixture-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/fixtures/translation_tree
-[translation-repository-config-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/translation_repository_config.py
-[tree-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/tree.py
-[unittest-workflow]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/.github/workflows/unittest.yml
-[validate-config-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/validate_translation_config_template.yml
-[weblate-checks-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/weblate_checks.py
-[workflow-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/dsw_knowledge_model_translation_tool/workflow.py
+[alignment-status-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/alignment_status.py
+[ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/ci_sync.py
+[command-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/command.py
+[dsw-models-adapter-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/dsw_models_adapter.py
+[examples-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples
+[files-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/files
+[km-auto-update-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
+[km-bundle-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/km_bundle_sync.py
+[km-latest-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/km_latest_sync.py
+[km-registry-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/km_registry.py
+[knowledge-model-service-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/knowledge_model_service.py
+[localize-alignment-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_alignment_report_template.yml
+[localize-auto-sync-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_auto_sync_template.yml
+[localize-merge-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/localize_merge.py
+[localize-status-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/localize_status.py
+[localize-status-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_status_report_template.yml
+[localize-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/localize_sync.py
+[localize-tree-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/localize_tree_sync.py
+[makefile]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/Makefile
+[outline-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/outline.py
+[package-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool
+[po-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/po.py
+[readme]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/readme.md
+[repository-ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/repository_ci_sync.py
+[review-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/review.py
+[shared-blocks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/shared_blocks.py
+[sphinx-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/docs/sphinx
+[src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
+[sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/sync.py
+[tests-infra-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/infra
+[tests-translation-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/translation
+[translation-fixture-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/fixtures/translation_tree
+[translation-repository-config-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/translation_repository_config.py
+[tree-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/tree.py
+[unittest-workflow]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/.github/workflows/unittest.yml
+[validate-config-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/validate_translation_config_template.yml
+[weblate-checks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/weblate_checks.py
+[workflow-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/workflow.py

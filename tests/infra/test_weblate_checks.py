@@ -10,7 +10,7 @@ from pathlib import Path
 
 from pytest import MonkeyPatch
 
-from dsw_knowledge_model_translation_tool.weblate_checks import (
+from dsw_km_translation_tool.weblate_checks import (
     build_weblate_checks_error_report,
     build_weblate_checks_report,
     render_weblate_checks_markdown,
@@ -42,7 +42,7 @@ def write_config(path: Path, download_url: str) -> None:
                 "branches:",
                 "  tracking_branch: master",
                 "tooling:",
-                "  repository: ThreeMonth03/DSW-knowledge-model-translation-tool",
+                "  repository: ThreeMonth03/DSW-KM-translation-tool",
                 "  ref: master",
                 "localize:",
                 f"  download_url: {download_url}",

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dsw_knowledge_model_translation_tool.http_auth import bearer_authorization_header
+from dsw_km_translation_tool.http_auth import bearer_authorization_header
 
 
 def test_bearer_authorization_header_adds_scheme() -> None:

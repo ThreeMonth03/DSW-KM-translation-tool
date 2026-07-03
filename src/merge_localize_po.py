@@ -6,8 +6,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.localize_merge import LocalizePoMerger
-from dsw_knowledge_model_translation_tool.translation_repository_config import (
+from dsw_km_translation_tool.localize_merge import LocalizePoMerger
+from dsw_km_translation_tool.translation_repository_config import (
     load_translation_repository_config,
     version_paths,
 )

@@ -5,10 +5,10 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.ci_sync import CiSyncCommitConfig
-from dsw_knowledge_model_translation_tool.localize_tree_sync import refresh_tree_from_localize
-from dsw_knowledge_model_translation_tool.po import PoCatalogWriter
-from dsw_knowledge_model_translation_tool.workflow import TranslationWorkflowService
+from dsw_km_translation_tool.ci_sync import CiSyncCommitConfig
+from dsw_km_translation_tool.localize_tree_sync import refresh_tree_from_localize
+from dsw_km_translation_tool.po import PoCatalogWriter
+from dsw_km_translation_tool.workflow import TranslationWorkflowService
 from tests.helpers import parse_po_entries, update_tree_field
 
 

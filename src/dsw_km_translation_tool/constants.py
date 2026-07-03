@@ -1,4 +1,4 @@
-"""Shared constants for DSW knowledge model translation tooling."""
+"""Shared constants for DSW KM translation tooling."""
 
 from __future__ import annotations
 

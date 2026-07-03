@@ -1,4 +1,4 @@
-"""PO-related data models used by the knowledge model translation tooling."""
+"""PO-related data models used by the KM translation tooling."""
 
 from __future__ import annotations
 

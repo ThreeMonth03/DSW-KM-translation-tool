@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 import shutil
 
-from dsw_knowledge_model_translation_tool.shared_blocks import SharedBlocksCatalogParser
+from dsw_km_translation_tool.shared_blocks import SharedBlocksCatalogParser
 from tests.helpers import (
     apply_sync_seed_translations_to_tree,
     apply_translation_map_to_tree,

@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 
-from dsw_knowledge_model_translation_tool.km_registry import (
+from dsw_km_translation_tool.km_registry import (
     discover_km_versions,
     render_km_version_discovery_markdown,
     write_km_version_discovery_markdown,

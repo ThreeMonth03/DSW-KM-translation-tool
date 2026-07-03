@@ -7,7 +7,7 @@ layers.
 PO Models
 ---------
 
-.. automodule:: dsw_knowledge_model_translation_tool.data_models.po
+.. automodule:: dsw_km_translation_tool.data_models.po
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ PO Models
 Tree Models
 -----------
 
-.. automodule:: dsw_knowledge_model_translation_tool.data_models.tree
+.. automodule:: dsw_km_translation_tool.data_models.tree
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ Tree Models
 Workflow Models
 ---------------
 
-.. automodule:: dsw_knowledge_model_translation_tool.data_models.workflow
+.. automodule:: dsw_km_translation_tool.data_models.workflow
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ Workflow Models
 Sync Models
 -----------
 
-.. automodule:: dsw_knowledge_model_translation_tool.data_models.sync
+.. automodule:: dsw_km_translation_tool.data_models.sync
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ Sync Models
 Knowledge Model Records
 -----------------------
 
-.. automodule:: dsw_knowledge_model_translation_tool.data_models.knowledge_model
+.. automodule:: dsw_km_translation_tool.data_models.knowledge_model
    :members:
    :undoc-members:
    :show-inheritance:

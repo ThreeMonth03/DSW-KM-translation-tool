@@ -6,8 +6,8 @@ import subprocess
 from dataclasses import replace
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.ci_sync import CiSyncCommitConfig, run_ci_sync_commit
-from dsw_knowledge_model_translation_tool.localize_merge import parse_po_entry_states
+from dsw_km_translation_tool.ci_sync import CiSyncCommitConfig, run_ci_sync_commit
+from dsw_km_translation_tool.localize_merge import parse_po_entry_states
 from tests.infra.test_localize_merge import UUID_A, write_po
 
 

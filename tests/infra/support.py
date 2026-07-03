@@ -6,7 +6,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.workflow import TranslationWorkflowService
+from dsw_km_translation_tool.workflow import TranslationWorkflowService
 from tests.helpers import run_cli_script
 
 

@@ -7,9 +7,9 @@ import argparse
 import os
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.km_bundle_sync import pull_km_bundle
-from dsw_knowledge_model_translation_tool.km_registry import KmRegistryError
-from dsw_knowledge_model_translation_tool.translation_repository_config import (
+from dsw_km_translation_tool.km_bundle_sync import pull_km_bundle
+from dsw_km_translation_tool.km_registry import KmRegistryError
+from dsw_km_translation_tool.translation_repository_config import (
     TranslationRepositoryConfigError,
 )
 

@@ -7,14 +7,14 @@ import argparse
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from dsw_knowledge_model_translation_tool.ci_sync import (
+from dsw_km_translation_tool.ci_sync import (
     DEFAULT_SYNC_COMMIT_MESSAGE,
     CiSyncError,
     run_ci_sync_commit,
 )
-from dsw_knowledge_model_translation_tool.localize_sync import pull_localize_po
-from dsw_knowledge_model_translation_tool.localize_tree_sync import refresh_tree_from_localize
-from dsw_knowledge_model_translation_tool.repository_ci_sync import build_repository_ci_sync_config
+from dsw_km_translation_tool.localize_sync import pull_localize_po
+from dsw_km_translation_tool.localize_tree_sync import refresh_tree_from_localize
+from dsw_km_translation_tool.repository_ci_sync import build_repository_ci_sync_config
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

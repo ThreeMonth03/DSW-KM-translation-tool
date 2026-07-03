@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from dsw_knowledge_model_translation_tool.knowledge_model_service import KnowledgeModelService
+from dsw_km_translation_tool.knowledge_model_service import KnowledgeModelService
 
 MOVED_QUESTION_UUID = "ab4b3f39-dfab-45a5-9489-2d46ceacbb73"
 MOVED_QUESTION_OLD_PARENT_UUID = "c4eda690-066f-495a-8c29-8e8a258ac487"
