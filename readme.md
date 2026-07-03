@@ -14,8 +14,8 @@ that workflow:
 
 ## Documentation
 
-The documentation workflow publishes the maintainer docs and API reference when
-GitHub Pages is enabled for the repository.
+The documentation workflow publishes the maintainer docs and package API
+reference when GitHub Pages is enabled for the repository.
 
 Start here:
 

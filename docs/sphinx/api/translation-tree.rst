@@ -1,11 +1,12 @@
-Translation Workflow
+Translation Tree API
 ====================
 
-These modules cover the local PO, KM, tree, review, and shared-string
-round-trip workflow.
+These package modules cover the local PO, KM, translation tree, review, and
+shared-string round trip. They are code references, not production operation
+notes; use the maintainer runbooks for repository operations.
 
-Facade Service
---------------
+Workflow Service
+----------------
 
 .. automodule:: dsw_km_translation_tool.workflow
    :members:

@@ -17,7 +17,7 @@ command reference; durable design and operating procedures live here.
 | Move the tooling repository to another GitHub owner | [Repository Transfer Checklist](repository-transfer-checklist.md) |
 | Monitor, automatically update, or manually repair a future KM version update | [KM Update Runbook](km-update-runbook.md) |
 | Find a Make target or CLI command | [Command Reference](command-reference.md) |
-| Browse developer API docs | `make docs`, then open `docs/sphinx/_build/html/index.html` |
+| Browse package API reference | `make docs`, then open `docs/sphinx/_build/html/index.html` |
 
 ## Documentation Ownership
 
@@ -28,6 +28,6 @@ command reference; durable design and operating procedures live here.
 - Use [Security and Permissions](security-and-permissions.md) for secrets and
   workflow permissions.
 - Use [Command Reference](command-reference.md) for command syntax and safety.
-- Use Sphinx API pages for stable package modules and docstrings.
+- Use the Sphinx package API reference for stable package modules and docstrings.
 
 [root-readme]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/readme.md
