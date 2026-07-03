@@ -1,9 +1,9 @@
 Reports and KM Updates
 ======================
 
-Maintainer-facing report models, renderers, and guarded KM update entrypoints.
-Use runbooks for operational steps and the internal change guide for helper
-implementation details.
+Use this page for maintainer-facing report models, renderers, and guarded KM
+update entrypoints. Use runbooks for operational steps and the internal change
+guide for helper implementation details.
 
 Alignment Report
 ----------------
@@ -74,7 +74,9 @@ Localize/Weblate Status
 KM Registry and Bundle Sync
 ---------------------------
 
-.. autoclass:: dsw_km_translation_tool.km_registry.KmRegistryError
+.. py:exception:: dsw_km_translation_tool.km_registry.KmRegistryError
+
+   Raised when KM Registry data cannot be fetched or parsed.
 
 .. autoclass:: dsw_km_translation_tool.km_registry.KmRegistryPackage
    :members:
@@ -104,7 +106,9 @@ KM Registry and Bundle Sync
 
 .. autofunction:: dsw_km_translation_tool.km_bundle_sync.pull_km_bundle
 
-.. autoclass:: dsw_km_translation_tool.km_latest_sync.KmLatestSyncError
+.. py:exception:: dsw_km_translation_tool.km_latest_sync.KmLatestSyncError
+
+   Raised when latest-KM synchronization cannot complete.
 
 .. autoclass:: dsw_km_translation_tool.km_latest_sync.KmLatestSyncResult
    :members:

@@ -1,15 +1,16 @@
 Localize and Git Sync
 =====================
 
-Maintainer-facing config, pull, merge, tree refresh, and CI writer entrypoints
-for Weblate-to-Git synchronization. Helper functions that implement one narrow
-decision stay out of this reference; use the internal change guide and tests
-when changing them.
+Use this page for maintainer-facing config, pull, merge, tree refresh, and CI
+writer entrypoints in Weblate-to-Git synchronization. Use the internal change
+guide for narrow helper behavior behind these entrypoints.
 
 Repository Configuration
 ------------------------
 
-.. autoclass:: dsw_km_translation_tool.translation_repository_config.TranslationRepositoryConfigError
+.. py:exception:: dsw_km_translation_tool.translation_repository_config.TranslationRepositoryConfigError
+
+   Raised when a translation repository config is invalid.
 
 .. autoclass:: dsw_km_translation_tool.translation_repository_config.KnowledgeModelRepositoryConfig
    :members:
@@ -87,6 +88,7 @@ PO Merge
 
 .. autoclass:: dsw_km_translation_tool.localize_merge.LocalizePoMerger
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 CI Writer
@@ -94,7 +96,9 @@ CI Writer
 
 .. autofunction:: dsw_km_translation_tool.repository_ci_sync.build_repository_ci_sync_config
 
-.. autoclass:: dsw_km_translation_tool.ci_sync.CiSyncError
+.. py:exception:: dsw_km_translation_tool.ci_sync.CiSyncError
+
+   Raised when CI sync-and-commit automation cannot complete.
 
 .. autoclass:: dsw_km_translation_tool.ci_sync.CiSyncCommitConfig
    :members:

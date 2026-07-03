@@ -1,15 +1,16 @@
 Translation Tree Reference
 ==========================
 
-Maintainer-facing services for local PO, KM, translation tree, review, and
-shared-string workflows. This is not a public SDK; internal parser, renderer,
-and storage helpers are covered by the internal change guide and tests.
+Use this page for maintainer-facing services in local PO, KM, translation tree,
+review, and shared-string workflows. Use the internal change guide for parser,
+renderer, storage, and other support-module implementation details.
 
 Workflow Service
 ----------------
 
 .. autoclass:: dsw_km_translation_tool.workflow.TranslationWorkflowService
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 Tree Repository
@@ -17,6 +18,7 @@ Tree Repository
 
 .. autoclass:: dsw_km_translation_tool.tree.TranslationTreeRepository
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 Knowledge Model Service
@@ -24,6 +26,7 @@ Knowledge Model Service
 
 .. autoclass:: dsw_km_translation_tool.knowledge_model_service.KnowledgeModelService
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 PO Facade
@@ -34,16 +37,26 @@ services. Their parser/render internals are intentionally not expanded here;
 use the internal change guide before changing PO support behavior.
 
 .. autoclass:: dsw_km_translation_tool.po.PoCatalogParser
+   :members: parse_blocks, parse_entries
+   :exclude-members: __init__, __new__
+   :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.po.PoCatalogWriter
+   :members: rewrite_translations
+   :exclude-members: __init__, __new__
+   :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.po.PoStringCodec
+   :members: decode, escape
+   :exclude-members: __new__, __init__
+   :show-inheritance:
 
 Review and Shared Strings
 -------------------------
 
 .. autoclass:: dsw_km_translation_tool.review.PoDiffReviewer
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlockContext
@@ -56,12 +69,15 @@ Review and Shared Strings
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlocksCatalogParser
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.shared_blocks.SharedBlocksCatalogBuilder
    :members:
+   :exclude-members: __init__
    :show-inheritance:
 
 .. autoclass:: dsw_km_translation_tool.sync.SharedStringSynchronizer
    :members:
+   :exclude-members: __init__
    :show-inheritance:
