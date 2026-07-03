@@ -22,15 +22,25 @@ Scheduled automation pulls from Weblate into Git and uses download-only access.
 
 ## Secret Placement
 
+Configure secrets in the production translation repository:
+
+```text
+Settings -> Secrets and variables -> Actions -> Repository secrets
+```
+
+The tooling repository does not need these secrets for documentation builds or
+unit tests. Local maintainer runs read the same names from shell environment
+variables.
+
 The normal sync and alignment workflows use download-only Weblate access.
 
 `LOCALIZE_API_TOKEN` is optional for the status report. It is used only for the
 read-only Weblate checks API; when absent, the report falls back to anonymous
 access.
 
-`DSW_REGISTRY_TOKEN` belongs in the production translation repository when the
-guarded KM version auto-update workflow is enabled. It is used only to download
-a newly published source KM bundle. It is not used for Weblate access.
+`DSW_REGISTRY_TOKEN` is required when the guarded KM version auto-update
+workflow is enabled. It is used only to download a newly published source KM
+bundle. It is not used for Weblate access.
 
 ## Token Handling
 

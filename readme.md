@@ -38,48 +38,22 @@ This creates `.venv` and installs the Python dependencies listed in
 
 ## Common Commands
 
-Run local checks:
+Run local checks before pushing tooling changes:
 
 ```shell
 make check
 ```
 
-Validate a translation repository config:
+Use `make help` for the common maintainer targets and `make help-all` for
+lower-level repair helpers.
 
-```shell
-make repo-validate TRANSLATION_REPO_DIR=/path/to/translation-repo
-```
-
-Format and lint Python code:
-
-```shell
-make format
-make lint
-```
-
-Check Python syntax:
-
-```shell
-make compile
-```
-
-Read [Command Reference](docs/command-reference.md) before running commands
-that rebuild translation artifacts or write Git commits.
+Read [Command Reference](docs/command-reference.md) before running targets that
+rebuild translation artifacts or write Git commits. Configure workflow secrets
+from [Security and Permissions](docs/security-and-permissions.md).
 
 ## Local Translation Tree Tools
 
-The local tree commands are available for development, inspection, and repair:
-
-```shell
-make export-tree
-make sync
-make sync-watch
-make tree-to-po
-make po-to-km
-make status
-make test-translation
-```
-
-By default these commands write to the ignored local workspace
-`translation/zh_Hant/`. Production translation repositories use their own
-`translation-config.yml` and repository layout.
+Local tree commands are available for development, inspection, and repair. By
+default they write to the ignored local workspace `translation/zh_Hant/`.
+Production translation repositories use their own `translation-config.yml` and
+repository layout.

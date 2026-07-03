@@ -8,6 +8,13 @@ Model. The production translation repository tracks the current published KM.
 Start after the KM version is published and available from the DSW Registry or
 another official upstream source.
 
+## Required Secret
+
+Configure `DSW_REGISTRY_TOKEN` in the production translation repository under
+GitHub Actions repository secrets before enabling the scheduled KM update
+workflow. Local runs read the same token from the shell environment. See
+[Security and Permissions](security-and-permissions.md).
+
 The scheduled KM version auto-update workflow is the normal update mechanism.
 It runs [`sync_latest_km.py`][sync-latest-km-py], no-ops when the configured KM
 is current, and only pushes to Git when every safety check passes. When the
@@ -43,9 +50,7 @@ Work in a disposable branch or local clone first.
 2. Pull the published KM bundle:
 
    ```shell
-   "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/pull_km_bundle.py" \
-     --repo-root "$TRANSLATION_REPO_DIR" \
-     --config translation-config.yml
+   make repo-km-pull TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
    ```
 
 3. Update `translation-config.yml`:
@@ -63,14 +68,9 @@ Work in a disposable branch or local clone first.
 5. Run Localize/Weblate sync on the disposable branch:
 
    ```shell
-   "$TOOL_REPO_DIR/.venv/bin/python" "$TOOL_REPO_DIR/src/sync_from_localize.py" \
-     --host-repo "$TRANSLATION_REPO_DIR" \
-     --tooling-repo "$TOOL_REPO_DIR" \
-     --config translation-config.yml \
-     --translation-root . \
-     --target-ref "$BRANCH_NAME" \
-     --restore-source-ref origin/master \
-     --mode pull_request
+   make repo-sync-branch \
+     TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR" \
+     TARGET_BRANCH="$BRANCH_NAME"
    ```
 
 6. Run the alignment report:

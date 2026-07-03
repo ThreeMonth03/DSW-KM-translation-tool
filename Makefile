@@ -37,12 +37,20 @@ KM_AUTO_UPDATE_MD ?= reviews/km_auto_update_report.md
 TRANSLATION_REPO_DIR ?=
 TRANSLATION_CONFIG ?= translation-config.yml
 TRACKING_BRANCH ?= master
+TARGET_BRANCH ?=
+RESTORE_SOURCE_REF ?= origin/$(TRACKING_BRANCH)
 SPHINXBUILD ?= $(PYTHON) -m sphinx
 SPHINXOPTS ?= -W --keep-going
 DOCS_SOURCE ?= docs/sphinx
 DOCS_BUILD ?= docs/sphinx/_build/html
 
-.PHONY: help help-all require-translation-repo venv install-dev install-hooks check compile format format-check lint test test-infra test-translation docs docs-clean repo-validate repo-pull-po repo-status repo-checks repo-align repo-sync repo-km-status repo-km-update export-tree export-tree-force status localize-status sync sync-watch tree-to-po po-to-km review-po validate workflow
+.PHONY: help help-all require-translation-repo require-target-branch
+.PHONY: venv install-dev install-hooks check compile format format-check lint
+.PHONY: test test-infra test-translation docs docs-clean
+.PHONY: repo-validate repo-pull-po repo-status repo-checks repo-align
+.PHONY: repo-sync repo-sync-branch repo-km-status repo-km-pull repo-km-update
+.PHONY: export-tree export-tree-force status localize-status sync sync-watch
+.PHONY: tree-to-po po-to-km review-po validate workflow
 
 venv: $(VENV_PYTHON)
 
@@ -96,7 +104,9 @@ help-all:
 	'  repo-checks        Query Weblate quality checks for TRANSLATION_REPO_DIR' \
 	'  repo-align         Verify artifact alignment in TRANSLATION_REPO_DIR' \
 	'  repo-sync          Writer: sync Weblate to Git in TRANSLATION_REPO_DIR' \
+	'  repo-sync-branch   Writer: sync Weblate to TARGET_BRANCH for PR repair' \
 	'  repo-km-status     Discover KM Registry versions for TRANSLATION_REPO_DIR' \
+	'  repo-km-pull       Writer: refresh the configured source KM bundle' \
 	'  repo-km-update     Writer: guarded latest-KM update for TRANSLATION_REPO_DIR' \
 	'  export-tree        Export PO + model into $(TREE_DIR) and refresh shared-block files' \
 	'  export-tree-force  Force rebuild $(TREE_DIR)' \
@@ -113,6 +123,12 @@ help-all:
 require-translation-repo:
 	@if [ -z "$(TRANSLATION_REPO_DIR)" ]; then \
 		printf '%s\n' 'Set TRANSLATION_REPO_DIR=/path/to/dsw-root-locales-zh_Hant' >&2; \
+		exit 2; \
+	fi
+
+require-target-branch:
+	@if [ -z "$(TARGET_BRANCH)" ]; then \
+		printf '%s\n' 'Set TARGET_BRANCH=<same-repository-branch-name>' >&2; \
 		exit 2; \
 	fi
 
@@ -194,12 +210,27 @@ repo-sync: venv require-translation-repo
 		--target-ref "$(TRACKING_BRANCH)" \
 		--mode schedule
 
+repo-sync-branch: venv require-translation-repo require-target-branch
+	$(PYTHON) src/sync_from_localize.py \
+		--host-repo "$(TRANSLATION_REPO_DIR)" \
+		--tooling-repo "$(CURDIR)" \
+		--config "$(TRANSLATION_CONFIG)" \
+		--translation-root . \
+		--target-ref "$(TARGET_BRANCH)" \
+		--restore-source-ref "$(RESTORE_SOURCE_REF)" \
+		--mode pull_request
+
 repo-km-status: venv require-translation-repo
 	$(PYTHON) src/discover_km_versions.py \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
 		--report "$(KM_DISCOVERY_JSON)" \
 		--details-out "$(KM_DISCOVERY_MD)"
+
+repo-km-pull: venv require-translation-repo
+	$(PYTHON) src/pull_km_bundle.py \
+		--repo-root "$(TRANSLATION_REPO_DIR)" \
+		--config "$(TRANSLATION_CONFIG)"
 
 repo-km-update: venv require-translation-repo
 	$(PYTHON) src/sync_latest_km.py \

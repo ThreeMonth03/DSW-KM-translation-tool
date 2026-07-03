@@ -19,6 +19,11 @@ TRANSLATION_CONFIG=translation-config.yml
 TRACKING_BRANCH=master
 ```
 
+Workflow secrets are configured in the production translation repository. Local
+commands read `LOCALIZE_API_TOKEN` and `DSW_REGISTRY_TOKEN` from the shell
+environment when a target needs them. See
+[Security and Permissions](security-and-permissions.md).
+
 ## Local Tooling
 
 | Target | Use |
@@ -64,7 +69,7 @@ workspace. They default to `translation/zh_Hant/`.
 | `make workflow` | Run the optional end-to-end smoke workflow |
 
 Run `make help-all` if you need lower-level helpers such as `tree-to-po`,
-`po-to-km`, or `review-po`.
+`po-to-km`, `repo-km-pull`, or `repo-sync-branch`.
 
 ## Script Map
 

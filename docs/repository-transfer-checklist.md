@@ -44,7 +44,9 @@ Verify these settings after transfer:
 - GitHub Pages is enabled with the `Deploy Documentation` workflow.
 - The repository homepage points to the active docs site.
 - Required repository secrets are present in each production translation
-  repository that needs them.
+  repository that needs them. See
+  [Security and Permissions](security-and-permissions.md) for
+  `LOCALIZE_API_TOKEN` and `DSW_REGISTRY_TOKEN`.
 
 Secrets are repository settings, not files. Verify them in GitHub after the
 move rather than documenting token values.

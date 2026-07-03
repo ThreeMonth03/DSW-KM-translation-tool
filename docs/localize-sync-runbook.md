@@ -14,6 +14,14 @@ Normal automation is one-way:
 Localize/Weblate -> GitHub translation repository
 ```
 
+## Secrets
+
+Scheduled sync and alignment do not need Weblate write access. Configure
+`LOCALIZE_API_TOKEN` in the production translation repository only when the
+read-only status workflow should use authenticated Weblate checks. If it is not
+configured, the check report uses anonymous access. See
+[Security and Permissions](security-and-permissions.md).
+
 ## Scheduled Pull Sync
 
 The external translation workflow should run:
@@ -63,8 +71,7 @@ The same workflow can also run
 `has:check`. That catches website-side quality-check warnings that are not
 always visible from PO fuzzy flags alone. The check report is diagnostic and
 uses `--allow-api-failure` so Weblate API rate limits are captured in the report
-while Git sync monitoring continues. Configure `LOCALIZE_API_TOKEN` if
-authenticated read-only Weblate API access is available.
+while Git sync monitoring continues.
 
 It requires only `contents: read`.
 
