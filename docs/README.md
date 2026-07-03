@@ -12,6 +12,7 @@ durable design and operating procedures live here.
 | Understand which module owns a behavior | [Architecture](architecture.md) |
 | Change code safely | [Development Guidelines](development-guidelines.md) |
 | Operate Localize/Weblate-to-Git sync | [Localize Sync Runbook](localize-sync-runbook.md) |
+| Copy or update translation repository workflows | [Workflow Templates](workflow-templates.md) |
 | Check repository/Weblate build alignment | [Localize Sync Runbook](localize-sync-runbook.md) |
 | Configure workflow permissions and secrets | [Security and Permissions](security-and-permissions.md) |
 | Move the tooling repository to another GitHub owner | [Repository Transfer Checklist](repository-transfer-checklist.md) |
@@ -25,6 +26,8 @@ durable design and operating procedures live here.
   route into the codebase.
 - Use [Architecture](architecture.md) for module ownership.
 - Use runbooks for operating production workflows.
+- Use [Workflow Templates](workflow-templates.md) when copying or changing
+  GitHub Actions templates for translation repositories.
 - Use [Security and Permissions](security-and-permissions.md) for secrets and
   workflow permissions.
 - Use [Command Reference](command-reference.md) for command syntax and safety.

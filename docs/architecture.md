@@ -96,7 +96,9 @@ belong in [Localize Sync Runbook](localize-sync-runbook.md).
   read-only config validation workflow for dedicated translation repositories.
 
 Keep GitHub Actions as orchestration. Branch selection, recovery, PO merge, KM
-generation, and commit decisions belong in Python helpers.
+generation, and commit decisions belong in Python helpers. Use
+[Workflow Templates](workflow-templates.md) when copying or updating templates
+in translation repositories.
 
 ## Ownership Rules
 

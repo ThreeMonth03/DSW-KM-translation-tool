@@ -17,6 +17,7 @@ or generated translation output.
    maintainer/architecture
    maintainer/command-reference
    maintainer/development-guidelines
+   maintainer/workflow-templates
    maintainer/localize-sync-runbook
    maintainer/km-update-runbook
    maintainer/repository-transfer-checklist
