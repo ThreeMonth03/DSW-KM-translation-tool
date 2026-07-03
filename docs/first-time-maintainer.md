@@ -33,9 +33,10 @@ translation config and generated translation output files.
    make check
    ```
 
-5. When changing behavior, find the thin CLI script in [`src/*.py`][src-root],
-   then follow it into [`src/dsw_km_translation_tool/`][package-dir] for the
-   reusable implementation.
+5. When changing command behavior, start from the packaged CLI module in
+   [`src/dsw_km_translation_tool/cli/`][cli-dir], then follow it into
+   [`src/dsw_km_translation_tool/`][package-dir] for the reusable
+   implementation.
 
 ## Safe vs. Writing Commands
 
@@ -72,6 +73,7 @@ If the right place is unclear, add or adjust a small test that describes the
 behavior you expect. The module ownership usually becomes obvious from there.
 
 [package-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool
+[cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
 [tests-infra]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/infra
 [tests-translation]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/translation

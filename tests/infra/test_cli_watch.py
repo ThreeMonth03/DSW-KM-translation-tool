@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-import sync_shared_strings
+from dsw_km_translation_tool.cli import sync_shared_strings
 from dsw_km_translation_tool.sync_support.watch import (
     RecentWriteRegistry,
     SyncWatchService,

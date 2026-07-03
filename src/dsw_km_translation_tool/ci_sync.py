@@ -184,6 +184,11 @@ class CiSyncCommitConfig:
 
         return self.tooling_repo_dir / ".venv" / "bin" / "python"
 
+    def tooling_command_path(self, command_name: str) -> Path:
+        """Return one installed console-script path from the tooling virtualenv."""
+
+        return self.tooling_repo_dir / ".venv" / "bin" / command_name
+
     @property
     def original_po_path(self) -> Path:
         """Return the source PO template path for sync and validation."""
@@ -442,8 +447,7 @@ def _build_sync_command(config: CiSyncCommitConfig) -> list[str]:
     """
 
     return [
-        str(config.tooling_python_path),
-        "src/sync_shared_strings.py",
+        str(config.tooling_command_path("dsw-km-sync-shared-strings")),
         "--tree-dir",
         str(config.tree_dir),
         "--original-po",
@@ -478,8 +482,7 @@ def _build_po_to_km_command(config: CiSyncCommitConfig) -> list[str]:
     """
 
     return [
-        str(config.tooling_python_path),
-        "src/po_to_km.py",
+        str(config.tooling_command_path("dsw-km-po-to-km")),
         "--translated-po",
         str(config.final_po_path),
         "--original-km",

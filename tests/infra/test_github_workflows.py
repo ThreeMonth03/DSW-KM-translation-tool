@@ -56,10 +56,11 @@ def test_localize_auto_sync_template_matches_writer_policy(
     assert "github.event.pull_request.head.repo.full_name == github.repository" in workflow_text
     assert "github.actor != 'github-actions[bot]'" in workflow_text
     assert "github.event_name == 'pull_request' && 'pull_request' || 'schedule'" in workflow_text
-    assert "tooling-repo/src/sync_from_localize.py" in workflow_text
-    assert "tooling-repo/src/discover_km_versions.py" not in workflow_text
-    assert "tooling-repo/src/sync_latest_km.py" not in workflow_text
-    assert "tooling-repo/src/pull_localize_po.py" not in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-sync-localize" in workflow_text
+    assert "tooling-repo/src/" not in workflow_text
+    assert "dsw-km-discover-versions" not in workflow_text
+    assert "dsw-km-sync-latest-km" not in workflow_text
+    assert "dsw-km-pull-localize-po" not in workflow_text
     assert "DSW_REGISTRY_TOKEN" not in workflow_text
     assert "--config" in workflow_text
     assert "--km-version" not in workflow_text
@@ -87,9 +88,9 @@ def test_localize_status_report_template_is_read_only(repo_root: Path) -> None:
     assert workflow["env"]["TARGET_LANG"] == "zh_Hant"
     assert workflow["env"]["TRANSLATION_CONFIG"] == "translation-config.yml"
     assert "KNOWN_FUZZY_REFERENCES" not in workflow["env"]
-    assert "tooling-repo/src/pull_localize_po.py" in workflow_text
-    assert "tooling-repo/src/report_localize_status.py" in workflow_text
-    assert "tooling-repo/src/report_weblate_checks.py" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-pull-localize-po" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-report-localize-status" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-report-weblate-checks" in workflow_text
     assert "secrets.LOCALIZE_API_TOKEN" in workflow_text
     assert "translation-repo/reviews/localize_status_report.json" in workflow_text
     assert "translation-repo/reviews/localize_status_report.md" in workflow_text
@@ -99,7 +100,8 @@ def test_localize_status_report_template_is_read_only(repo_root: Path) -> None:
     assert "--known-" not in workflow_text
     assert "--allow-api-failure" in workflow_text
     assert "actions/upload-artifact@v7" in workflow_text
-    assert "sync_from_localize.py" not in workflow_text
+    assert "dsw-km-sync-localize" not in workflow_text
+    assert "tooling-repo/src/" not in workflow_text
     assert "contents: write" not in workflow_text
 
 
@@ -118,13 +120,14 @@ def test_localize_alignment_report_template_is_read_only(repo_root: Path) -> Non
     assert_tooling_checkout_env(workflow)
     assert workflow["env"]["TRACKING_BRANCH"] == "master"
     assert workflow["env"]["TRANSLATION_CONFIG"] == "translation-config.yml"
-    assert "tooling-repo/src/report_alignment_status.py" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-report-alignment" in workflow_text
     assert "--fail-on-mismatch" in workflow_text
     assert "translation-repo/reviews/localize_alignment_report.json" in workflow_text
     assert "translation-repo/reviews/localize_alignment_artifacts/" in workflow_text
     assert "actions/upload-artifact@v7" in workflow_text
-    assert "pull_localize_po.py" not in workflow_text
-    assert "sync_from_localize.py" not in workflow_text
+    assert "dsw-km-pull-localize-po" not in workflow_text
+    assert "dsw-km-sync-localize" not in workflow_text
+    assert "tooling-repo/src/" not in workflow_text
     assert "contents: write" not in workflow_text
 
 
@@ -144,7 +147,7 @@ def test_km_version_auto_update_template_is_guarded_writer(repo_root: Path) -> N
     assert_tooling_checkout_env(workflow)
     assert workflow["env"]["TRACKING_BRANCH"] == "master"
     assert workflow["env"]["TRANSLATION_CONFIG"] == "translation-config.yml"
-    assert "tooling-repo/src/sync_latest_km.py" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-sync-latest-km" in workflow_text
     assert "--target-ref" in workflow_text
     assert '--report "$RUNNER_TEMP/km_auto_update_report.json"' in workflow_text
     assert '--details-out "$RUNNER_TEMP/km_auto_update_report.md"' in workflow_text
@@ -152,7 +155,8 @@ def test_km_version_auto_update_template_is_guarded_writer(repo_root: Path) -> N
     assert "km-version-auto-update" in workflow_text
     assert "if-no-files-found: ignore" in workflow_text
     assert "actions/upload-artifact@v7" in workflow_text
-    assert "sync_from_localize.py" not in workflow_text
+    assert "dsw-km-sync-localize" not in workflow_text
+    assert "tooling-repo/src/" not in workflow_text
 
 
 def test_validate_translation_config_template_is_read_only(repo_root: Path) -> None:
@@ -169,9 +173,10 @@ def test_validate_translation_config_template_is_read_only(repo_root: Path) -> N
     assert "workflow_dispatch" in workflow["on"]
     assert workflow["permissions"]["contents"] == "read"
     assert_tooling_checkout_env(workflow)
-    assert "tooling-repo/src/validate_translation_config.py" in workflow_text
+    assert "tooling-repo/.venv/bin/dsw-km-validate-config" in workflow_text
     assert "--summary" in workflow_text
-    assert "sync_from_localize.py" not in workflow_text
-    assert "sync_latest_km.py" not in workflow_text
+    assert "dsw-km-sync-localize" not in workflow_text
+    assert "dsw-km-sync-latest-km" not in workflow_text
+    assert "tooling-repo/src/" not in workflow_text
     assert "DSW_REGISTRY_TOKEN" not in workflow_text
     assert "contents: write" not in workflow_text

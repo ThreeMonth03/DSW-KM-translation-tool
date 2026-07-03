@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dsw-km-translation-tool"
+version = "0.1.0"
+description = "Tooling for DSW Knowledge Model translation maintenance."
+readme = "readme.md"
+requires-python = ">=3.13"
+license = "BSD-3-Clause"
+dependencies = [
+    "dsw-models @ git+https://github.com/ds-wizard/engine-tools.git@v4.27.0#subdirectory=packages/dsw-models",
+    "pydantic>=2,<3",
+    "PyYAML==6.0.3",
+    "watchdog>=6,<7",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4,<5",
+    "pytest>=8,<9",
+    "ruff>=0.12,<1.0",
+    "furo>=2024,<2027",
+    "myst-parser>=4,<5",
+    "Sphinx>=8,<9",
+]
+
+[project.scripts]
+dsw-km-discover-versions = "dsw_km_translation_tool.cli.discover_km_versions:main"
+dsw-km-export-tree = "dsw_km_translation_tool.cli.po_json_tree:main"
+dsw-km-merge-localize-po = "dsw_km_translation_tool.cli.merge_localize_po:main"
+dsw-km-po-to-km = "dsw_km_translation_tool.cli.po_to_km:main"
+dsw-km-pull-bundle = "dsw_km_translation_tool.cli.pull_km_bundle:main"
+dsw-km-pull-localize-po = "dsw_km_translation_tool.cli.pull_localize_po:main"
+dsw-km-report-alignment = "dsw_km_translation_tool.cli.report_alignment_status:main"
+dsw-km-report-localize-status = "dsw_km_translation_tool.cli.report_localize_status:main"
+dsw-km-report-weblate-checks = "dsw_km_translation_tool.cli.report_weblate_checks:main"
+dsw-km-review-po = "dsw_km_translation_tool.cli.review_po_changes:main"
+dsw-km-status = "dsw_km_translation_tool.cli.translation_status:main"
+dsw-km-sync-latest-km = "dsw_km_translation_tool.cli.sync_latest_km:main"
+dsw-km-sync-localize = "dsw_km_translation_tool.cli.sync_from_localize:main"
+dsw-km-sync-shared-strings = "dsw_km_translation_tool.cli.sync_shared_strings:main"
+dsw-km-tree-to-po = "dsw_km_translation_tool.cli.tree_to_po:main"
+dsw-km-validate-config = "dsw_km_translation_tool.cli.validate_translation_config:main"
+dsw-km-workflow = "dsw_km_translation_tool.cli.translate_workflow:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["dsw_km_translation_tool*"]

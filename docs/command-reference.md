@@ -1,8 +1,8 @@
 # Command Reference
 
-Use `make` for normal maintenance. Use the Python scripts directly only when
-you are changing workflow wiring, debugging one helper, or reproducing a GitHub
-Actions command exactly.
+Use `make` for normal maintenance. Use the packaged `dsw-km-*` commands only
+when you are changing workflow wiring, debugging one helper, or reproducing a
+GitHub Actions command exactly.
 
 ## Required Variables
 
@@ -76,12 +76,15 @@ workspace. They default to `translation/zh_Hant/`.
 Run `make help-all` if you need lower-level helpers such as `tree-to-po`,
 `po-to-km`, `repo-km-pull`, or `repo-sync-branch`.
 
-## Direct Script Use
+## Direct CLI Use
 
-The targets above are thin wrappers around root scripts in [`src/`][src-root].
-GitHub Actions call those scripts directly so they can pass explicit paths and
-write step outputs. When changing implementation, use
-[Architecture](architecture.md) to find the owning package module and tests.
+The targets above are thin wrappers around console scripts installed into
+`.venv/bin/`. Those commands are declared in [`pyproject.toml`][pyproject] and
+implemented under [`src/dsw_km_translation_tool/cli/`][cli-dir]. Root scripts in
+[`src/`][src-root] are compatibility wrappers for older direct-script use.
+
+When changing implementation, use [Architecture](architecture.md) to find the
+owning package module and tests.
 
 ## Local Tree Variables
 
@@ -99,5 +102,7 @@ Production translation repositories should use `translation-config.yml` and the
 `repo-*` targets instead.
 
 [example-translation-config]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/translation-config.yml
+[cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [makefile]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/Makefile
+[pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
 [src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src

@@ -5,7 +5,7 @@ from __future__ import annotations
 import shutil
 from argparse import Namespace
 
-import sync_shared_strings
+from dsw_km_translation_tool.cli import sync_shared_strings
 from tests.helpers import (
     corrupt_translation_by_appending_outside_fence,
     corrupt_translation_by_appending_to_event_type_header,

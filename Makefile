@@ -1,8 +1,25 @@
 VENV_DIR ?= .venv
 VENV_PYTHON := $(VENV_DIR)/bin/python
+VENV_BIN := $(VENV_DIR)/bin
 BOOTSTRAP_PYTHON ?= python3
 PYTHON ?= $(VENV_PYTHON)
 PIP := $(PYTHON) -m pip
+DSW_KM_DISCOVER_VERSIONS := $(VENV_BIN)/dsw-km-discover-versions
+DSW_KM_EXPORT_TREE := $(VENV_BIN)/dsw-km-export-tree
+DSW_KM_PO_TO_KM := $(VENV_BIN)/dsw-km-po-to-km
+DSW_KM_PULL_BUNDLE := $(VENV_BIN)/dsw-km-pull-bundle
+DSW_KM_PULL_LOCALIZE_PO := $(VENV_BIN)/dsw-km-pull-localize-po
+DSW_KM_REPORT_ALIGNMENT := $(VENV_BIN)/dsw-km-report-alignment
+DSW_KM_REPORT_LOCALIZE_STATUS := $(VENV_BIN)/dsw-km-report-localize-status
+DSW_KM_REPORT_WEBLATE_CHECKS := $(VENV_BIN)/dsw-km-report-weblate-checks
+DSW_KM_REVIEW_PO := $(VENV_BIN)/dsw-km-review-po
+DSW_KM_STATUS := $(VENV_BIN)/dsw-km-status
+DSW_KM_SYNC_LATEST_KM := $(VENV_BIN)/dsw-km-sync-latest-km
+DSW_KM_SYNC_LOCALIZE := $(VENV_BIN)/dsw-km-sync-localize
+DSW_KM_SYNC_SHARED_STRINGS := $(VENV_BIN)/dsw-km-sync-shared-strings
+DSW_KM_TREE_TO_PO := $(VENV_BIN)/dsw-km-tree-to-po
+DSW_KM_VALIDATE_CONFIG := $(VENV_BIN)/dsw-km-validate-config
+DSW_KM_WORKFLOW := $(VENV_BIN)/dsw-km-workflow
 
 PO ?= files/knowledge-models-common-dsw-knowledge-model-zh_Hant.po
 MODEL ?= files/dsw_root_2.7.0.km
@@ -169,22 +186,22 @@ docs-clean:
 	rm -rf docs/sphinx/_build
 
 repo-validate: venv require-translation-repo
-	$(PYTHON) src/validate_translation_config.py \
+	$(DSW_KM_VALIDATE_CONFIG) \
 		--config "$(TRANSLATION_REPO_DIR)/$(TRANSLATION_CONFIG)"
 
 repo-pull-po: venv require-translation-repo
-	$(PYTHON) src/pull_localize_po.py \
+	$(DSW_KM_PULL_LOCALIZE_PO) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)"
 
 repo-status: venv require-translation-repo
-	$(PYTHON) src/report_localize_status.py \
+	$(DSW_KM_REPORT_LOCALIZE_STATUS) \
 		--po "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_PO)" \
 		--json-out "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_STATUS_JSON)" \
 		--details-out "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_STATUS_MD)"
 
 repo-checks: venv require-translation-repo
-	$(PYTHON) src/report_weblate_checks.py \
+	$(DSW_KM_REPORT_WEBLATE_CHECKS) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
 		--query "$(WEBLATE_CHECK_QUERY)" \
@@ -193,7 +210,7 @@ repo-checks: venv require-translation-repo
 		--allow-api-failure
 
 repo-align: venv require-translation-repo
-	$(PYTHON) src/report_alignment_status.py \
+	$(DSW_KM_REPORT_ALIGNMENT) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
 		--json-out "$(TRANSLATION_REPO_DIR)/$(ALIGNMENT_JSON)" \
@@ -202,7 +219,7 @@ repo-align: venv require-translation-repo
 		--fail-on-mismatch
 
 repo-sync: venv require-translation-repo
-	$(PYTHON) src/sync_from_localize.py \
+	$(DSW_KM_SYNC_LOCALIZE) \
 		--host-repo "$(TRANSLATION_REPO_DIR)" \
 		--tooling-repo "$(CURDIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
@@ -211,7 +228,7 @@ repo-sync: venv require-translation-repo
 		--mode schedule
 
 repo-sync-branch: venv require-translation-repo require-target-branch
-	$(PYTHON) src/sync_from_localize.py \
+	$(DSW_KM_SYNC_LOCALIZE) \
 		--host-repo "$(TRANSLATION_REPO_DIR)" \
 		--tooling-repo "$(CURDIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
@@ -221,19 +238,19 @@ repo-sync-branch: venv require-translation-repo require-target-branch
 		--mode pull_request
 
 repo-km-status: venv require-translation-repo
-	$(PYTHON) src/discover_km_versions.py \
+	$(DSW_KM_DISCOVER_VERSIONS) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
 		--report "$(KM_DISCOVERY_JSON)" \
 		--details-out "$(KM_DISCOVERY_MD)"
 
 repo-km-pull: venv require-translation-repo
-	$(PYTHON) src/pull_km_bundle.py \
+	$(DSW_KM_PULL_BUNDLE) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--config "$(TRANSLATION_CONFIG)"
 
 repo-km-update: venv require-translation-repo
-	$(PYTHON) src/sync_latest_km.py \
+	$(DSW_KM_SYNC_LATEST_KM) \
 		--repo-root "$(TRANSLATION_REPO_DIR)" \
 		--tooling-repo "$(CURDIR)" \
 		--config "$(TRANSLATION_CONFIG)" \
@@ -243,7 +260,7 @@ repo-km-update: venv require-translation-repo
 		--skip-without-token
 
 export-tree: venv
-	$(PYTHON) src/po_json_tree.py \
+	$(DSW_KM_EXPORT_TREE) \
 		--po $(PO) \
 		--json $(MODEL) \
 		--out-dir $(TREE_DIR) \
@@ -252,7 +269,7 @@ export-tree: venv
 		--target-lang $(TARGET_LANG)
 
 export-tree-force: venv
-	$(PYTHON) src/po_json_tree.py \
+	$(DSW_KM_EXPORT_TREE) \
 		--po $(PO) \
 		--json $(MODEL) \
 		--out-dir $(TREE_DIR) \
@@ -262,19 +279,19 @@ export-tree-force: venv
 		--force
 
 status: venv
-	$(PYTHON) src/translation_status.py \
+	$(DSW_KM_STATUS) \
 		--tree-dir $(TREE_DIR) \
 		--source-lang $(SOURCE_LANG) \
 		--target-lang $(TARGET_LANG) \
 		-k $(STATUS_LIMIT)
 
 localize-status: venv
-	$(PYTHON) src/report_localize_status.py \
+	$(DSW_KM_REPORT_LOCALIZE_STATUS) \
 		--po $(LOCALIZE_PO) \
 		--json-out $(LOCALIZE_STATUS_JSON)
 
 sync: venv
-	$(PYTHON) src/sync_shared_strings.py \
+	$(DSW_KM_SYNC_SHARED_STRINGS) \
 		--tree-dir $(TREE_DIR) \
 		--original-po $(PO) \
 		--out-po $(FINAL_PO) \
@@ -287,7 +304,7 @@ sync: venv
 		--group-by $(SYNC_GROUP)
 
 sync-watch: venv
-	$(PYTHON) src/sync_shared_strings.py \
+	$(DSW_KM_SYNC_SHARED_STRINGS) \
 		--tree-dir $(TREE_DIR) \
 		--original-po $(PO) \
 		--out-po $(FINAL_PO) \
@@ -301,7 +318,7 @@ sync-watch: venv
 		--watch
 
 tree-to-po: venv
-	$(PYTHON) src/tree_to_po.py \
+	$(DSW_KM_TREE_TO_PO) \
 		--tree-dir $(TREE_DIR) \
 		--original-po $(PO) \
 		--out-po $(FINAL_PO) \
@@ -309,7 +326,7 @@ tree-to-po: venv
 		--target-lang $(TARGET_LANG)
 
 po-to-km: venv
-	$(PYTHON) src/po_to_km.py \
+	$(DSW_KM_PO_TO_KM) \
 		--translated-po $(FINAL_PO) \
 		--original-km $(MODEL) \
 		--out-km $(FINAL_KM) \
@@ -318,7 +335,7 @@ po-to-km: venv
 		$(PO_TO_KM_FLAGS)
 
 review-po: venv
-	$(PYTHON) src/review_po_changes.py \
+	$(DSW_KM_REVIEW_PO) \
 		--original-po $(PO) \
 		--generated-po $(FINAL_PO) \
 		--diff-out $(REVIEW_DIFF) \
@@ -327,7 +344,7 @@ review-po: venv
 		--target-lang $(TARGET_LANG)
 
 validate: venv
-	$(PYTHON) src/po_json_tree.py \
+	$(DSW_KM_EXPORT_TREE) \
 		--po $(FINAL_PO) \
 		--json $(MODEL) \
 		--report-out $(REPORT) \
@@ -335,7 +352,7 @@ validate: venv
 		--target-lang $(TARGET_LANG)
 
 workflow: venv
-	$(PYTHON) src/translate_workflow.py \
+	$(DSW_KM_WORKFLOW) \
 		--po $(PO) \
 		--json $(MODEL) \
 		--tree-dir $(TREE_DIR) \

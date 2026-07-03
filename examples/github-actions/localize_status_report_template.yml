@@ -44,13 +44,13 @@ jobs:
 
       - name: Pull latest Localize PO snapshot
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/pull_localize_po.py
+          tooling-repo/.venv/bin/dsw-km-pull-localize-po
           --repo-root "$GITHUB_WORKSPACE/translation-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"
 
       - name: Generate Localize status report
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/report_localize_status.py
+          tooling-repo/.venv/bin/dsw-km-report-localize-status
           --po "$GITHUB_WORKSPACE/translation-repo/sources/localize/${{ env.TARGET_LANG }}/latest.po"
           --json-out "$GITHUB_WORKSPACE/translation-repo/reviews/localize_status_report.json"
           --details-out "$GITHUB_WORKSPACE/translation-repo/reviews/localize_status_report.md"
@@ -60,7 +60,7 @@ jobs:
         env:
           LOCALIZE_API_TOKEN: ${{ secrets.LOCALIZE_API_TOKEN }}
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/report_weblate_checks.py
+          tooling-repo/.venv/bin/dsw-km-report-weblate-checks
           --repo-root "$GITHUB_WORKSPACE/translation-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"
           --json-out "$GITHUB_WORKSPACE/translation-repo/reviews/weblate_checks_report.json"

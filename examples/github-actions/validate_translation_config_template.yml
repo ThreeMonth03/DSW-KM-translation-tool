@@ -44,7 +44,6 @@ jobs:
 
       - name: Validate translation configuration
         run: >-
-          tooling-repo/.venv/bin/python
-          tooling-repo/src/validate_translation_config.py
+          tooling-repo/.venv/bin/dsw-km-validate-config
           --config "$GITHUB_WORKSPACE/translation-repo/translation-config.yml"
           --summary "$GITHUB_STEP_SUMMARY"

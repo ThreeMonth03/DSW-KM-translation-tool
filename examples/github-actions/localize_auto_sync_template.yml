@@ -67,7 +67,7 @@ jobs:
         env:
           SYNC_MODE: ${{ github.event_name == 'pull_request' && 'pull_request' || 'schedule' }}
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/sync_from_localize.py
+          tooling-repo/.venv/bin/dsw-km-sync-localize
           --host-repo "$GITHUB_WORKSPACE/translation-repo"
           --tooling-repo "$GITHUB_WORKSPACE/tooling-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"

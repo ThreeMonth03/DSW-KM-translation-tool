@@ -6,10 +6,14 @@ when deciding where a change belongs.
 ## Top-Level Shape
 
 - [`readme.md`][readme] is the quick-start entry point for this tooling repo.
+- [`pyproject.toml`][pyproject] defines the installable package and the
+  `dsw-km-*` command-line tools.
 - [`Makefile`][makefile] wraps local development checks and the in-repository
   translation-tree workflow.
-- [`src/*.py`][src-root] contains command-line entry points used by Make targets and
-  GitHub Actions. Keep these files thin.
+- [`src/*.py`][src-root] contains compatibility wrappers for older direct-script
+  usage.
+- [`src/dsw_km_translation_tool/cli/`][cli-dir] contains packaged command-line
+  entry points used by Make targets and GitHub Actions.
 - [`src/dsw_km_translation_tool/`][package-dir] contains reusable package code.
 - [`examples/`][examples-dir] contains copy-ready workflow templates and an example
   translation repository config.
@@ -134,11 +138,13 @@ in translation repositories.
 [outline-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/outline.py
 [package-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool
 [po-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/po.py
+[pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
 [readme]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/readme.md
 [repository-ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/repository_ci_sync.py
 [review-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/review.py
 [shared-blocks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/shared_blocks.py
 [sphinx-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/docs/sphinx
+[cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
 [sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/sync.py
 [tests-infra-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/infra

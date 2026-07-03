@@ -8,6 +8,7 @@ translation-tree behavior evolve.
 Commit source and durable examples:
 
 - [`src/`][src-dir]
+- [`pyproject.toml`][pyproject]
 - [`tests/`][tests-dir]
 - [`config/`][config-dir]
 - [`examples/`][examples-dir]
@@ -34,7 +35,10 @@ workspace for translators and maintainers.
 
 ## Code Organization
 
-- Keep root [`src/*.py`][src-dir] files as command-line shims.
+- Keep root [`src/*.py`][src-dir] files as compatibility command-line shims.
+- Put packaged CLI behavior under
+  [`src/dsw_km_translation_tool/cli/`][cli-dir] and expose user-facing commands
+  through [`pyproject.toml`][pyproject].
 - Put reusable logic in [`src/dsw_km_translation_tool/`][package-dir].
 - Keep GitHub Actions YAML thin. YAML should describe checkout, setup, and the
   one helper command it runs.
@@ -73,10 +77,12 @@ sync behavior changes, test against a disposable translation checkout before
 touching the production translation repository.
 
 [config-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/config
+[cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [docs-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/docs
 [examples-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples
 [files-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/files
 [package-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool
+[pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
 [src-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
 [tests-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests
 [tests-fixtures-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/fixtures

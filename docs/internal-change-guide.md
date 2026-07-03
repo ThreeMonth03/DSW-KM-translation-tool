@@ -21,11 +21,14 @@ the support code.
 | Weblate PO merge policy | [`localize_merge.py`][localize-merge-py] | Merge decision helpers inside the same module | [`tests/infra/test_localize_merge.py`][test-localize-merge-py] |
 | CI writer commit or recovery behavior | [`ci_sync.py`][ci-sync-py], [`repository_ci_sync.py`][repository-ci-sync-py] | Git command helpers in [`command.py`][command-py] | [`tests/infra/test_ci_sync.py`][test-ci-sync-py] |
 | KM Registry discovery or latest-KM update behavior | [`km_registry.py`][km-registry-py], [`km_latest_sync.py`][km-latest-sync-py] | [`km_bundle_sync.py`][km-bundle-sync-py] and helper functions in the same modules | KM tests under [`tests/infra/`][tests-infra] |
-| GitHub Actions template wiring | [`examples/github-actions/`][github-actions-templates] | Workflow templates and root CLI scripts in [`src/`][src-root] | [`tests/infra/test_github_workflows.py`][test-github-workflows-py] |
+| GitHub Actions template wiring | [`examples/github-actions/`][github-actions-templates] | Workflow templates and packaged CLI modules in [`src/dsw_km_translation_tool/cli/`][cli-dir] | [`tests/infra/test_github_workflows.py`][test-github-workflows-py] |
 
 ## Editing Rules
 
-- Keep root `src/*.py` files as thin command-line shims.
+- Keep root `src/*.py` files as compatibility command-line shims.
+- Keep packaged CLI behavior under
+  [`src/dsw_km_translation_tool/cli/`][cli-dir] and expose user-facing commands
+  through [`pyproject.toml`][pyproject].
 - Keep GitHub Actions YAML as orchestration; branch selection, merge policy, KM
   rewriting, and commit decisions belong in Python.
 - Keep support modules behavior-focused. If an internal helper starts serving
@@ -35,6 +38,7 @@ the support code.
   model, or config contract changes.
 
 [ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/ci_sync.py
+[cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [command-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/command.py
 [dsw-models-adapter-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/dsw_models_adapter.py
 [github-actions-templates]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples/github-actions
@@ -50,6 +54,7 @@ the support code.
 [po-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/po.py
 [po-render-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/po_support/render.py
 [po-writer-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/po_support/writer.py
+[pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
 [repository-ci-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/repository_ci_sync.py
 [shared-blocks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/shared_blocks.py
 [src-root]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src

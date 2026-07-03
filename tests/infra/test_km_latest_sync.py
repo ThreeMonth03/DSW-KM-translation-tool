@@ -114,13 +114,13 @@ def test_sync_latest_km_updates_validates_and_pushes_target_ref(workspace: Path)
     assert result.target_ref == "master"
     assert runner.command_names == [
         "git status --porcelain",
-        "python src/validate_translation_config.py",
-        "python src/po_json_tree.py",
-        "python src/sync_shared_strings.py",
-        "python src/merge_localize_po.py",
-        "python src/po_to_km.py",
+        "dsw-km-validate-config",
+        "dsw-km-export-tree",
+        "dsw-km-sync-shared-strings",
+        "dsw-km-merge-localize-po",
+        "dsw-km-po-to-km",
         "python -m pytest",
-        "python src/report_alignment_status.py",
+        "dsw-km-report-alignment",
         "git config user.name github-actions[bot]",
         "git config user.email 41898282+github-actions[bot]@users.noreply.github.com",
         "git add -A -- .",
@@ -137,7 +137,7 @@ def test_sync_latest_km_does_not_push_when_validation_fails(workspace: Path) -> 
     tooling_repo = workspace / "tooling"
     tooling_repo.mkdir()
     write_config(config_path, supported_versions=["2.7.0"])
-    runner = RecordingRunner(fail_on="src/report_alignment_status.py")
+    runner = RecordingRunner(fail_on="dsw-km-report-alignment")
 
     try:
         sync_latest_km_version(
@@ -217,7 +217,7 @@ class RecordingRunner:
         del cwd, env
         command_name = self._command_name(args)
         self.command_names.append(command_name)
-        if self.fail_on and self.fail_on in args:
+        if self.fail_on and self.fail_on == command_name:
             return subprocess.CompletedProcess(args, 1, stdout="", stderr="alignment failed")
         stdout = ""
         if list(args) == ["git", "status", "--porcelain"]:
@@ -231,6 +231,7 @@ class RecordingRunner:
         ]
         if display_args[:3] == ["python", "-m", "pytest"]:
             return "python -m pytest"
-        if display_args[0] == "python" and len(display_args) > 1:
-            return f"python {display_args[1]}"
+        first_arg = Path(display_args[0])
+        if first_arg.parent.name == "bin" and first_arg.name.startswith("dsw-km-"):
+            return first_arg.name
         return " ".join(display_args)

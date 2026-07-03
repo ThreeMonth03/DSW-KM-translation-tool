@@ -154,8 +154,8 @@ def test_ci_sync_commit_skips_commit_when_no_tracked_translation_changes(workspa
 
     assert committed is False
     commands = [call["args"] for call in runner.calls]
-    assert commands[0][1] == "src/sync_shared_strings.py"
-    assert commands[1][1] == "src/po_to_km.py"
+    assert commands[0][0] == str(config.tooling_command_path("dsw-km-sync-shared-strings"))
+    assert commands[1][0] == str(config.tooling_command_path("dsw-km-po-to-km"))
     assert commands[2][:4] == [str(config.tooling_python_path), "-m", "pytest", "tests/translation"]
     assert commands[3] == [
         "git",
@@ -220,7 +220,7 @@ def test_ci_sync_commit_uses_repo_root_layout_for_external_translation_repo(
 
     assert committed is False
     sync_command = runner.calls[0]["args"]
-    assert sync_command[:2] == [str(config.tooling_python_path), "src/sync_shared_strings.py"]
+    assert sync_command[0] == str(config.tooling_command_path("dsw-km-sync-shared-strings"))
     assert "--tree-dir" in sync_command
     assert str(config.host_repo_dir / "tree") in sync_command
     assert str(config.host_repo_dir / "builds" / "final_translated.po") in sync_command
@@ -228,7 +228,7 @@ def test_ci_sync_commit_uses_repo_root_layout_for_external_translation_repo(
     assert str(config.host_repo_dir / "tree" / "shared_blocks") in sync_command
     assert str(config.original_po_path) in sync_command
     po_to_km_command = runner.calls[1]["args"]
-    assert po_to_km_command[:2] == [str(config.tooling_python_path), "src/po_to_km.py"]
+    assert po_to_km_command[0] == str(config.tooling_command_path("dsw-km-po-to-km"))
     assert str(config.host_repo_dir / "builds" / "final_translated.po") in po_to_km_command
     assert str(config.host_repo_dir / "builds" / "final_translated.km") in po_to_km_command
     assert str(config.original_model_path) in po_to_km_command
@@ -417,7 +417,7 @@ def test_ci_sync_commit_restores_broken_translation_markdown_from_origin_master(
         "--",
         "translation/zh_Hant/tree/chapter/translation.md",
     ]
-    assert commands[2][1] == "src/sync_shared_strings.py"
+    assert commands[2][0] == str(config.tooling_command_path("dsw-km-sync-shared-strings"))
 
 
 def test_ci_sync_commit_restores_broken_shared_block_translation_from_origin_master(
@@ -466,7 +466,7 @@ def test_ci_sync_commit_restores_broken_shared_block_translation_from_origin_mas
         "--",
         "translation/zh_Hant/tree/shared_blocks/abc123/context.md",
     ]
-    assert commands[2][1] == "src/sync_shared_strings.py"
+    assert commands[2][0] == str(config.tooling_command_path("dsw-km-sync-shared-strings"))
 
 
 def test_ci_sync_commit_does_not_commit_when_translation_tests_fail_after_restore(

@@ -30,8 +30,7 @@ The external translation workflow should run:
 - on pull requests targeting `master`
 - on manual `workflow_dispatch`
 
-The workflow runs [`src/sync_from_localize.py`][sync-from-localize-py]. That
-command:
+The workflow runs the `dsw-km-sync-localize` command. That command:
 
 1. Downloads the current Weblate PO to `sources/localize/zh_Hant/latest.po`.
 2. Writes the previous checked-in `latest.po` to a temporary comparison file.
@@ -62,7 +61,7 @@ Git or Weblate. It:
 
 1. Checks out the translation repository.
 2. Pulls the latest Weblate PO into the ephemeral workflow checkout.
-3. Runs [`src/report_localize_status.py`][report-localize-status-py].
+3. Runs `dsw-km-report-localize-status`.
 4. Writes a GitHub step summary and uploads
    `reviews/localize_status_report.json` and
    `reviews/localize_status_report.md` as artifacts.
@@ -70,10 +69,9 @@ Git or Weblate. It:
 The status report includes Weblate review-state counts from the PO export as
 part of current translation health.
 
-The same workflow can also run
-[`src/report_weblate_checks.py`][report-weblate-checks-py] with the Weblate query
-`has:check`. That catches website-side quality-check warnings that are not
-always visible from PO state alone. The check report is diagnostic and uses
+The same workflow can also run `dsw-km-report-weblate-checks` with the Weblate
+query `has:check`. That catches website-side quality-check warnings that are
+not always visible from PO state alone. The check report is diagnostic and uses
 `--allow-api-failure` so Weblate API rate limits are captured in the report
 while Git sync monitoring continues.
 
@@ -133,7 +131,4 @@ Common DSW KM.
 - If Weblate has untranslated strings after sync, check whether they are empty,
   marked for review, or missing from the current KM source.
 
-[report-localize-status-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/report_localize_status.py
-[report-weblate-checks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/report_weblate_checks.py
-[sync-from-localize-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/sync_from_localize.py
 [makefile]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/Makefile

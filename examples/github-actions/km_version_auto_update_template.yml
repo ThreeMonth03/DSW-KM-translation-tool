@@ -51,7 +51,7 @@ jobs:
         env:
           DSW_REGISTRY_TOKEN: ${{ secrets.DSW_REGISTRY_TOKEN }}
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/sync_latest_km.py
+          tooling-repo/.venv/bin/dsw-km-sync-latest-km
           --repo-root "$GITHUB_WORKSPACE/translation-repo"
           --tooling-repo "$GITHUB_WORKSPACE/tooling-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"

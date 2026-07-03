@@ -36,8 +36,8 @@ Common references:
 make install-dev
 ```
 
-This creates `.venv` and installs the Python dependencies listed in
-`config/requirements.txt`.
+This creates `.venv` and installs the package plus development dependencies
+declared through `pyproject.toml` and `config/requirements.txt`.
 
 ## Common Commands
 

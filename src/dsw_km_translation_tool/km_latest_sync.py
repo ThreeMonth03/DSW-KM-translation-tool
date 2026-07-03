@@ -298,8 +298,7 @@ def _run_validate_config(
     _run_checked(
         runner,
         [
-            str(_tooling_python(tooling_repo)),
-            "src/validate_translation_config.py",
+            str(_tooling_command(tooling_repo, "dsw-km-validate-config")),
             "--config",
             str(_resolve_repo_path(repo_root, config_path)),
         ],
@@ -322,8 +321,7 @@ def _run_export_tree(
     _run_checked(
         runner,
         [
-            str(_tooling_python(tooling_repo)),
-            "src/po_json_tree.py",
+            str(_tooling_command(tooling_repo, "dsw-km-export-tree")),
             "--po",
             str(repo_root / paths.localize_latest_po_path),
             "--json",
@@ -356,12 +354,10 @@ def _run_sync_merge_build_and_tests(
 ) -> None:
     config = load_translation_repository_config(_resolve_repo_path(repo_root, config_path))
     paths = version_paths(config, version)
-    python = _tooling_python(tooling_repo)
     _run_checked(
         runner,
         [
-            str(python),
-            "src/sync_shared_strings.py",
+            str(_tooling_command(tooling_repo, "dsw-km-sync-shared-strings")),
             "--tree-dir",
             str(repo_root / paths.translation_tree_dir),
             "--original-po",
@@ -390,8 +386,7 @@ def _run_sync_merge_build_and_tests(
     if localize_base_po_path is None:
         raise KmLatestSyncError("Missing transient Localize base PO for latest-KM merge")
     merge_command = [
-        str(python),
-        "src/merge_localize_po.py",
+        str(_tooling_command(tooling_repo, "dsw-km-merge-localize-po")),
         "--repo-root",
         str(repo_root),
         "--config",
@@ -411,8 +406,7 @@ def _run_sync_merge_build_and_tests(
     _run_checked(
         runner,
         [
-            str(python),
-            "src/po_to_km.py",
+            str(_tooling_command(tooling_repo, "dsw-km-po-to-km")),
             "--translated-po",
             str(repo_root / paths.final_po_path),
             "--original-km",
@@ -436,7 +430,7 @@ def _run_sync_merge_build_and_tests(
     )
     _run_checked(
         runner,
-        [str(python), "-m", "pytest", "tests/translation"],
+        [str(_tooling_python(tooling_repo)), "-m", "pytest", "tests/translation"],
         cwd=tooling_repo,
         env={"DSW_TRANSLATION_OUTPUT_ROOT": str(repo_root)},
         description=f"run translation tests for KM {version}",
@@ -455,8 +449,7 @@ def _run_alignment_check(
     _run_checked(
         runner,
         [
-            str(_tooling_python(tooling_repo)),
-            "src/report_alignment_status.py",
+            str(_tooling_command(tooling_repo, "dsw-km-report-alignment")),
             "--repo-root",
             str(repo_root),
             "--config",
@@ -558,3 +551,7 @@ def _format_value(value: object | None) -> str:
 
 def _tooling_python(tooling_repo: Path) -> Path:
     return tooling_repo / ".venv" / "bin" / "python"
+
+
+def _tooling_command(tooling_repo: Path, command_name: str) -> Path:
+    return tooling_repo / ".venv" / "bin" / command_name

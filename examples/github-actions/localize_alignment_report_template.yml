@@ -43,7 +43,7 @@ jobs:
 
       - name: Generate alignment report
         run: >-
-          tooling-repo/.venv/bin/python tooling-repo/src/report_alignment_status.py
+          tooling-repo/.venv/bin/dsw-km-report-alignment
           --repo-root "$GITHUB_WORKSPACE/translation-repo"
           --config "${{ env.TRANSLATION_CONFIG }}"
           --json-out "$GITHUB_WORKSPACE/translation-repo/reviews/localize_alignment_report.json"
