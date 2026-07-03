@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from ..data_models import PoEntry
+from .event_ordering import event_type_priority
 
 
 @dataclass(frozen=True)
@@ -311,7 +312,12 @@ class KnowledgeModelBundleWriter:
                     continue
                 event_type = str(content.get("eventType") or "")
                 created_at = str(event.get("createdAt") or "")
-                sort_key = (created_at, package_index, event_index)
+                sort_key = (
+                    created_at,
+                    package_index,
+                    event_type_priority(event_type),
+                    event_index,
+                )
 
                 for field in requested_fields:
                     if not self.event_defines_field(

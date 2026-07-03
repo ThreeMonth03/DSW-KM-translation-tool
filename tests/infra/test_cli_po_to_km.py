@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import json
 
+from dsw_km_translation_tool.knowledge_model_support import KnowledgeModelBundleWriter
 from tests.helpers import parse_po_entries
 from tests.infra.support import assert_cli_success, run_po_to_km_cli
+
+SAME_TIMESTAMP_ENTITY_UUID = "426bdcb5-d012-4f1d-b99e-36dc3efe6e50"
 
 
 def test_po_to_km_cli_generates_translated_km(
@@ -60,3 +63,43 @@ def test_po_to_km_cli_generates_translated_km(
         empty_entry.field,
     )
     assert preserved_text == normalize(empty_entry.msgid)
+
+
+def test_km_writer_targets_same_timestamp_edit_event_over_add_event() -> None:
+    """Verify translations are written to the effective current text event."""
+
+    writer = KnowledgeModelBundleWriter()
+    bundle_root = {
+        "packages": [
+            {
+                "events": [
+                    {
+                        "entityUuid": SAME_TIMESTAMP_ENTITY_UUID,
+                        "createdAt": "2025-11-25T12:31:45Z",
+                        "content": {
+                            "eventType": "EditQuestionEvent",
+                            "title": {
+                                "changed": True,
+                                "value": "Are there any other outputs?",
+                            },
+                        },
+                    },
+                    {
+                        "entityUuid": SAME_TIMESTAMP_ENTITY_UUID,
+                        "createdAt": "2025-11-25T12:31:45Z",
+                        "content": {
+                            "eventType": "AddQuestionEvent",
+                            "title": "",
+                        },
+                    },
+                ]
+            }
+        ]
+    }
+
+    targets = writer.locate_field_targets(
+        bundle_root=bundle_root,
+        target_keys={(SAME_TIMESTAMP_ENTITY_UUID, "title")},
+    )
+
+    assert targets[(SAME_TIMESTAMP_ENTITY_UUID, "title")].event_type == "EditQuestionEvent"

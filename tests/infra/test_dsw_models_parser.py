@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from dsw_km_translation_tool.dsw_models_adapter import TypedKnowledgeModelEvent
 from dsw_km_translation_tool.knowledge_model_service import KnowledgeModelService
+from dsw_km_translation_tool.knowledge_model_support import KnowledgeModelEventMerger
 
 MOVED_QUESTION_UUID = "ab4b3f39-dfab-45a5-9489-2d46ceacbb73"
 MOVED_QUESTION_OLD_PARENT_UUID = "c4eda690-066f-495a-8c29-8e8a258ac487"
@@ -14,6 +16,8 @@ MOVED_ENTITY_PARENT_EXPECTATIONS = {
     "bb71dd81-e53a-4ee3-ab8e-bdd687329b91": "8c962e6f-17ee-4b22-8ebb-9f06f779e3b3",
     "a2b1fa38-792a-4628-9765-93476a38cffb": "761d20f2-d2ce-496b-8a91-a52ff0513e7b",
 }
+SAME_TIMESTAMP_ENTITY_UUID = "426bdcb5-d012-4f1d-b99e-36dc3efe6e50"
+SAME_TIMESTAMP_PARENT_UUID = "70cc627a-4a9f-4d3e-8fdb-7a09b6684bec"
 
 
 def assert_parent_uuid(
@@ -79,4 +83,62 @@ def test_tree_builder_places_moved_question_under_the_new_parent(
     assert all(
         child.entity_uuid != MOVED_QUESTION_UUID
         for child in nodes_map[MOVED_QUESTION_OLD_PARENT_UUID].children
+    )
+
+
+def test_event_merger_applies_same_timestamp_add_before_edit() -> None:
+    """Ensure Registry event ordering cannot erase same-timestamp edits."""
+
+    merger = KnowledgeModelEventMerger()
+    latest_by_uuid = merger.build_latest_entities(
+        {
+            SAME_TIMESTAMP_ENTITY_UUID: [
+                make_typed_event(
+                    event_type="EditQuestionEvent",
+                    event_index=0,
+                    content={
+                        "title": {
+                            "changed": True,
+                            "value": "Are there any other outputs?",
+                        }
+                    },
+                ),
+                make_typed_event(
+                    event_type="AddQuestionEvent",
+                    event_index=1,
+                    content={
+                        "annotations": [],
+                        "questionType": "OptionsQuestion",
+                        "requiredPhaseUuid": None,
+                        "tagUuids": [],
+                        "text": None,
+                        "title": "",
+                    },
+                ),
+            ]
+        }
+    )
+
+    content = latest_by_uuid[SAME_TIMESTAMP_ENTITY_UUID]["content"]
+    assert content["eventType"] == "EditQuestionEvent"
+    assert content["title"] == "Are there any other outputs?"
+
+
+def make_typed_event(
+    *,
+    event_type: str,
+    event_index: int,
+    content: dict[str, object],
+) -> TypedKnowledgeModelEvent:
+    """Build a typed KM event for entity-ordering tests."""
+
+    return TypedKnowledgeModelEvent(
+        uuid=f"event-{event_index}",
+        entity_uuid=SAME_TIMESTAMP_ENTITY_UUID,
+        parent_uuid=SAME_TIMESTAMP_PARENT_UUID,
+        effective_parent_uuid=SAME_TIMESTAMP_PARENT_UUID,
+        created_at="2025-11-25T12:31:45Z",
+        package_index=0,
+        event_index=event_index,
+        content={"eventType": event_type, **content},
     )

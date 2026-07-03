@@ -7,6 +7,7 @@ from typing import Any
 
 from ..constants import ZERO_UUID
 from ..dsw_models_adapter import TypedKnowledgeModelEvent
+from .event_ordering import event_type_priority
 
 
 class KnowledgeModelEventMerger:
@@ -47,7 +48,7 @@ class KnowledgeModelEventMerger:
         for entity_uuid, history in entity_history.items():
             state: dict[str, Any] = {}
             latest_parent_uuid = ZERO_UUID
-            for event in history:
+            for event in self._sort_entity_history(history):
                 state = self._merge_event_content(
                     base=state,
                     event_type=event.event_type,
@@ -67,6 +68,28 @@ class KnowledgeModelEventMerger:
                 "entityUuid": entity_uuid,
             }
         return latest_by_uuid
+
+    @staticmethod
+    def _sort_entity_history(
+        history: list[TypedKnowledgeModelEvent],
+    ) -> list[TypedKnowledgeModelEvent]:
+        """Sort one entity history before applying event deltas.
+
+        Registry bundles may contain same-timestamp events where an edit appears
+        before the corresponding add event. Add events must initialize the
+        entity before edits are applied, otherwise the add payload can overwrite
+        edited text fields with empty bootstrap values.
+        """
+
+        return sorted(
+            history,
+            key=lambda event: (
+                event.created_at,
+                event.package_index,
+                event_type_priority(event.event_type),
+                event.event_index,
+            ),
+        )
 
     def _merge_event_content(
         self,
