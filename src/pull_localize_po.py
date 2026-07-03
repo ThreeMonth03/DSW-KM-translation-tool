@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from dsw_translation_tool.localize_sync import pull_localize_po
+from dsw_knowledge_model_translation_tool.localize_sync import pull_localize_po
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

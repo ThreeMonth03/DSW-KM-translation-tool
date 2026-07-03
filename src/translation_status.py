@@ -7,13 +7,13 @@ import argparse
 import json
 from dataclasses import asdict
 
-from dsw_translation_tool import (
+from dsw_knowledge_model_translation_tool import (
     DEFAULT_LAYOUT,
     DEFAULT_SOURCE_LANG,
     DEFAULT_TARGET_LANG,
     TranslationWorkflowService,
 )
-from dsw_translation_tool.data_models import (
+from dsw_knowledge_model_translation_tool.data_models import (
     TranslationStatusFolder,
     TranslationStatusReport,
 )

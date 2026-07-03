@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from dsw_translation_tool.repository_ci_sync import build_repository_ci_sync_config
-from dsw_translation_tool.translation_repository_config import (
+from dsw_knowledge_model_translation_tool.repository_ci_sync import build_repository_ci_sync_config
+from dsw_knowledge_model_translation_tool.translation_repository_config import (
     load_translation_repository_config,
     sorted_versions,
     tracking_branch,
@@ -42,7 +42,7 @@ branches:
   tracking_branch: translation/latest
 
 tooling:
-  repository: ThreeMonth03/DSW_Translation_tool
+  repository: ThreeMonth03/DSW-knowledge-model-translation-tool
   ref: master
 
 localize:

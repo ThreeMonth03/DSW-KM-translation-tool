@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from dsw_translation_tool.km_bundle_sync import pull_km_bundle
-from dsw_translation_tool.km_registry import KmRegistryError
+from dsw_knowledge_model_translation_tool.km_bundle_sync import pull_km_bundle
+from dsw_knowledge_model_translation_tool.km_registry import KmRegistryError
 from tests.helpers import run_cli_script
 from tests.infra.test_translation_repository_config import write_config
 

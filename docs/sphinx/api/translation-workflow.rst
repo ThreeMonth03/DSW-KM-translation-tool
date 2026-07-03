@@ -7,7 +7,7 @@ round-trip workflow.
 Facade Service
 --------------
 
-.. automodule:: dsw_translation_tool.workflow
+.. automodule:: dsw_knowledge_model_translation_tool.workflow
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ Facade Service
 Tree Repository
 ---------------
 
-.. automodule:: dsw_translation_tool.tree
+.. automodule:: dsw_knowledge_model_translation_tool.tree
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ Tree Repository
 Knowledge Model Service
 -----------------------
 
-.. automodule:: dsw_translation_tool.knowledge_model_service
+.. automodule:: dsw_knowledge_model_translation_tool.knowledge_model_service
    :members:
    :undoc-members:
    :show-inheritance:
@@ -31,7 +31,7 @@ Knowledge Model Service
 PO Facade
 ---------
 
-.. automodule:: dsw_translation_tool.po
+.. automodule:: dsw_knowledge_model_translation_tool.po
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,17 +39,17 @@ PO Facade
 Review and Shared Strings
 -------------------------
 
-.. automodule:: dsw_translation_tool.review
+.. automodule:: dsw_knowledge_model_translation_tool.review
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: dsw_translation_tool.shared_blocks
+.. automodule:: dsw_knowledge_model_translation_tool.shared_blocks
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: dsw_translation_tool.sync
+.. automodule:: dsw_knowledge_model_translation_tool.sync
    :members:
    :undoc-members:
    :show-inheritance:

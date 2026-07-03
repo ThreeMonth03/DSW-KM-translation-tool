@@ -8,14 +8,14 @@ import time
 from argparse import Namespace
 from pathlib import Path
 
-from dsw_translation_tool import (
+from dsw_knowledge_model_translation_tool import (
     DEFAULT_LAYOUT,
     DEFAULT_PO_PATH,
     DEFAULT_SOURCE_LANG,
     DEFAULT_TARGET_LANG,
     TranslationWorkflowService,
 )
-from dsw_translation_tool.sync_support import SyncWatchService, SyncWatchSettings
+from dsw_knowledge_model_translation_tool.sync_support import SyncWatchService, SyncWatchSettings
 
 DEFAULT_OUT_PO = str(DEFAULT_LAYOUT.final_po_path)
 DEFAULT_DIFF_OUT = str(DEFAULT_LAYOUT.diff_path)

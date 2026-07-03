@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 import sync_shared_strings
-from dsw_translation_tool.sync_support.watch import (
+from dsw_knowledge_model_translation_tool.sync_support.watch import (
     RecentWriteRegistry,
     SyncWatchService,
     SyncWatchSettings,

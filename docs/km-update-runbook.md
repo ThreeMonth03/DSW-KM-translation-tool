@@ -107,5 +107,5 @@ Merge only after the dry-run branch produces aligned artifacts. After merge,
 trigger the scheduled sync and alignment report once manually to verify the
 production branch.
 
-[sync-latest-km-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/sync_latest_km.py
-[makefile]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/Makefile
+[sync-latest-km-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/sync_latest_km.py
+[makefile]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/Makefile

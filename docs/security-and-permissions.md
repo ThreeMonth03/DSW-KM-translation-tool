@@ -56,8 +56,8 @@ bundle. It is not used for Weblate access.
 Use forward commits for workflow, build output, report, or documentation fixes
 on public branches.
 
-[km-auto-update-template]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
-[github-actions-templates]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/examples/github-actions
-[localize-alignment-template]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/examples/github-actions/localize_alignment_report_template.yml
-[localize-auto-sync-template]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/examples/github-actions/localize_auto_sync_template.yml
-[localize-status-template]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/examples/github-actions/localize_status_report_template.yml
+[km-auto-update-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
+[github-actions-templates]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/examples/github-actions
+[localize-alignment-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_alignment_report_template.yml
+[localize-auto-sync-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_auto_sync_template.yml
+[localize-status-template]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/github-actions/localize_status_report_template.yml

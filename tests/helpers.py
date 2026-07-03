@@ -11,15 +11,15 @@ import time
 from collections import defaultdict
 from pathlib import Path
 
-from dsw_translation_tool import TranslationWorkflowService
-from dsw_translation_tool.constants import (
+from dsw_knowledge_model_translation_tool import TranslationWorkflowService
+from dsw_knowledge_model_translation_tool.constants import (
     LEGACY_SHARED_FIELD_NOTES,
     MANIFEST_NAME,
     TRANSLATION_FILENAME,
     TREE_BACKUP_DIRNAME,
     UUID_FILENAME,
 )
-from dsw_translation_tool.data_models import (
+from dsw_knowledge_model_translation_tool.data_models import (
     OutlineBuildResult,
     PoBlock,
     PoEntry,
@@ -31,8 +31,8 @@ from dsw_translation_tool.data_models import (
     TreeScanResult,
     WorkflowContext,
 )
-from dsw_translation_tool.po import PoCatalogParser
-from dsw_translation_tool.shared_blocks import (
+from dsw_knowledge_model_translation_tool.po import PoCatalogParser
+from dsw_knowledge_model_translation_tool.shared_blocks import (
     SharedBlocksCatalogParser,
     resolve_shared_blocks_root_path,
 )

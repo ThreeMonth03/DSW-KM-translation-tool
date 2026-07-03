@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 
-from dsw_translation_tool import (
+from dsw_knowledge_model_translation_tool import (
     DEFAULT_LAYOUT,
     DEFAULT_MODEL_PATH,
     DEFAULT_PO_PATH,

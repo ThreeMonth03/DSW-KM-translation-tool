@@ -1,4 +1,4 @@
-"""Workflow result models used by the translation tooling."""
+"""Workflow result models used by the knowledge model translation tooling."""
 
 from __future__ import annotations
 

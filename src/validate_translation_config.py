@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from dsw_translation_tool.translation_repository_config import (
+from dsw_knowledge_model_translation_tool.translation_repository_config import (
     TranslationRepositoryConfigError,
     load_translation_repository_config,
     tracking_branch,

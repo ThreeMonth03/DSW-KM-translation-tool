@@ -7,7 +7,7 @@ translation repositories.
 Repository Configuration
 ------------------------
 
-.. automodule:: dsw_translation_tool.translation_repository_config
+.. automodule:: dsw_knowledge_model_translation_tool.translation_repository_config
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,12 +15,12 @@ Repository Configuration
 Localize Pull and Tree Refresh
 ------------------------------
 
-.. automodule:: dsw_translation_tool.localize_sync
+.. automodule:: dsw_knowledge_model_translation_tool.localize_sync
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: dsw_translation_tool.localize_tree_sync
+.. automodule:: dsw_knowledge_model_translation_tool.localize_tree_sync
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,7 +28,7 @@ Localize Pull and Tree Refresh
 PO Merge
 --------
 
-.. automodule:: dsw_translation_tool.localize_merge
+.. automodule:: dsw_knowledge_model_translation_tool.localize_merge
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,12 +36,12 @@ PO Merge
 CI Writer
 ---------
 
-.. automodule:: dsw_translation_tool.repository_ci_sync
+.. automodule:: dsw_knowledge_model_translation_tool.repository_ci_sync
    :members:
    :undoc-members:
    :show-inheritance:
 
-.. automodule:: dsw_translation_tool.ci_sync
+.. automodule:: dsw_knowledge_model_translation_tool.ci_sync
    :members:
    :undoc-members:
    :show-inheritance:

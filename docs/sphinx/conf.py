@@ -1,4 +1,4 @@
-"""Sphinx configuration for DSW translation tooling developer docs."""
+"""Sphinx configuration for DSW knowledge model translation tooling developer docs."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ ROOT_DIR = Path(__file__).resolve().parents[2]
 SRC_DIR = ROOT_DIR / "src"
 sys.path.insert(0, str(SRC_DIR))
 
-project = "DSW Translation Tooling"
+project = "DSW Knowledge Model Translation Tooling"
 author = "depositar"
 
 extensions = [
@@ -21,7 +21,7 @@ extensions = [
 
 exclude_patterns = ["_build"]
 html_theme = "furo"
-html_title = "DSW Translation Tooling"
+html_title = "DSW Knowledge Model Translation Tooling"
 
 autodoc_class_signature = "separated"
 autodoc_member_order = "bysource"

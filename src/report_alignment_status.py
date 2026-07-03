@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from dsw_translation_tool.alignment_status import (
+from dsw_knowledge_model_translation_tool.alignment_status import (
     build_alignment_status_report,
     render_alignment_status_markdown,
     write_alignment_status_json,

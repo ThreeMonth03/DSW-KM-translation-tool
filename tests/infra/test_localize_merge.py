@@ -5,7 +5,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from dsw_translation_tool.localize_merge import LocalizePoMerger, parse_po_entry_states
+from dsw_knowledge_model_translation_tool.localize_merge import (
+    LocalizePoMerger,
+    parse_po_entry_states,
+)
 
 UUID_A = "11111111-1111-4111-8111-111111111111"
 UUID_B = "22222222-2222-4222-8222-222222222222"

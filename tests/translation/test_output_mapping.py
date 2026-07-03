@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from dsw_translation_tool.shared_blocks import SharedBlocksCatalogParser
+from dsw_knowledge_model_translation_tool.shared_blocks import SharedBlocksCatalogParser
 from tests.helpers import (
     build_entry_map,
     build_outline_markdown,

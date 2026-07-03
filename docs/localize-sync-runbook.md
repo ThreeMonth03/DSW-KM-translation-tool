@@ -133,7 +133,7 @@ Common DSW KM.
 - If Weblate has untranslated strings after sync, check whether they are empty,
   marked for review, or missing from the current KM source.
 
-[report-localize-status-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/report_localize_status.py
-[report-weblate-checks-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/report_weblate_checks.py
-[sync-from-localize-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/sync_from_localize.py
-[makefile]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/Makefile
+[report-localize-status-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/report_localize_status.py
+[report-weblate-checks-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/report_weblate_checks.py
+[sync-from-localize-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/sync_from_localize.py
+[makefile]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/Makefile

@@ -24,7 +24,7 @@ branches:
   tracking_branch: master
 
 tooling:
-  repository: ThreeMonth03/DSW_Translation_tool
+  repository: ThreeMonth03/DSW-knowledge-model-translation-tool
   ref: master
 
 localize:

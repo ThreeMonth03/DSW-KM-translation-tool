@@ -6,14 +6,16 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from dsw_translation_tool.km_registry import (
+from dsw_knowledge_model_translation_tool.km_registry import (
     KmRegistryError,
     discover_km_versions,
     render_km_version_discovery_markdown,
     write_km_version_discovery_markdown,
     write_km_version_discovery_report,
 )
-from dsw_translation_tool.translation_repository_config import TranslationRepositoryConfigError
+from dsw_knowledge_model_translation_tool.translation_repository_config import (
+    TranslationRepositoryConfigError,
+)
 
 
 def build_argument_parser() -> argparse.ArgumentParser:

@@ -9,7 +9,7 @@ import sys
 from collections.abc import Callable
 from pathlib import Path
 
-from dsw_translation_tool.alignment_status import (
+from dsw_knowledge_model_translation_tool.alignment_status import (
     build_alignment_status_report,
     render_alignment_status_markdown,
     write_alignment_status_json,
@@ -79,7 +79,7 @@ def prepare_translation_repo_fixture(
                 "branches:",
                 "  tracking_branch: master",
                 "tooling:",
-                "  repository: ThreeMonth03/DSW_Translation_tool",
+                "  repository: ThreeMonth03/DSW-knowledge-model-translation-tool",
                 "  ref: master",
                 "localize:",
                 f"  download_url: {download_url}",

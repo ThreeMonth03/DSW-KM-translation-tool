@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from dsw_translation_tool.localize_status import (
+from dsw_knowledge_model_translation_tool.localize_status import (
     build_localize_po_status_report,
     render_localize_po_status_markdown,
     write_localize_po_status_json,

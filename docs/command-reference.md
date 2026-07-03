@@ -108,14 +108,14 @@ OUTPUT_ROOT=translation/zh_Hant
 Production translation repositories should use `translation-config.yml` and the
 `repo-*` targets instead.
 
-[discover-km-versions-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/discover_km_versions.py
-[example-translation-config]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/examples/translation-config.yml
-[makefile]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/Makefile
-[pull-km-bundle-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/pull_km_bundle.py
-[pull-localize-po-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/pull_localize_po.py
-[report-alignment-status-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/report_alignment_status.py
-[report-localize-status-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/report_localize_status.py
-[report-weblate-checks-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/report_weblate_checks.py
-[sync-from-localize-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/sync_from_localize.py
-[sync-latest-km-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/sync_latest_km.py
-[validate-translation-config-py]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/src/validate_translation_config.py
+[discover-km-versions-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/discover_km_versions.py
+[example-translation-config]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/examples/translation-config.yml
+[makefile]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/Makefile
+[pull-km-bundle-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/pull_km_bundle.py
+[pull-localize-po-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/pull_localize_po.py
+[report-alignment-status-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/report_alignment_status.py
+[report-localize-status-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/report_localize_status.py
+[report-weblate-checks-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/report_weblate_checks.py
+[sync-from-localize-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/sync_from_localize.py
+[sync-latest-km-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/sync_latest_km.py
+[validate-translation-config-py]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/src/validate_translation_config.py

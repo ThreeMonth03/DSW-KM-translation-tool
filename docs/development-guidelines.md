@@ -35,7 +35,7 @@ workspace for translators and maintainers.
 ## Code Organization
 
 - Keep root [`src/*.py`][src-dir] files as command-line shims.
-- Put reusable logic in [`src/dsw_translation_tool/`][package-dir].
+- Put reusable logic in [`src/dsw_knowledge_model_translation_tool/`][package-dir].
 - Keep GitHub Actions YAML thin. YAML should describe checkout, setup, and the
   one helper command it runs.
 - Add or update tests under [`tests/infra/`][tests-infra-dir] when a helper makes a Git, Weblate,
@@ -72,13 +72,13 @@ together, then let the normal repository CI validate both sides. For production
 sync behavior changes, test against a disposable translation checkout before
 touching the formal public repository.
 
-[config-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/config
-[docs-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/docs
-[examples-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/examples
-[files-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/files
-[package-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/src/dsw_translation_tool
-[src-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/src
-[tests-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/tests
-[tests-fixtures-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/tests/fixtures
-[tests-infra-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/tests/infra
-[tests-translation-dir]: https://github.com/ThreeMonth03/DSW_Translation_tool/tree/master/tests/translation
+[config-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/config
+[docs-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/docs
+[examples-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/examples
+[files-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/files
+[package-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/src/dsw_knowledge_model_translation_tool
+[src-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/src
+[tests-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests
+[tests-fixtures-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/fixtures
+[tests-infra-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/infra
+[tests-translation-dir]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/tree/master/tests/translation

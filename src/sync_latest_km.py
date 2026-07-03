@@ -7,7 +7,7 @@ import argparse
 import os
 from pathlib import Path
 
-from dsw_translation_tool.km_latest_sync import (
+from dsw_knowledge_model_translation_tool.km_latest_sync import (
     KmLatestSyncError,
     sync_latest_km_version,
     write_km_latest_sync_markdown,

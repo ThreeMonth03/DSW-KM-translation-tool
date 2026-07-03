@@ -1,6 +1,6 @@
 # Documentation Index
 
-Use this directory as the maintenance manual for the DSW translation tooling.
+Use this directory as the maintenance manual for the DSW knowledge model translation tooling.
 The root [`readme.md`][root-readme] stays as the translator-friendly entry point and quick
 command reference; durable design and operating procedures live here.
 
@@ -30,4 +30,4 @@ command reference; durable design and operating procedures live here.
 - Use [Command Reference](command-reference.md) for command syntax and safety.
 - Use Sphinx API pages for stable package modules and docstrings.
 
-[root-readme]: https://github.com/ThreeMonth03/DSW_Translation_tool/blob/master/readme.md
+[root-readme]: https://github.com/ThreeMonth03/DSW-knowledge-model-translation-tool/blob/master/readme.md

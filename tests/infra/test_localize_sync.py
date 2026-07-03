@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from dsw_translation_tool.localize_sync import pull_localize_po
+from dsw_knowledge_model_translation_tool.localize_sync import pull_localize_po
 from tests.infra.test_translation_repository_config import write_config
 
 

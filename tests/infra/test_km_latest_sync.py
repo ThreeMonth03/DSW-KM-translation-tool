@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yaml
 
-from dsw_translation_tool.km_latest_sync import (
+from dsw_knowledge_model_translation_tool.km_latest_sync import (
     render_km_latest_sync_markdown,
     sync_latest_km_version,
     update_supported_versions_in_config,

@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from dsw_translation_tool.data_models import PoBlock
-from dsw_translation_tool.po import PoCatalogParser, PoStringCodec
+from dsw_knowledge_model_translation_tool.data_models import PoBlock
+from dsw_knowledge_model_translation_tool.po import PoCatalogParser, PoStringCodec
 from tests.helpers import parse_po_entries
 
 
