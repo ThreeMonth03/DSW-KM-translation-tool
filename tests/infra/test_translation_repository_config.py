@@ -26,7 +26,7 @@ knowledge_model:
   organization_id: dsw
   km_id: root
   upstream_repository: https://github.com/ds-wizard/dsw-root-locales.git
-  bundle_path: files/dsw_root_2.7.0.km
+  bundle_path: sources/knowledge-models/dsw-root-2.7.0/dsw-root-2.7.0.km
   supported_versions:
 {version_lines}
 

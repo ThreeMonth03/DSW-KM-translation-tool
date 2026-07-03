@@ -180,3 +180,23 @@ def test_validate_translation_config_template_is_read_only(repo_root: Path) -> N
     assert "tooling-repo/src/" not in workflow_text
     assert "DSW_REGISTRY_TOKEN" not in workflow_text
     assert "contents: write" not in workflow_text
+
+
+def test_upstream_smoke_workflow_is_tooling_integration_check(repo_root: Path) -> None:
+    """Verify the tooling repo smoke workflow checks live upstream sources."""
+
+    workflow_path = repo_root / ".github" / "workflows" / "upstream_smoke.yml"
+    workflow = load_workflow_yaml(workflow_path)
+    workflow_text = workflow_path.read_text(encoding="utf-8")
+
+    assert workflow["on"]["schedule"][0]["cron"] == "20 3 * * *"
+    assert "workflow_dispatch" in workflow["on"]
+    assert workflow["permissions"]["contents"] == "read"
+    assert "actions/cache/restore@v5" in workflow_text
+    assert "actions/cache/save@v5" in workflow_text
+    assert ".cache/upstream-smoke/sources/knowledge-models" in workflow_text
+    assert "make upstream-smoke" in workflow_text
+    assert "secrets.DSW_REGISTRY_TOKEN" in workflow_text
+    assert "actions/upload-artifact@v7" in workflow_text
+    assert "git push" not in workflow_text
+    assert "contents: write" not in workflow_text

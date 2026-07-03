@@ -125,3 +125,22 @@ KM Registry and Bundle Sync
 .. autofunction:: dsw_km_translation_tool.km_latest_sync.write_km_latest_sync_report
 
 .. autofunction:: dsw_km_translation_tool.km_latest_sync.write_km_latest_sync_markdown
+
+Upstream Smoke
+--------------
+
+.. py:exception:: dsw_km_translation_tool.upstream_smoke.UpstreamSmokeError
+
+   Raised when the live upstream integration smoke test cannot complete.
+
+.. autoclass:: dsw_km_translation_tool.upstream_smoke.UpstreamSmokeResult
+   :members:
+   :show-inheritance:
+
+.. autofunction:: dsw_km_translation_tool.upstream_smoke.run_upstream_smoke
+
+.. autofunction:: dsw_km_translation_tool.upstream_smoke.render_upstream_smoke_markdown
+
+.. autofunction:: dsw_km_translation_tool.upstream_smoke.write_upstream_smoke_report
+
+.. autofunction:: dsw_km_translation_tool.upstream_smoke.write_upstream_smoke_markdown

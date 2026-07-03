@@ -18,11 +18,12 @@ DSW_KM_SYNC_LATEST_KM := $(VENV_BIN)/dsw-km-sync-latest-km
 DSW_KM_SYNC_LOCALIZE := $(VENV_BIN)/dsw-km-sync-localize
 DSW_KM_SYNC_SHARED_STRINGS := $(VENV_BIN)/dsw-km-sync-shared-strings
 DSW_KM_TREE_TO_PO := $(VENV_BIN)/dsw-km-tree-to-po
+DSW_KM_UPSTREAM_SMOKE := $(VENV_BIN)/dsw-km-upstream-smoke
 DSW_KM_VALIDATE_CONFIG := $(VENV_BIN)/dsw-km-validate-config
 DSW_KM_WORKFLOW := $(VENV_BIN)/dsw-km-workflow
 
-PO ?= files/knowledge-models-common-dsw-knowledge-model-zh_Hant.po
-MODEL ?= files/dsw_root_2.7.0.km
+PO ?= tests/fixtures/source_inputs/common_dsw_zh_Hant.po
+MODEL ?= tests/fixtures/source_inputs/dsw_root_2.7.0.km
 SOURCE_LANG ?= en
 TARGET_LANG ?= zh_Hant
 OUTPUT_ROOT ?= translation/$(TARGET_LANG)
@@ -51,6 +52,9 @@ KM_DISCOVERY_JSON ?= reviews/km_version_discovery.json
 KM_DISCOVERY_MD ?= reviews/km_version_discovery.md
 KM_AUTO_UPDATE_JSON ?= reviews/km_auto_update_report.json
 KM_AUTO_UPDATE_MD ?= reviews/km_auto_update_report.md
+UPSTREAM_SMOKE_DIR ?= .cache/upstream-smoke
+UPSTREAM_SMOKE_JSON ?= $(UPSTREAM_SMOKE_DIR)/upstream_smoke_report.json
+UPSTREAM_SMOKE_MD ?= $(UPSTREAM_SMOKE_DIR)/upstream_smoke_report.md
 TRANSLATION_REPO_DIR ?=
 TRANSLATION_CONFIG ?= translation-config.yml
 TRACKING_BRANCH ?= master
@@ -65,7 +69,7 @@ DOCS_BUILD ?= docs/sphinx/_build/html
 .PHONY: venv install-dev install-hooks check compile format format-check lint
 .PHONY: test test-infra test-translation docs docs-clean
 .PHONY: repo-validate repo-pull-po repo-status repo-checks repo-align
-.PHONY: repo-sync repo-sync-branch repo-km-status repo-km-pull repo-km-update
+.PHONY: repo-sync repo-sync-branch repo-km-status repo-km-pull repo-km-update upstream-smoke
 .PHONY: export-tree export-tree-force status localize-status sync sync-watch
 .PHONY: tree-to-po po-to-km review-po validate workflow
 
@@ -90,6 +94,7 @@ help:
 	'  repo-sync          Writer: pull Weblate, rebuild outputs, commit/push if changed' \
 	'  repo-km-status     Report whether the Registry has a newer KM' \
 	'  repo-km-update     Writer: update to latest KM only after validation passes' \
+	'  upstream-smoke     Integration check against current upstream KM and Weblate PO' \
 	'' \
 	'Local translation-tree development targets:' \
 	'  export-tree        Export PO + model into $(TREE_DIR)' \
@@ -125,6 +130,7 @@ help-all:
 	'  repo-km-status     Discover KM Registry versions for TRANSLATION_REPO_DIR' \
 	'  repo-km-pull       Writer: refresh the configured source KM bundle' \
 	'  repo-km-update     Writer: guarded latest-KM update for TRANSLATION_REPO_DIR' \
+	'  upstream-smoke     Integration check against current upstream KM and Weblate PO' \
 	'  export-tree        Export PO + model into $(TREE_DIR) and refresh shared-block files' \
 	'  export-tree-force  Force rebuild $(TREE_DIR)' \
 	'  status             Show untranslated fields from $(TREE_DIR)' \
@@ -258,6 +264,13 @@ repo-km-update: venv require-translation-repo
 		--report "$(TRANSLATION_REPO_DIR)/$(KM_AUTO_UPDATE_JSON)" \
 		--details-out "$(TRANSLATION_REPO_DIR)/$(KM_AUTO_UPDATE_MD)" \
 		--skip-without-token
+
+upstream-smoke: venv
+	$(DSW_KM_UPSTREAM_SMOKE) \
+		--work-dir "$(UPSTREAM_SMOKE_DIR)" \
+		--config examples/translation-config.yml \
+		--report "$(UPSTREAM_SMOKE_JSON)" \
+		--details-out "$(UPSTREAM_SMOKE_MD)"
 
 export-tree: venv
 	$(DSW_KM_EXPORT_TREE) \

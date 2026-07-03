@@ -15,6 +15,7 @@ durable design and operating procedures live here.
 | Operate Localize/Weblate-to-Git sync | [Localize Sync Runbook](localize-sync-runbook.md) |
 | Copy or update translation repository workflows | [Workflow Templates](workflow-templates.md) |
 | Check repository/Weblate build alignment | [Localize Sync Runbook](localize-sync-runbook.md) |
+| Check current upstream KM/Weblate compatibility | [Command Reference](command-reference.md) |
 | Configure workflow permissions and secrets | [Security and Permissions](security-and-permissions.md) |
 | Move the tooling repository to another GitHub owner | [Repository Transfer Checklist](repository-transfer-checklist.md) |
 | Monitor, automatically update, or manually repair a future KM version update | [KM Update Runbook](km-update-runbook.md) |

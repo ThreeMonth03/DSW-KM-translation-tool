@@ -4,6 +4,11 @@ Use this page when copying or updating GitHub Actions workflows in a dedicated
 translation repository. The templates live in
 [`examples/github-actions/`][github-actions-templates].
 
+The tooling repository also has its own
+[`upstream_smoke.yml`][upstream-smoke-workflow]. That workflow is not a template
+for translation repositories; it checks whether the current upstream Registry KM
+and Weblate PO still build with this tool.
+
 The templates assume the translation repository also has a
 `translation-config.yml` shaped like
 [`examples/translation-config.yml`][example-translation-config]. Keep repository
@@ -65,4 +70,5 @@ When a workflow behavior changes:
 [km-update-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
 [status-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_status_report_template.yml
 [test-github-workflows]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/tests/infra/test_github_workflows.py
+[upstream-smoke-workflow]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/.github/workflows/upstream_smoke.yml
 [validate-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/validate_translation_config_template.yml

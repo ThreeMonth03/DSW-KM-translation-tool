@@ -7,8 +7,9 @@ from pathlib import Path
 
 DEFAULT_SOURCE_LANG = "en"
 DEFAULT_TARGET_LANG = "zh_Hant"
-DEFAULT_PO_PATH = Path("files/knowledge-models-common-dsw-knowledge-model-zh_Hant.po")
-DEFAULT_MODEL_PATH = Path("files/dsw_root_2.7.0.km")
+DEFAULT_SOURCE_INPUTS_DIR = Path("tests/fixtures/source_inputs")
+DEFAULT_PO_PATH = DEFAULT_SOURCE_INPUTS_DIR / "common_dsw_zh_Hant.po"
+DEFAULT_MODEL_PATH = DEFAULT_SOURCE_INPUTS_DIR / "dsw_root_2.7.0.km"
 
 
 @dataclass(frozen=True)

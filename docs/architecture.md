@@ -15,10 +15,11 @@ when deciding where a change belongs.
 - [`src/dsw_km_translation_tool/`][package-dir] contains reusable package code.
 - [`examples/`][examples-dir] contains copy-ready workflow templates and an example
   translation repository config.
-- [`files/`][files-dir] contains small default source PO/KM inputs for local use and tests.
 - [`docs/sphinx/`][sphinx-dir] contains Sphinx source for the published docs site
   and package reference. The files under `docs/sphinx/maintainer/` are
   include wrappers; edit the maintainer Markdown files under `docs/`.
+- [`tests/fixtures/source_inputs/`][source-inputs-fixture-dir] contains offline
+  PO/KM inputs for deterministic local tests.
 - [`tests/fixtures/translation_tree/`][translation-fixture-dir] contains the checked-in tree, final PO, and
   review diff used by translation round-trip tests.
 - [`tests/infra/`][tests-infra-dir] covers tooling, CLI, config, and automation behavior.
@@ -85,6 +86,8 @@ belong in [Localize Sync Runbook](localize-sync-runbook.md).
 ## GitHub Actions Layer
 
 - [`.github/workflows/unittest.yml`][unittest-workflow] validates this tooling repository.
+- [`.github/workflows/upstream_smoke.yml`][upstream-smoke-workflow] checks the current
+  upstream Registry KM and Weblate PO without writing to a translation repo.
 - [`examples/github-actions/localize_auto_sync_template.yml`][localize-auto-sync-template] is the
   copy-ready workflow for dedicated translation repositories.
 - [`examples/github-actions/localize_status_report_template.yml`][localize-status-template] is the
@@ -119,7 +122,6 @@ in translation repositories.
 [command-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/command.py
 [dsw-models-adapter-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/dsw_models_adapter.py
 [examples-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples
-[files-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/files
 [km-auto-update-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/km_version_auto_update_template.yml
 [km-bundle-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/km_bundle_sync.py
 [km-latest-sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/km_latest_sync.py
@@ -142,6 +144,7 @@ in translation repositories.
 [review-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/review.py
 [shared-blocks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/shared_blocks.py
 [sphinx-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/docs/sphinx
+[source-inputs-fixture-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/fixtures/source_inputs
 [cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [sync-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/sync.py
 [tests-infra-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/infra
@@ -150,6 +153,7 @@ in translation repositories.
 [translation-repository-config-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/translation_repository_config.py
 [tree-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/tree.py
 [unittest-workflow]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/.github/workflows/unittest.yml
+[upstream-smoke-workflow]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/.github/workflows/upstream_smoke.yml
 [validate-config-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/validate_translation_config_template.yml
 [weblate-checks-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/weblate_checks.py
 [workflow-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/dsw_km_translation_tool/workflow.py

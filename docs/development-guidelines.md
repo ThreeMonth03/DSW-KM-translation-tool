@@ -13,7 +13,7 @@ Commit source and durable examples:
 - [`config/`][config-dir]
 - [`examples/`][examples-dir]
 - [`docs/`][docs-dir]
-- small fixture inputs under [`files/`][files-dir]
+- offline source inputs under [`tests/fixtures/source_inputs/`][source-inputs-fixture-dir]
 - durable translation round-trip fixtures under [`tests/fixtures/`][tests-fixtures-dir]
 
 Local generated state stays out of normal tooling commits:
@@ -70,6 +70,16 @@ Before pushing tooling changes:
 make check
 ```
 
+When you need to verify current upstream services and data shape, run:
+
+```shell
+make upstream-smoke
+```
+
+This requires `DSW_REGISTRY_TOKEN`. It downloads the current Weblate PO and
+uses a cacheable workspace under `.cache/upstream-smoke/`; it does not write to
+the production translation repository.
+
 For workflow template changes, update the template and the production workflow
 together, then let the normal repository CI validate both sides. For production
 sync behavior changes, test against a disposable translation checkout before
@@ -79,9 +89,9 @@ touching the production translation repository.
 [cli-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool/cli
 [docs-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/docs
 [examples-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/examples
-[files-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/files
 [package-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src/dsw_km_translation_tool
 [pyproject]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/pyproject.toml
+[source-inputs-fixture-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/fixtures/source_inputs
 [src-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/src
 [tests-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests
 [tests-fixtures-dir]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/tree/master/tests/fixtures

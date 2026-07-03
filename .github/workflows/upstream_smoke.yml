@@ -1,0 +1,59 @@
+name: Upstream Smoke
+
+on:
+  schedule:
+    - cron: "20 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-smoke
+  cancel-in-progress: false
+
+jobs:
+  upstream-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout tooling repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Restore upstream KM cache
+        uses: actions/cache/restore@v5
+        with:
+          path: .cache/upstream-smoke/sources/knowledge-models
+          key: upstream-smoke-km-${{ runner.os }}-${{ hashFiles('.cache/upstream-smoke/sources/knowledge-models/**') }}
+          restore-keys: |
+            upstream-smoke-km-${{ runner.os }}-
+
+      - name: Install tooling dependencies
+        run: make install-dev BOOTSTRAP_PYTHON=python
+
+      - name: Run upstream smoke
+        env:
+          DSW_REGISTRY_TOKEN: ${{ secrets.DSW_REGISTRY_TOKEN }}
+        run: make upstream-smoke
+
+      - name: Save upstream KM cache
+        if: success()
+        uses: actions/cache/save@v5
+        with:
+          path: .cache/upstream-smoke/sources/knowledge-models
+          key: upstream-smoke-km-${{ runner.os }}-${{ hashFiles('.cache/upstream-smoke/sources/knowledge-models/**') }}
+
+      - name: Upload upstream smoke report artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: upstream-smoke
+          if-no-files-found: ignore
+          path: |
+            .cache/upstream-smoke/upstream_smoke_report.json
+            .cache/upstream-smoke/upstream_smoke_report.md

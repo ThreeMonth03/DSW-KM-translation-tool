@@ -126,11 +126,10 @@ def build_ci_sync_config(
     tree_dir.mkdir(parents=True, exist_ok=True)
     (tooling_repo / ".venv" / "bin").mkdir(parents=True, exist_ok=True)
     (tooling_repo / ".venv" / "bin" / "python").write_text("", encoding="utf-8")
-    (tooling_repo / "files").mkdir(parents=True, exist_ok=True)
-    (tooling_repo / "files" / "knowledge-models-common-dsw-knowledge-model-zh_Hant.po").write_text(
-        "", encoding="utf-8"
-    )
-    (tooling_repo / "files" / "dsw_root_2.7.0.km").write_text("{}", encoding="utf-8")
+    source_inputs = tooling_repo / "tests" / "fixtures" / "source_inputs"
+    source_inputs.mkdir(parents=True, exist_ok=True)
+    (source_inputs / "common_dsw_zh_Hant.po").write_text("", encoding="utf-8")
+    (source_inputs / "dsw_root_2.7.0.km").write_text("{}", encoding="utf-8")
     return CiSyncCommitConfig(
         host_repo_path=host_repo,
         tooling_repo_path=tooling_repo,

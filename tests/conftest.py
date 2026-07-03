@@ -62,7 +62,7 @@ def po_path(repo_root: Path) -> Path:
     if configured_path:
         return _resolve_fixture_path(repo_root=repo_root, configured_path=configured_path)
 
-    return repo_root / "files" / "knowledge-models-common-dsw-knowledge-model-zh_Hant.po"
+    return repo_root / "tests" / "fixtures" / "source_inputs" / "common_dsw_zh_Hant.po"
 
 
 @pytest.fixture(scope="session")
@@ -80,7 +80,7 @@ def model_path(repo_root: Path) -> Path:
     if configured_path:
         return _resolve_fixture_path(repo_root=repo_root, configured_path=configured_path)
 
-    return repo_root / "files" / "dsw_root_2.7.0.km"
+    return repo_root / "tests" / "fixtures" / "source_inputs" / "dsw_root_2.7.0.km"
 
 
 @pytest.fixture(scope="session")

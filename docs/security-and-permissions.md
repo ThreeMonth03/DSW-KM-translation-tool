@@ -15,6 +15,7 @@ Scheduled automation pulls from Weblate into Git and uses download-only access.
 
 | Workflow | GitHub permission | Secrets | Writes translations? |
 | --- | --- | --- | --- |
+| [Tooling upstream smoke][upstream-smoke-workflow] | `contents: read` | `DSW_REGISTRY_TOKEN` | No |
 | [Localize auto sync][localize-auto-sync-template] | `contents: write` | none | Writes Git only |
 | [Localize status report][localize-status-template] | `contents: read` | optional `LOCALIZE_API_TOKEN` | No |
 | [Localize alignment report][localize-alignment-template] | `contents: read` | none | No |
@@ -29,8 +30,9 @@ Settings -> Secrets and variables -> Actions -> Repository secrets
 ```
 
 The tooling repository does not need these secrets for documentation builds or
-unit tests. Local maintainer runs read the same names from shell environment
-variables.
+unit tests. The tooling repository only needs `DSW_REGISTRY_TOKEN` if its
+scheduled upstream smoke workflow is enabled. Local maintainer runs read the
+same names from shell environment variables.
 
 The workflow templates in [`examples/github-actions/`][github-actions-templates]
 show where GitHub Actions injects these secrets.
@@ -43,7 +45,9 @@ access.
 
 `DSW_REGISTRY_TOKEN` is required when the guarded KM version auto-update
 workflow is enabled. It is used only to download a newly published source KM
-bundle. It is not used for Weblate access.
+bundle. The tooling repository upstream smoke workflow uses the same secret to
+download the current source KM for integration testing. It is not used for
+Weblate access.
 
 ## Token Handling
 
@@ -61,3 +65,4 @@ on public branches.
 [localize-alignment-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_alignment_report_template.yml
 [localize-auto-sync-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_auto_sync_template.yml
 [localize-status-template]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/examples/github-actions/localize_status_report_template.yml
+[upstream-smoke-workflow]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/.github/workflows/upstream_smoke.yml

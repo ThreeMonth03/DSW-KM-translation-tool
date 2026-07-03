@@ -39,6 +39,7 @@ shape.
 | `make format` | Auto-fix Python formatting and import ordering |
 | `make help` | Show the common maintainer targets |
 | `make help-all` | Show every target, including lower-level local tree helpers |
+| `make upstream-smoke` | Check current upstream KM/Weblate inputs in `.cache/upstream-smoke/` |
 
 ## Translation Repository
 
@@ -91,8 +92,8 @@ The local tree targets accept these Make variable overrides from
 [`Makefile`][makefile]:
 
 ```shell
-PO=files/knowledge-models-common-dsw-knowledge-model-zh_Hant.po
-MODEL=files/<source-km>.km
+PO=tests/fixtures/source_inputs/common_dsw_zh_Hant.po
+MODEL=tests/fixtures/source_inputs/dsw_root_2.7.0.km
 TARGET_LANG=zh_Hant
 OUTPUT_ROOT=translation/zh_Hant
 ```
