@@ -38,7 +38,12 @@ TRANSLATION_REPO_DIR ?=
 TRANSLATION_CONFIG ?= translation-config.yml
 TRACKING_BRANCH ?= master
 TARGET_BRANCH ?=
-RESTORE_SOURCE_REF ?= origin/$(TRACKING_BRANCH)
+REPO ?= $(TRANSLATION_REPO_DIR)
+CFG ?= $(TRANSLATION_CONFIG)
+BRANCH ?= $(TRACKING_BRANCH)
+TARGET ?= $(TARGET_BRANCH)
+RESTORE_SOURCE_REF ?= origin/$(BRANCH)
+RESTORE_REF ?= $(RESTORE_SOURCE_REF)
 SPHINXBUILD ?= $(PYTHON) -m sphinx
 SPHINXOPTS ?= -W --keep-going
 DOCS_SOURCE ?= docs/sphinx
@@ -65,7 +70,7 @@ help:
 	'  docs               Build Sphinx docs into $(DOCS_BUILD)' \
 	'  format             Auto-fix imports/style and format Python files' \
 	'' \
-	'Translation repository targets; set TRANSLATION_REPO_DIR=/path/to/repo:' \
+	'Translation repository targets; set REPO=/path/to/repo:' \
 	'  repo-validate      Validate translation-config.yml' \
 	'  repo-status        Report checked-in Weblate PO health' \
 	'  repo-checks        Query Weblate quality checks' \
@@ -98,16 +103,16 @@ help-all:
 	'  test-translation   Run translation consistency pytest suites' \
 	'  docs               Build Sphinx docs into $(DOCS_BUILD)' \
 	'  docs-clean         Remove generated Sphinx docs' \
-	'  repo-validate      Validate translation-config.yml in TRANSLATION_REPO_DIR' \
-	'  repo-pull-po       Refresh sources/localize/ in TRANSLATION_REPO_DIR' \
-	'  repo-status        Report checked-in Weblate PO health in TRANSLATION_REPO_DIR' \
-	'  repo-checks        Query Weblate quality checks for TRANSLATION_REPO_DIR' \
-	'  repo-align         Verify output alignment in TRANSLATION_REPO_DIR' \
-	'  repo-sync          Writer: sync Weblate to Git in TRANSLATION_REPO_DIR' \
-	'  repo-sync-branch   Writer: sync Weblate to TARGET_BRANCH for PR repair' \
-	'  repo-km-status     Discover KM Registry versions for TRANSLATION_REPO_DIR' \
+	'  repo-validate      Validate translation-config.yml in REPO' \
+	'  repo-pull-po       Refresh sources/localize/ in REPO' \
+	'  repo-status        Report checked-in Weblate PO health in REPO' \
+	'  repo-checks        Query Weblate quality checks for REPO' \
+	'  repo-align         Verify output alignment in REPO' \
+	'  repo-sync          Writer: sync Weblate to Git in REPO' \
+	'  repo-sync-branch   Writer: sync Weblate to TARGET for PR repair' \
+	'  repo-km-status     Discover KM Registry versions for REPO' \
 	'  repo-km-pull       Writer: refresh the configured source KM bundle' \
-	'  repo-km-update     Writer: guarded latest-KM update for TRANSLATION_REPO_DIR' \
+	'  repo-km-update     Writer: guarded latest-KM update for REPO' \
 	'  export-tree        Export PO + model into $(TREE_DIR) and refresh shared-block files' \
 	'  export-tree-force  Force rebuild $(TREE_DIR)' \
 	'  status             Show untranslated fields from $(TREE_DIR)' \
@@ -121,14 +126,14 @@ help-all:
 	'  workflow           Run the optional end-to-end smoke workflow'
 
 require-translation-repo:
-	@if [ -z "$(TRANSLATION_REPO_DIR)" ]; then \
-		printf '%s\n' 'Set TRANSLATION_REPO_DIR=/path/to/dsw-root-locales-zh_Hant' >&2; \
+	@if [ -z "$(REPO)" ]; then \
+		printf '%s\n' 'Set REPO=/path/to/translation-repo' >&2; \
 		exit 2; \
 	fi
 
 require-target-branch:
-	@if [ -z "$(TARGET_BRANCH)" ]; then \
-		printf '%s\n' 'Set TARGET_BRANCH=<same-repository-branch-name>' >&2; \
+	@if [ -z "$(TARGET)" ]; then \
+		printf '%s\n' 'Set TARGET=<same-repository-branch-name>' >&2; \
 		exit 2; \
 	fi
 
@@ -170,76 +175,76 @@ docs-clean:
 
 repo-validate: venv require-translation-repo
 	$(PYTHON) src/validate_translation_config.py \
-		--config "$(TRANSLATION_REPO_DIR)/$(TRANSLATION_CONFIG)"
+		--config "$(REPO)/$(CFG)"
 
 repo-pull-po: venv require-translation-repo
 	$(PYTHON) src/pull_localize_po.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
-		--config "$(TRANSLATION_CONFIG)"
+		--repo-root "$(REPO)" \
+		--config "$(CFG)"
 
 repo-status: venv require-translation-repo
 	$(PYTHON) src/report_localize_status.py \
-		--po "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_PO)" \
-		--json-out "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_STATUS_JSON)" \
-		--details-out "$(TRANSLATION_REPO_DIR)/$(LOCALIZE_STATUS_MD)"
+		--po "$(REPO)/$(LOCALIZE_PO)" \
+		--json-out "$(REPO)/$(LOCALIZE_STATUS_JSON)" \
+		--details-out "$(REPO)/$(LOCALIZE_STATUS_MD)"
 
 repo-checks: venv require-translation-repo
 	$(PYTHON) src/report_weblate_checks.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
+		--repo-root "$(REPO)" \
+		--config "$(CFG)" \
 		--query "$(WEBLATE_CHECK_QUERY)" \
-		--json-out "$(TRANSLATION_REPO_DIR)/$(WEBLATE_CHECKS_JSON)" \
-		--details-out "$(TRANSLATION_REPO_DIR)/$(WEBLATE_CHECKS_MD)" \
+		--json-out "$(REPO)/$(WEBLATE_CHECKS_JSON)" \
+		--details-out "$(REPO)/$(WEBLATE_CHECKS_MD)" \
 		--allow-api-failure
 
 repo-align: venv require-translation-repo
 	$(PYTHON) src/report_alignment_status.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
-		--json-out "$(TRANSLATION_REPO_DIR)/$(ALIGNMENT_JSON)" \
-		--details-out "$(TRANSLATION_REPO_DIR)/$(ALIGNMENT_MD)" \
-		--artifact-dir "$(TRANSLATION_REPO_DIR)/$(ALIGNMENT_ARTIFACT_DIR)" \
+		--repo-root "$(REPO)" \
+		--config "$(CFG)" \
+		--json-out "$(REPO)/$(ALIGNMENT_JSON)" \
+		--details-out "$(REPO)/$(ALIGNMENT_MD)" \
+		--artifact-dir "$(REPO)/$(ALIGNMENT_ARTIFACT_DIR)" \
 		--fail-on-mismatch
 
 repo-sync: venv require-translation-repo
 	$(PYTHON) src/sync_from_localize.py \
-		--host-repo "$(TRANSLATION_REPO_DIR)" \
+		--host-repo "$(REPO)" \
 		--tooling-repo "$(CURDIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
+		--config "$(CFG)" \
 		--translation-root . \
-		--target-ref "$(TRACKING_BRANCH)" \
+		--target-ref "$(BRANCH)" \
 		--mode schedule
 
 repo-sync-branch: venv require-translation-repo require-target-branch
 	$(PYTHON) src/sync_from_localize.py \
-		--host-repo "$(TRANSLATION_REPO_DIR)" \
+		--host-repo "$(REPO)" \
 		--tooling-repo "$(CURDIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
+		--config "$(CFG)" \
 		--translation-root . \
-		--target-ref "$(TARGET_BRANCH)" \
-		--restore-source-ref "$(RESTORE_SOURCE_REF)" \
+		--target-ref "$(TARGET)" \
+		--restore-source-ref "$(RESTORE_REF)" \
 		--mode pull_request
 
 repo-km-status: venv require-translation-repo
 	$(PYTHON) src/discover_km_versions.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
+		--repo-root "$(REPO)" \
+		--config "$(CFG)" \
 		--report "$(KM_DISCOVERY_JSON)" \
 		--details-out "$(KM_DISCOVERY_MD)"
 
 repo-km-pull: venv require-translation-repo
 	$(PYTHON) src/pull_km_bundle.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
-		--config "$(TRANSLATION_CONFIG)"
+		--repo-root "$(REPO)" \
+		--config "$(CFG)"
 
 repo-km-update: venv require-translation-repo
 	$(PYTHON) src/sync_latest_km.py \
-		--repo-root "$(TRANSLATION_REPO_DIR)" \
+		--repo-root "$(REPO)" \
 		--tooling-repo "$(CURDIR)" \
-		--config "$(TRANSLATION_CONFIG)" \
-		--target-ref "$(TRACKING_BRANCH)" \
-		--report "$(TRANSLATION_REPO_DIR)/$(KM_AUTO_UPDATE_JSON)" \
-		--details-out "$(TRANSLATION_REPO_DIR)/$(KM_AUTO_UPDATE_MD)" \
+		--config "$(CFG)" \
+		--target-ref "$(BRANCH)" \
+		--report "$(REPO)/$(KM_AUTO_UPDATE_JSON)" \
+		--details-out "$(REPO)/$(KM_AUTO_UPDATE_MD)" \
 		--skip-without-token
 
 export-tree: venv

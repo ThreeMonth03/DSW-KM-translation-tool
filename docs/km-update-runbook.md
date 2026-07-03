@@ -16,7 +16,7 @@ workflow. Local runs read the same token from the shell environment. See
 [Security and Permissions](security-and-permissions.md).
 
 The scheduled KM version auto-update workflow is the normal update mechanism.
-It runs [`sync_latest_km.py`][sync-latest-km-py], no-ops when the configured KM
+It runs `sync_latest_km.py`, no-ops when the configured KM
 is current, and only pushes to Git when every safety check passes. When the
 Registry has a newer published KM, the workflow:
 
@@ -34,12 +34,12 @@ The next scheduled run will retry.
 For a local maintainer run, use:
 
 ```shell
-make repo-km-update TRANSLATION_REPO_DIR=/path/to/dsw-root-locales-zh_Hant
+make repo-km-update REPO=/path/to/translation-repo
 ```
 
-Set `TRANSLATION_REPO_DIR`, `TARGET_BRANCH`, and related Make variables as
+Set `REPO`, `TARGET`, and related Make variables as
 described in the [Command Reference](command-reference.md). The targets are
-declared in the [`Makefile`][makefile].
+declared in the `Makefile`.
 
 ## Dry-Run First
 
@@ -48,13 +48,13 @@ Work in a disposable branch or local clone first.
 1. Discover available versions:
 
    ```shell
-   make repo-km-status TRANSLATION_REPO_DIR=/path/to/dsw-root-locales-zh_Hant
+   make repo-km-status REPO=/path/to/translation-repo
    ```
 
 2. Pull the published KM bundle:
 
    ```shell
-   make repo-km-pull TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
+   make repo-km-pull REPO="$REPO"
    ```
 
 3. Update `translation-config.yml`:
@@ -66,21 +66,21 @@ Work in a disposable branch or local clone first.
 4. Validate config:
 
    ```shell
-   make repo-validate TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
+   make repo-validate REPO="$REPO"
    ```
 
 5. Run Localize/Weblate sync on the disposable branch:
 
    ```shell
    make repo-sync-branch \
-     TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR" \
-     TARGET_BRANCH="$BRANCH_NAME"
+     REPO="$REPO" \
+     TARGET="$BRANCH_NAME"
    ```
 
 6. Run the alignment report:
 
    ```shell
-   make repo-align TRANSLATION_REPO_DIR="$TRANSLATION_REPO_DIR"
+   make repo-align REPO="$REPO"
    ```
 
 ## Review Before Merge
@@ -107,5 +107,5 @@ Merge only after the dry-run branch produces aligned outputs. After merge,
 trigger the scheduled sync and alignment report once manually to verify the
 production branch.
 
-[sync-latest-km-py]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/src/sync_latest_km.py
-[makefile]: https://github.com/ThreeMonth03/DSW-KM-translation-tool/blob/master/Makefile
+[sync-latest-km-py]: ../src/sync_latest_km.py
+[makefile]: ../Makefile
