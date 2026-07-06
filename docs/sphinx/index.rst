@@ -12,33 +12,50 @@ Start Here
 ----------
 
 New to the repository
-   Read the :doc:`First-Time Maintainer Guide <maintainer/first-time-maintainer>`
-   first. It explains the mental model, safe commands, and where common changes
-   belong.
+~~~~~~~~~~~~~~~~~~~~~
+
+Read the :doc:`First-Time Maintainer Guide <maintainer/first-time-maintainer>`
+first. It explains the mental model, safe commands, and where common changes
+belong.
 
 Operating production sync
-   Use the :doc:`Localize Sync Runbook <maintainer/localize-sync-runbook>` for
-   Weblate-to-Git sync, status reports, and alignment checks.
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use the :doc:`Localize Sync Runbook <maintainer/localize-sync-runbook>` for
+Weblate-to-Git sync, status reports, and alignment checks.
 
 Updating to a newer KM
-   Use the :doc:`KM Update Runbook <maintainer/km-update-runbook>` for the
-   guarded auto-update workflow and manual repair path.
+~~~~~~~~~~~~~~~~~~~~~~
+
+Use the :doc:`KM Update Runbook <maintainer/km-update-runbook>` for the guarded
+auto-update workflow and manual repair path.
 
 Changing the tooling
-   Start with :doc:`Architecture <maintainer/architecture>` and then use the
-   :doc:`Internal Change Guide <maintainer/internal-change-guide>` when editing
-   lower-level helpers.
+~~~~~~~~~~~~~~~~~~~~
+
+Start with :doc:`Architecture <maintainer/architecture>` and then use the
+:doc:`Internal Change Guide <maintainer/internal-change-guide>` when editing
+lower-level helpers.
 
 Finding commands
-   Use the :doc:`Command Reference <maintainer/command-reference>` for Make
-   targets, required variables, and writer commands.
+~~~~~~~~~~~~~~~~
 
-Reference Material
-------------------
+Use the :doc:`Command Reference <maintainer/command-reference>` for Make
+targets, required variables, and writer commands.
 
-The package reference is intentionally selective. It documents maintainer-facing
-services, shared data contracts, and report models. For implementation helpers
-below those facades, use the internal change guide.
+Package Reference
+-----------------
+
+Use these pages when you need maintainer-facing Python interfaces, shared data
+contracts, or report models:
+
+- :doc:`Translation Tree Reference <api/translation-tree>`
+- :doc:`Localize and Git Sync <api/localize-sync>`
+- :doc:`Reports and KM Updates <api/reports-and-km>`
+- :doc:`Data Models <api/data-models>`
+
+For implementation helpers below these facades, use the
+:doc:`Internal Change Guide <maintainer/internal-change-guide>`.
 
 .. toctree::
    :maxdepth: 2
