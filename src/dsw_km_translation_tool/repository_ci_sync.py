@@ -36,6 +36,7 @@ def build_repository_ci_sync_config(
     output_name: str | None = None,
     restore_source_ref: str | None = None,
     localize_base_po_path: Path | None = None,
+    localize_merge_report_path: Path | None = None,
 ) -> CiSyncCommitConfig:
     """Build sync automation config from a translation repository config.
 
@@ -64,6 +65,8 @@ def build_repository_ci_sync_config(
         localize_base_po_path: Optional transient Localize base snapshot. When
             provided, the sync runs a latest-wins PO merge and writes a merge
             report.
+        localize_merge_report_path: Optional transient merge report path. When
+            omitted, the configured repository review path is used.
 
     Returns:
         Populated CI sync configuration.
@@ -76,9 +79,11 @@ def build_repository_ci_sync_config(
     paths = version_paths(repository_config, version)
     branch = tracking_branch(repository_config)
 
-    localize_merge_report_path = (
-        paths.localize_merge_report_path if localize_base_po_path is not None else None
-    )
+    resolved_merge_report_path = None
+    if localize_base_po_path is not None:
+        resolved_merge_report_path = (
+            localize_merge_report_path or paths.localize_merge_report_path
+        )
     return CiSyncCommitConfig(
         host_repo_path=host_repo,
         tooling_repo_path=tooling_repo_path,
@@ -97,7 +102,7 @@ def build_repository_ci_sync_config(
         output_name=output_name or repository_config.translation.translated_name,
         restore_source_ref=restore_source_ref or f"origin/{branch}",
         localize_base_po_path=localize_base_po_path,
-        localize_merge_report_path=localize_merge_report_path,
+        localize_merge_report_path=resolved_merge_report_path,
         localize_conflict_policy="latest-wins",
     )
 

@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
+from dsw_km_translation_tool.cli import sync_from_localize
+from dsw_km_translation_tool.localize_sync import LocalizePullResult
 from dsw_km_translation_tool.localize_sync import pull_localize_po
 from tests.infra.test_translation_repository_config import write_config
 
@@ -104,3 +108,75 @@ def test_pull_localize_po_writes_transient_base_when_latest_is_unchanged(
     assert result.base_po_path == base_snapshot_path
     assert base_snapshot_path.read_bytes() == b"same"
     assert not (workspace / "sources/localize/zh_Hant/base.po").exists()
+
+
+def test_sync_from_localize_uses_transient_merge_report(
+    monkeypatch,
+    workspace: Path,
+) -> None:
+    """Verify CI Localize sync does not write merge reports into the repo."""
+
+    host_repo = workspace / "translation-repo"
+    tooling_repo = workspace / "tooling-repo"
+    host_repo.mkdir()
+    tooling_repo.mkdir()
+    write_config(host_repo / "translation-config.yml")
+    recorded_paths: dict[str, Path] = {}
+
+    def fake_pull_localize_po(**kwargs):
+        base_snapshot_path = kwargs["base_snapshot_path"]
+        return LocalizePullResult(
+            version="2.7.0",
+            url="https://example.test/localize.po",
+            base_po_path=base_snapshot_path,
+            latest_po_path=host_repo / "sources/localize/zh_Hant/latest.po",
+            changed=False,
+            initialized=False,
+            bytes_downloaded=0,
+        )
+
+    def fake_build_repository_ci_sync_config(**kwargs):
+        recorded_paths["base"] = kwargs["localize_base_po_path"]
+        recorded_paths["report"] = kwargs["localize_merge_report_path"]
+        return object()
+
+    def fake_refresh_tree_from_localize(**_kwargs):
+        return SimpleNamespace(
+            version="2.7.0",
+            tree_dir=host_repo / "tree",
+            folder_count=0,
+            root_count=0,
+            shared_block_file_count=0,
+        )
+
+    monkeypatch.setattr(sync_from_localize, "pull_localize_po", fake_pull_localize_po)
+    monkeypatch.setattr(
+        sync_from_localize,
+        "build_repository_ci_sync_config",
+        fake_build_repository_ci_sync_config,
+    )
+    monkeypatch.setattr(
+        sync_from_localize,
+        "refresh_tree_from_localize",
+        fake_refresh_tree_from_localize,
+    )
+    monkeypatch.setattr(sync_from_localize, "run_ci_sync_commit", lambda _config: False)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "dsw-km-sync-localize",
+            "--host-repo",
+            str(host_repo),
+            "--tooling-repo",
+            str(tooling_repo),
+            "--mode",
+            "pull_request",
+        ],
+    )
+
+    sync_from_localize.main()
+
+    assert recorded_paths["report"].name == "localize_merge_report.json"
+    assert recorded_paths["report"].parent == recorded_paths["base"].parent
+    assert not recorded_paths["report"].is_relative_to(host_repo)

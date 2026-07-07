@@ -81,6 +81,7 @@ def main() -> None:
 
     with TemporaryDirectory(prefix="dsw-localize-") as temp_dir:
         base_snapshot_path = Path(temp_dir) / "base.po"
+        merge_report_path = Path(temp_dir) / "localize_merge_report.json"
         pull_result = pull_localize_po(
             config_path=_resolve_host_path(host_repo, config_path),
             repo_root=host_repo,
@@ -104,6 +105,7 @@ def main() -> None:
             commit_message=args.commit_message,
             restore_source_ref=args.restore_source_ref,
             localize_base_po_path=pull_result.base_po_path,
+            localize_merge_report_path=merge_report_path,
         )
         refresh_result = refresh_tree_from_localize(
             config=sync_config,

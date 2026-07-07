@@ -199,3 +199,31 @@ def test_repository_ci_sync_config_accepts_transient_localize_base(
 
     assert config.localize_base_po_path == transient_base
     assert config.localize_merge_report_path == Path("reviews/localize_merge_report.json")
+
+
+def test_repository_ci_sync_config_accepts_transient_localize_report(
+    workspace: Path,
+) -> None:
+    """Verify CI callers can keep merge reports outside the repository."""
+
+    host_repo = workspace / "translation-repo"
+    tooling_repo = workspace / "tooling-repo"
+    host_repo.mkdir()
+    tooling_repo.mkdir()
+    config_path = host_repo / "translation-config.yml"
+    transient_base = workspace / "tmp" / "base.po"
+    transient_report = workspace / "tmp" / "localize_merge_report.json"
+    write_config(config_path, supported_versions=["2.7.0"])
+
+    config = build_repository_ci_sync_config(
+        host_repo_path=host_repo,
+        tooling_repo_path=tooling_repo,
+        config_path=Path("translation-config.yml"),
+        mode="schedule",
+        km_version="2.7.0",
+        localize_base_po_path=transient_base,
+        localize_merge_report_path=transient_report,
+    )
+
+    assert config.localize_base_po_path == transient_base
+    assert config.localize_merge_report_path == transient_report
