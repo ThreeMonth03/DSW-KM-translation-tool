@@ -7,8 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from dsw_km_translation_tool.cli import sync_from_localize
-from dsw_km_translation_tool.localize_sync import LocalizePullResult
-from dsw_km_translation_tool.localize_sync import pull_localize_po
+from dsw_km_translation_tool.localize_sync import LocalizePullResult, pull_localize_po
 from tests.infra.test_translation_repository_config import write_config
 
 

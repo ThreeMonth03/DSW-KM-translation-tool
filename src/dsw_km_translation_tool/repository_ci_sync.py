@@ -81,9 +81,7 @@ def build_repository_ci_sync_config(
 
     resolved_merge_report_path = None
     if localize_base_po_path is not None:
-        resolved_merge_report_path = (
-            localize_merge_report_path or paths.localize_merge_report_path
-        )
+        resolved_merge_report_path = localize_merge_report_path or paths.localize_merge_report_path
     return CiSyncCommitConfig(
         host_repo_path=host_repo,
         tooling_repo_path=tooling_repo_path,
