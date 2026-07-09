@@ -6,12 +6,12 @@ This repository uses a Weblate-first synchronization policy.
 
 The latest translation state is governed by Localize/Weblate.
 
-GitHub mirrors the website state. Direct changes to `tree/` may be overwritten
-by the next sync.
+GitHub mirrors the website state. Direct changes to `tree/` outside the
+reviewed pull-request path may be overwritten by the next sync.
 
 ## Direction
 
-Normal automation is one-way:
+Scheduled automation is one-way:
 
 ```text
 Localize/Weblate -> GitHub
@@ -26,13 +26,27 @@ The sync writer:
 5. Refreshes review outputs.
 6. Commits and pushes only when tracked artifacts changed.
 
-It does not upload translations to Weblate.
+Scheduled sync does not upload translations to Weblate.
+
+Reviewed GitHub translation pull requests use a guarded reverse path:
+
+```text
+GitHub PR -> reviewed merge -> Weblate import -> Weblate-to-Git sync
+```
+
+Only entries that are safe against the current Weblate state are imported. If
+GitHub and Weblate changed the same entry differently, the import workflow
+fails and writes a conflict report.
 
 ## Writer Workflows
 
 - `localize_auto_sync.yml` commits directly to the tracking branch on scheduled
   runs when tracked files changed.
-- Same-repository pull requests receive a sync commit before merge.
+- Pull requests receive a read-only GitHub translation report.
+- Same-repository pull requests that do not edit translation text can receive a
+  sync commit before merge.
+- `github_translation_import.yml` imports accepted GitHub translation edits to
+  Weblate after merge, then syncs Weblate back to Git when an upload occurred.
 - `km_version_auto_update.yml` updates to a newer published KM only after the
   bundle download, Weblate mirror, rebuild, validation, and alignment checks
   pass.

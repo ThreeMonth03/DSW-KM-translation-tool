@@ -29,6 +29,12 @@ Check KM auto-update:
 gh run list --workflow km_version_auto_update.yml --branch master --limit 5
 ```
 
+Check post-merge GitHub translation imports:
+
+```shell
+gh run list --workflow github_translation_import.yml --branch master --limit 5
+```
+
 ## Manual Triggers
 
 Trigger Weblate-to-Git sync after a translation batch lands in Weblate:
@@ -49,6 +55,18 @@ Trigger KM auto-update immediately:
 ```shell
 gh workflow run km_version_auto_update.yml --ref master
 ```
+
+Trigger a GitHub translation import for a known commit range:
+
+```shell
+gh workflow run github_translation_import.yml \
+  --ref master \
+  -f base_ref=BASE_COMMIT \
+  -f head_ref=HEAD_COMMIT
+```
+
+Use this only after reviewed translation changes have landed in the tracking
+branch.
 
 ## KM and Config Updates
 

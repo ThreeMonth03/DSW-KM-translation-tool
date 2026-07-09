@@ -38,7 +38,11 @@ Normal translation work happens in Localize/Weblate. Automation then mirrors the
 website state into this repository:
 
 - Scheduled sync pulls Weblate into Git.
-- Pull-request sync refreshes same-repository branches before merge.
+- Pull requests that do not edit translation text can be refreshed from Weblate
+  before merge.
+- Pull requests that edit `tree/**/translation.md` are reported for review and
+  imported to Weblate only after merge when they do not conflict with newer
+  Weblate edits.
 - Read-only reports check Weblate status and repository alignment.
 - KM auto-update tracks newer published DSW Registry KM bundles when validation
   passes.
@@ -47,8 +51,9 @@ website state into this repository:
 
 Configure these Actions repository secrets:
 
-- `LOCALIZE_API_TOKEN`: used by the read-only Weblate checks report. The
-  workflow can still run without it, but API limits may be stricter.
+- `LOCALIZE_API_TOKEN`: used by the GitHub translation import workflow and by
+  the read-only Weblate checks report. The checks report can still run without
+  it, but API limits may be stricter.
 - `DSW_REGISTRY_TOKEN`: used when KM auto-update downloads a newer Registry
   bundle.
 

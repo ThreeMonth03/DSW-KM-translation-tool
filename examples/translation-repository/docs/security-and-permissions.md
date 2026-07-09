@@ -8,6 +8,7 @@ permissions for this repository.
 | Workflow | Permission | Secret | Writes |
 | --- | --- | --- | --- |
 | `localize_auto_sync.yml` | `contents: write` | none | tracking branch or same-repository PR branch |
+| `github_translation_import.yml` | `contents: write` | `LOCALIZE_API_TOKEN` | Weblate after merge; Git only when sync changes follow |
 | `localize_status_report.yml` | `contents: read` | optional `LOCALIZE_API_TOKEN` | nothing |
 | `localize_alignment_report.yml` | `contents: read` | none | nothing |
 | `km_version_auto_update.yml` | `contents: write` | `DSW_REGISTRY_TOKEN` only when a newer KM exists | tracking branch only after validation |
@@ -22,9 +23,10 @@ LOCALIZE_API_TOKEN
 DSW_REGISTRY_TOKEN
 ```
 
-`LOCALIZE_API_TOKEN` is used only by the status report for read-only Weblate
-checks. The report falls back to anonymous access if the token is unavailable,
-but API limits may be stricter.
+`LOCALIZE_API_TOKEN` is required by the post-merge GitHub translation import
+workflow. It is also used by the status report for read-only Weblate checks;
+that report falls back to anonymous access if the token is unavailable, but API
+limits may be stricter.
 
 `DSW_REGISTRY_TOKEN` is used only by KM auto-update when it needs to download a
 newly published source KM bundle.
