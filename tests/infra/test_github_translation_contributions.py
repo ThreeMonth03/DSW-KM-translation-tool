@@ -42,7 +42,7 @@ def test_github_translation_report_marks_safe_imports(workspace: Path) -> None:
 
 
 def test_github_translation_report_marks_conflicts(workspace: Path) -> None:
-    """Verify conflicting Weblate and GitHub edits are not auto-imported."""
+    """Verify conflicts require review instead of last-writer-wins import."""
 
     repo = initialize_translation_repo(workspace)
     base_ref = commit_translation(repo, "base", "舊翻譯")
@@ -143,7 +143,7 @@ def test_import_github_translations_cli_blocks_conflicts(
     monkeypatch,
     workspace: Path,
 ) -> None:
-    """Verify the post-merge import CLI does not upload conflicts to Weblate."""
+    """Verify post-merge import does not upload conflicting GitHub edits."""
 
     repo = initialize_translation_repo(workspace)
     write_config(repo / "translation-config.yml")

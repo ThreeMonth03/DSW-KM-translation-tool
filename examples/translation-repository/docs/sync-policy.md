@@ -36,7 +36,8 @@ GitHub PR -> reviewed merge -> Weblate import -> Weblate-to-Git sync
 
 Only entries that are safe against the current Weblate state are imported. If
 GitHub and Weblate changed the same entry differently, the import workflow
-fails and writes a conflict report.
+fails and writes a conflict report. It does not use timestamps or a
+last-writer-wins rule to choose between reviewers.
 
 ## Writer Workflows
 

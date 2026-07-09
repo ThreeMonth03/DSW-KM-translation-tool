@@ -41,8 +41,8 @@ website state into this repository:
 - Pull requests that do not edit translation text can be refreshed from Weblate
   before merge.
 - Pull requests that edit `tree/**/translation.md` are reported for review and
-  imported to Weblate only after merge when they do not conflict with newer
-  Weblate edits.
+  imported to Weblate only after merge when they do not conflict with Weblate
+  edits to the same entries.
 - Read-only reports check Weblate status and repository alignment.
 - KM auto-update tracks newer published DSW Registry KM bundles when validation
   passes.

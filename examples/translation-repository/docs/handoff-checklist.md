@@ -22,7 +22,7 @@ Configure these repository secrets:
 
 | Secret | Used by | Purpose |
 | --- | --- | --- |
-| `LOCALIZE_API_TOKEN` | `localize_status_report.yml` | Read Weblate quality-check units |
+| `LOCALIZE_API_TOKEN` | `github_translation_import.yml`, `localize_status_report.yml` | Import accepted GitHub translation edits and read Weblate quality-check units |
 | `DSW_REGISTRY_TOKEN` | `km_version_auto_update.yml` | Download newer published KM bundles |
 
 ## Workflow Inventory
@@ -30,6 +30,7 @@ Configure these repository secrets:
 | Workflow | Writes | Normal Result |
 | --- | --- | --- |
 | `localize_auto_sync.yml` | Git | Mirrors Weblate; commits only when tracked files changed |
+| `github_translation_import.yml` | Weblate, then Git if sync changes follow | Imports accepted GitHub translation edits after merge; fails on conflicts |
 | `localize_status_report.yml` | No | Reports empty translations, review-state counts, and Weblate checks |
 | `localize_alignment_report.yml` | No | Verifies Weblate PO, checked-in PO, tree, final PO, and final KM alignment |
 | `km_version_auto_update.yml` | Git | No-ops when current; updates only after validation passes |
