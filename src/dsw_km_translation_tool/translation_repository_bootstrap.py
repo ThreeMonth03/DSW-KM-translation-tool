@@ -106,6 +106,7 @@ def bootstrap_translation_repository(
     _copy_translation_repository_templates(
         tooling_root=tooling_root,
         target_root=target_root,
+        config=config,
         overwrite=overwrite,
         written=written,
         skipped=skipped,
@@ -251,6 +252,7 @@ def _copy_translation_repository_templates(
     *,
     tooling_root: Path,
     target_root: Path,
+    config: TranslationRepositoryConfig,
     overwrite: bool,
     written: list[Path],
     skipped: list[Path],
@@ -261,13 +263,27 @@ def _copy_translation_repository_templates(
         if not source.is_file():
             continue
         relative_path = source.relative_to(template_root)
-        _copy_file(
-            source=source,
+        _write_text_file(
+            text=_render_repository_template(source.read_text(encoding="utf-8"), config),
             target=target_root / relative_path,
             overwrite=overwrite,
             written=written,
             skipped=skipped,
         )
+
+
+def _render_repository_template(
+    text: str,
+    config: TranslationRepositoryConfig,
+) -> str:
+    replacements = {
+        "TARGET_LANGUAGE_LABEL": config.translation.target_language_label,
+        "TOOLING_REPOSITORY": config.tooling.repository,
+        "TOOLING_REF": config.tooling.ref,
+    }
+    for name, value in replacements.items():
+        text = text.replace(f"{{{{{name}}}}}", value)
+    return text
 
 
 def _copy_workflow_templates(

@@ -32,7 +32,15 @@ def test_bootstrap_scaffolds_config_docs_and_workflows(
     assert result.hydrated is False
     assert (target_repo / "translation-config.yml").exists()
     assert (target_repo / "README.md").exists()
-    assert (target_repo / "docs" / "maintenance-runbook.md").exists()
+    docs_readme = target_repo / "docs" / "README.md"
+    assert docs_readme.exists()
+    docs_text = docs_readme.read_text(encoding="utf-8")
+    assert "the zh-Hant Common DSW Knowledge Model translation" in docs_text
+    assert "ThreeMonth03/dsw-km-translation-tool/tree/master" in docs_text
+    assert "{{" not in docs_text
+    handoff_text = (target_repo / "docs" / "handoff-checklist.md").read_text(encoding="utf-8")
+    assert "Formal zh-Hant translation mirror" in handoff_text
+    assert "ThreeMonth03/dsw-km-translation-tool" in handoff_text
     workflow = target_repo / ".github" / "workflows" / "localize_auto_sync.yml"
     assert workflow.exists()
     workflow_text = workflow.read_text(encoding="utf-8")

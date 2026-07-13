@@ -9,7 +9,7 @@ The bootstrap command turns an empty checkout into a working translation
 repository:
 
 - writes `translation-config.yml` from a template;
-- copies repository docs and GitHub Actions workflows;
+- renders repository docs and GitHub Actions workflows from the config;
 - downloads the configured KM bundle from the DSW Registry;
 - downloads the current Localize/Weblate PO;
 - expands the PO/KM pair into `tree/`;
@@ -61,8 +61,9 @@ network downloads:
 
 ## Template Ownership
 
-- Translation repository docs are copied from
-  [`examples/translation-repository/`][translation-repo-template].
+- Translation repository docs are rendered from
+  [`examples/translation-repository/`][translation-repo-template]. Language and
+  tooling values come from `translation-config.yml`.
 - GitHub Actions workflows are copied from
   [`examples/github-actions/`][github-actions-templates].
 - Workflow `TOOLING_REPOSITORY`, `TOOLING_REF`, and tracking branch values are
