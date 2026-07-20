@@ -211,6 +211,11 @@ def _hydrate_translation_repository(
         output_organization_id=config.translation.translated_organization_id,
         output_km_id=config.translation.translated_km_id,
         output_name=config.translation.translated_name,
+        supplemental_translations_dir=(
+            str(repo_root / config.translation.supplemental_directory)
+            if config.translation.supplemental_directory
+            else None
+        ),
     )
 
     _extend_existing_artifacts(

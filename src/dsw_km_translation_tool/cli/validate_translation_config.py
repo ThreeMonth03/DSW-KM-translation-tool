@@ -55,6 +55,10 @@ def main() -> None:
         f"Registry API: {config.registry.api_url}",
         f"Translation tree path: {paths.translation_tree_dir.as_posix()}",
     ]
+    if config.translation.supplemental_directory:
+        lines.append(
+            f"Supplemental translations: {config.translation.supplemental_directory.as_posix()}"
+        )
     print("\n".join(lines))
     if args.summary:
         write_summary(Path(args.summary), lines)

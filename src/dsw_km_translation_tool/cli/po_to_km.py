@@ -62,6 +62,14 @@ def build_argument_parser() -> argparse.ArgumentParser:
             "name suffixed with the target language."
         ),
     )
+    parser.add_argument(
+        "--supplemental-translations-dir",
+        default=None,
+        help=(
+            "Directory containing Markdown forms for KM fields omitted from "
+            "the upstream PO catalog."
+        ),
+    )
     return parser
 
 
@@ -81,6 +89,7 @@ def main() -> None:
             output_organization_id=args.output_organization_id,
             output_km_id=args.output_km_id,
             output_name=args.output_name,
+            supplemental_translations_dir=args.supplemental_translations_dir,
         )
     except ValueError as error:
         raise SystemExit(str(error)) from error

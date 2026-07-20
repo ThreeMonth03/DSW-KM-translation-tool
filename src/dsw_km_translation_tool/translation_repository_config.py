@@ -41,6 +41,7 @@ class TranslationLanguageConfig:
     translated_organization_id: str
     translated_km_id: str
     translated_name: str
+    supplemental_directory: Path | None
 
 
 @dataclass(frozen=True)
@@ -170,6 +171,9 @@ def _load_translation_config(payload: dict[str, Any]) -> TranslationLanguageConf
         translated_organization_id=_require_str(payload, "translated_organization_id"),
         translated_km_id=_require_str(payload, "translated_km_id"),
         translated_name=_require_str(payload, "translated_name"),
+        supplemental_directory=(
+            Path(value) if (value := _optional_str(payload, "supplemental_directory")) else None
+        ),
     )
 
 
