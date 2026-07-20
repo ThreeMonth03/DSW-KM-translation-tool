@@ -19,6 +19,7 @@ translation-config.yml
 sources/knowledge-models/
 sources/localize/
 tree/
+supplemental/
 builds/
 reviews/
 ```
@@ -28,6 +29,8 @@ reviews/
 - `sources/knowledge-models/` stores released source KM bundles.
 - `sources/localize/` stores the latest Weblate PO snapshot.
 - `tree/` stores the generated translation tree mirrored from Weblate.
+- `supplemental/` stores translator-facing forms for KM fields that Weblate
+  does not expose. Repositories without omitted fields do not need it.
 - `builds/final_translated.po` is regenerated from the tree.
 - `builds/final_translated.km` is regenerated from the final PO.
 - `reviews/` stores generated review outputs and workflow reports.
@@ -48,6 +51,8 @@ website state into this repository:
   tooling templates rendered from this repository's config.
 - KM auto-update tracks newer published DSW Registry KM bundles when validation
   passes.
+- Supplemental forms are validated against the current KM and applied only to
+  the KM artifact. They never modify the Weblate PO mirror.
 
 ## Actions Secrets
 
