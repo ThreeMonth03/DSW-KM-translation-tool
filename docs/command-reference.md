@@ -105,6 +105,11 @@ workspace. They default to `translation/zh_Hant/`.
 Run `make help-all` if you need lower-level helpers such as `tree-to-po`,
 `po-to-km`, `repo-km-pull`, or `repo-sync-branch`.
 
+`dsw-km-po-to-km` also accepts `--supplemental-translations-dir` for strict
+Markdown forms representing source KM fields that do not exist in the upstream
+PO. Production repositories should set `translation.supplemental_directory` in
+`translation-config.yml` instead of passing this flag directly.
+
 ## Direct CLI Use
 
 The targets above are thin wrappers around console scripts installed into

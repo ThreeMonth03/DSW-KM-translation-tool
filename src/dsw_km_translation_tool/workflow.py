@@ -17,6 +17,7 @@ from .data_models import (
     OutlineBuildResult,
     PoBuildResult,
     PoDiffReviewResult,
+    PoEntry,
     SharedBlocksDirectoryBuildResult,
     SharedBlocksOutlineBuildResult,
     SharedStringSyncResult,
@@ -29,6 +30,7 @@ from .outline import TranslationOutlineBuilder
 from .po import PoCatalogWriter
 from .review import PoDiffReviewer
 from .shared_blocks import SharedBlocksCatalogBuilder
+from .supplemental_translations import SupplementalTranslationCatalog
 from .sync import SharedStringSynchronizer
 from .tree import TranslationTreeRepository
 from .workflow_support import (
@@ -220,6 +222,7 @@ class TranslationWorkflowService:
         output_organization_id: str | None = None,
         output_km_id: str | None = None,
         output_name: str | None = None,
+        supplemental_translations_dir: str | None = None,
     ) -> KmBuildResult:
         """Generate a translated KM bundle directly from a translated PO file.
 
@@ -235,6 +238,8 @@ class TranslationWorkflowService:
                 Defaults to the source KM ID suffixed with target language.
             output_name: Optional display name for the generated translated KM.
                 Defaults to the source name suffixed with target language.
+            supplemental_translations_dir: Optional directory of strict
+                Markdown forms for KM fields omitted from the upstream PO.
 
         Returns:
             Result containing generated KM content and application summary.
@@ -252,6 +257,31 @@ class TranslationWorkflowService:
         if self._report_has_model_errors(report):
             preview = "\n".join(self._format_model_validation_preview(report)[:50])
             raise ValueError(f"PO validation against KM failed:\n{preview}")
+
+        if supplemental_translations_dir:
+            supplemental_entries = SupplementalTranslationCatalog(
+                source_lang=self.source_lang,
+                target_lang=self.target_lang,
+            ).load(supplemental_translations_dir)
+            supplemental_report = self._validate_entries_against_model(
+                po_entries=supplemental_entries,
+                model_path=original_model_path,
+            )
+            if self._report_has_model_errors(supplemental_report):
+                preview = "\n".join(self._format_model_validation_preview(supplemental_report)[:50])
+                raise ValueError(
+                    f"Supplemental translation validation against KM failed:\n{preview}"
+                )
+            base_keys = {(entry.uuid, entry.field) for entry in po_entries}
+            duplicate_keys = sorted(
+                base_keys & {(entry.uuid, entry.field) for entry in supplemental_entries}
+            )
+            if duplicate_keys:
+                preview = ", ".join(f"{uuid}:{field}" for uuid, field in duplicate_keys[:10])
+                raise ValueError(
+                    f"Supplemental translations duplicate upstream PO entries: {preview}"
+                )
+            po_entries.extend(supplemental_entries)
 
         km_content, translations = self.km_writer.rewrite_translations(
             original_model_path=original_model_path,
@@ -377,6 +407,16 @@ class TranslationWorkflowService:
             result,
             output_outline=str(outline_result.output_outline),
         )
+
+    def _validate_entries_against_model(
+        self,
+        po_entries: list[PoEntry],
+        model_path: str,
+    ) -> dict[str, Any]:
+        """Validate in-memory translation entries against a KM bundle."""
+
+        latest_by_uuid, _ = self.model_service.load_model(model_path)
+        return self.model_service.validate_po_entries(po_entries, latest_by_uuid)
 
     @staticmethod
     def _report_has_model_errors(report: dict[str, Any]) -> bool:

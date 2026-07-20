@@ -22,6 +22,7 @@ from .km_registry import Downloader, discover_km_versions
 from .localize_sync import Downloader as LocalizeDownloader
 from .localize_sync import pull_localize_po
 from .translation_repository_config import (
+    TranslationRepositoryConfig,
     TranslationRepositoryConfigError,
     format_package_id,
     load_translation_repository_config,
@@ -382,7 +383,8 @@ def _run_sync_build_and_tests(
             config.translation.translated_km_id,
             "--output-name",
             config.translation.translated_name,
-        ],
+        ]
+        + _supplemental_po_to_km_args(repo_root, config),
         cwd=tooling_repo,
         description=f"build translated KM for KM {paths.version}",
         echo_output=True,
@@ -400,6 +402,18 @@ def _run_sync_build_and_tests(
         description=f"run translation tests for KM {paths.version}",
         echo_output=True,
     )
+
+
+def _supplemental_po_to_km_args(
+    repo_root: Path,
+    config: TranslationRepositoryConfig,
+) -> list[str]:
+    """Build PO-to-KM flags for configured supplemental forms."""
+
+    directory = config.translation.supplemental_directory
+    if directory is None:
+        return []
+    return ["--supplemental-translations-dir", str(repo_root / directory)]
 
 
 def _run_alignment_check(

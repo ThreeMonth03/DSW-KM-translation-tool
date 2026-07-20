@@ -13,9 +13,17 @@ from dsw_km_translation_tool.translation_repository_config import (
 from tests.helpers import run_cli_command
 
 
-def write_config(path: Path, *, version: str = "2.7.0") -> None:
+def write_config(
+    path: Path,
+    *,
+    version: str = "2.7.0",
+    supplemental_directory: str | None = None,
+) -> None:
     """Write a minimal valid translation config for tests."""
 
+    supplemental_line = (
+        f"  supplemental_directory: {supplemental_directory}\n" if supplemental_directory else ""
+    )
     path.write_text(
         f"""schema_version: 1
 
@@ -33,6 +41,7 @@ translation:
   translated_organization_id: dsw
   translated_km_id: root-zh-hant
   translated_name: Common DSW Knowledge Model (zh-Hant)
+{supplemental_line}
 
 branches:
   tracking_branch: translation/latest
@@ -153,3 +162,28 @@ def test_repository_ci_sync_config_derives_tracking_branch_and_source_paths(
     )
     assert config.output_organization_id == "dsw"
     assert config.output_km_id == "root-zh-hant"
+
+
+def test_repository_config_resolves_supplemental_translation_directory(
+    workspace: Path,
+) -> None:
+    """Verify omitted Localize fields are configured without workflow literals."""
+
+    host_repo = workspace / "translation-repo"
+    tooling_repo = workspace / "tooling-repo"
+    host_repo.mkdir()
+    tooling_repo.mkdir()
+    write_config(
+        host_repo / "translation-config.yml",
+        supplemental_directory="supplemental",
+    )
+
+    config = build_repository_ci_sync_config(
+        host_repo_path=host_repo,
+        tooling_repo_path=tooling_repo,
+        config_path=Path("translation-config.yml"),
+        mode="schedule",
+    )
+
+    assert config.supplemental_translations_path == Path("supplemental")
+    assert config.supplemental_translations_dir == host_repo / "supplemental"

@@ -63,6 +63,8 @@ class CiSyncCommitConfig:
         output_organization_id: Optional organization ID for the generated KM.
         output_km_id: Optional KM ID for the generated KM.
         output_name: Optional display name for the generated KM.
+        supplemental_translations_path: Optional directory of translator-facing
+            forms for KM fields omitted from the upstream PO.
         restore_source_ref: Git ref used when restoring a malformed
             translation source file during CI recovery.
     """
@@ -80,6 +82,7 @@ class CiSyncCommitConfig:
     output_organization_id: str | None = None
     output_km_id: str | None = None
     output_name: str | None = None
+    supplemental_translations_path: Path | None = None
     restore_source_ref: str = "origin/master"
 
     @property
@@ -199,6 +202,17 @@ class CiSyncCommitConfig:
             default_path=self.tooling_repo_dir / DEFAULT_MODEL_PATH,
         )
 
+    @property
+    def supplemental_translations_dir(self) -> Path | None:
+        """Return the resolved supplemental translation directory, if configured."""
+
+        if self.supplemental_translations_path is None:
+            return None
+        return self._resolve_source_path(
+            configured_path=self.supplemental_translations_path,
+            default_path=self.host_repo_dir,
+        )
+
     def _resolve_source_path(self, configured_path: Path | None, default_path: Path) -> Path:
         """Resolve one optional source path for CI automation.
 
@@ -253,6 +267,13 @@ class CiSyncCommitConfig:
             raise CiSyncError(f"Missing original PO file: {self.original_po_path}")
         if not self.original_model_path.exists():
             raise CiSyncError(f"Missing original KM file: {self.original_model_path}")
+        if (
+            self.supplemental_translations_dir is not None
+            and not self.supplemental_translations_dir.is_dir()
+        ):
+            raise CiSyncError(
+                f"Missing supplemental translation directory: {self.supplemental_translations_dir}"
+            )
 
 
 def run_ci_sync_commit(
@@ -432,11 +453,11 @@ def _build_po_to_km_command(config: CiSyncCommitConfig) -> list[str]:
         config.source_lang,
         "--target-lang",
         config.target_lang,
-    ] + _build_optional_po_to_km_identity_args(config)
+    ] + _build_optional_po_to_km_args(config)
 
 
-def _build_optional_po_to_km_identity_args(config: CiSyncCommitConfig) -> list[str]:
-    """Build optional translated-KM identity flags.
+def _build_optional_po_to_km_args(config: CiSyncCommitConfig) -> list[str]:
+    """Build optional translated-KM identity and supplemental flags.
 
     Args:
         config: Sync-and-commit configuration.
@@ -452,6 +473,13 @@ def _build_optional_po_to_km_identity_args(config: CiSyncCommitConfig) -> list[s
         args.extend(["--output-km-id", config.output_km_id])
     if config.output_name:
         args.extend(["--output-name", config.output_name])
+    if config.supplemental_translations_dir is not None:
+        args.extend(
+            [
+                "--supplemental-translations-dir",
+                str(config.supplemental_translations_dir),
+            ]
+        )
     return args
 
 
